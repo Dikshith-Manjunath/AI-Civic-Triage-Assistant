@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build
+.next/
+out/
+dist/
+*.egg-info/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Data
+*.db
+*.sqlite
+uploads/
+
+# Logs
+*.log
