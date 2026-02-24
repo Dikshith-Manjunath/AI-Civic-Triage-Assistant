@@ -1,92 +1,84 @@
-/**
- * CivicFlow API client - communicates with FastAPI backend
- */
+/* ──────────────────────────────────────────────────────────────
+   CivicFlow — API client  (matches actual FastAPI endpoints)
+   ────────────────────────────────────────────────────────────── */
 
-import type {
-  ComplaintSubmission,
-  DashboardKPIs,
-  DeptTrend,
-  HeatmapData,
-  TicketListResponse,
-  Ticket,
-} from "./types";
+import type { Ticket, SimilarComplaint } from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const BASE = "";  // Next.js rewrites /api/* → FastAPI
 
-class ApiClient {
-  private base: string;
+/* ── Complaints ── */
 
-  constructor(base: string) {
-    this.base = base;
-  }
-
-  private async fetch<T>(path: string, init?: RequestInit): Promise<T> {
-    const res = await fetch(`${this.base}${path}`, {
-      ...init,
-      headers: {
-        ...init?.headers,
-      },
-    });
-    if (!res.ok) {
-      throw new Error(`API ${res.status}: ${await res.text()}`);
-    }
-    return res.json();
-  }
-
-  // ── Complaints ──────────────────────────────────────────────
-  async submitComplaint(formData: FormData): Promise<ComplaintSubmission> {
-    const res = await fetch(`${this.base}/api/v1/complaints`, {
-      method: "POST",
-      body: formData,
-    });
-    if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
-    return res.json();
-  }
-
-  // ── Tickets ─────────────────────────────────────────────────
-  async getTickets(params?: {
-    page?: number;
-    page_size?: number;
-    department?: string;
-    urgency?: number;
-    status?: string;
-  }): Promise<TicketListResponse> {
-    const searchParams = new URLSearchParams();
-    if (params?.page) searchParams.set("page", String(params.page));
-    if (params?.page_size)
-      searchParams.set("page_size", String(params.page_size));
-    if (params?.department) searchParams.set("department", params.department);
-    if (params?.urgency !== undefined)
-      searchParams.set("urgency", String(params.urgency));
-    if (params?.status) searchParams.set("status", params.status);
-
-    const qs = searchParams.toString();
-    return this.fetch<TicketListResponse>(
-      `/api/v1/tickets${qs ? `?${qs}` : ""}`
-    );
-  }
-
-  async getTicket(id: string): Promise<Ticket> {
-    return this.fetch<Ticket>(`/api/v1/tickets/${id}`);
-  }
-
-  // ── Dashboard ───────────────────────────────────────────────
-  async getKPIs(): Promise<DashboardKPIs> {
-    return this.fetch<DashboardKPIs>("/api/v1/dashboard/kpis");
-  }
-
-  async getHeatmap(): Promise<HeatmapData> {
-    return this.fetch<HeatmapData>("/api/v1/dashboard/heatmap");
-  }
-
-  async getDepartmentTrend(): Promise<DeptTrend[]> {
-    return this.fetch<DeptTrend[]>("/api/v1/dashboard/department-trend");
-  }
-
-  // ── Health ──────────────────────────────────────────────────
-  async healthCheck(): Promise<{ status: string }> {
-    return this.fetch<{ status: string }>("/health");
-  }
+export async function fetchComplaints(limit = 200): Promise<Ticket[]> {
+  const res = await fetch(`${BASE}/api/complaints?limit=${limit}`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to fetch complaints: ${res.status}`);
+  return res.json();
 }
 
-export const api = new ApiClient(API_BASE);
+export interface SubmitComplaintPayload {
+  text: string;
+  channel?: string;
+  image?: File;
+  audio?: File;
+  pdf?: File;
+}
+
+export async function submitComplaint(payload: SubmitComplaintPayload): Promise<Ticket> {
+  const fd = new FormData();
+  fd.append("text", payload.text);
+  fd.append("channel", payload.channel ?? "dashboard");
+  if (payload.image) fd.append("image", payload.image);
+  if (payload.audio) fd.append("audio", payload.audio);
+  if (payload.pdf)   fd.append("pdf", payload.pdf);
+  const res = await fetch(`${BASE}/api/complaints`, { method: "POST", body: fd });
+  if (!res.ok) throw new Error(`Failed to submit complaint: ${res.status}`);
+  return res.json();
+}
+
+/* ── Ticket actions (lifecycle state machine) ── */
+
+export async function approveTicket(id: string, approvedBy: string) {
+  const res = await fetch(`${BASE}/api/v1/tickets/${id}/approve`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ approved_by: approvedBy }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Approve failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function rejectTicket(id: string, rejectedBy: string) {
+  const res = await fetch(`${BASE}/api/v1/tickets/${id}/reject`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ approved_by: rejectedBy }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Reject failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function transitionTicket(id: string, newStatus: string, actedBy = "dashboard") {
+  const res = await fetch(`${BASE}/api/v1/tickets/${id}/transition`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ new_status: newStatus, acted_by: actedBy }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Transition failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+/* ── Similarity ── */
+
+export async function fetchSimilar(id: string): Promise<SimilarComplaint[]> {
+  const res = await fetch(`${BASE}/api/v1/complaints/${id}/similar`);
+  if (!res.ok) throw new Error(`Failed to fetch similar: ${res.status}`);
+  return res.json();
+}

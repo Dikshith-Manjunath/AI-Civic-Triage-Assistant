@@ -1,132 +1,99 @@
-/**
- * CivicFlow API client types
- */
+/* ──────────────────────────────────────────────────────────────
+   CivicFlow — Canonical types  (aligned with backend models)
+   ────────────────────────────────────────────────────────────── */
 
-export type MediaType = "text" | "audio" | "image" | "pdf";
+export type Department =
+  | "roads"
+  | "sanitation"
+  | "water"
+  | "electricity"
+  | "transport"
+  | "housing"
+  | "planning";
+
+export type TicketStatus =
+  | "pending"
+  | "awaiting_approval"
+  | "approved"
+  | "rejected"
+  | "filed"
+  | "resolved";
 
 export type UrgencyLevel = 0 | 1 | 2;
 
-export type TicketStatus =
-  | "received"
-  | "processing"
-  | "triaged"
-  | "assigned"
-  | "resolved";
+export type UserRole = "officer" | "admin";
 
-export type Department =
-  | "water"
-  | "roads"
-  | "sanitation"
-  | "electricity"
-  | "parks"
-  | "building"
-  | "traffic"
-  | "public_health"
-  | "general";
-
+/* ── Core ticket — matches backend TicketResponse exactly ── */
 export interface Ticket {
   id: string;
   timestamp: string;
-  department: Department;
-  urgency: UrgencyLevel;
+  dept: Department;
+  authority: string;
+  urgency: number;
   summary: string;
-  location_lat: number | null;
-  location_lon: number | null;
+  reply: string;
   status: TicketStatus;
-  channel: string;
-  citizen_reply: string | null;
+  media?: MediaItem[];
 }
 
-export interface TicketListResponse {
-  tickets: Ticket[];
-  total: number;
-  page: number;
-  page_size: number;
+export interface MediaItem {
+  type: "image" | "audio" | "pdf";
+  url: string;
 }
 
-export interface DashboardKPIs {
-  total_complaints: number;
-  open_complaints: number;
-  avg_resolution_hours: number;
-  urgency_distribution: Record<string, number>;
-  department_distribution: Record<string, number>;
-  daily_trend: { date: string; count: number }[];
-}
-
-export interface GeoPoint {
-  lat: number;
-  lon: number;
-  complaint_id: string;
-  urgency: UrgencyLevel;
-  department: Department;
+/* ── Similar complaint from /api/v1/complaints/{id}/similar ── */
+export interface SimilarComplaint {
+  id: string;
   summary: string;
+  dept: string;
+  authority: string;
+  urgency: number;
+  score: number;
 }
 
-export interface HeatmapData {
-  points: GeoPoint[];
+/* ── Session stored in localStorage ── */
+export interface UserSession {
+  name: string;
+  department: Department;
+  role: UserRole;
 }
 
-export interface ComplaintSubmission {
-  ticket_id: string;
-  status: string;
-  message: string;
-}
-
-export interface DeptTrend {
-  date: string;
-  department: string;
-  count: number;
-}
-
-// Urgency labels & colors
-export const URGENCY_CONFIG: Record<
-  UrgencyLevel,
-  { label: string; color: string; bg: string }
-> = {
-  0: { label: "Low", color: "text-green-700", bg: "bg-green-100" },
-  1: { label: "Medium", color: "text-yellow-700", bg: "bg-yellow-100" },
-  2: { label: "High", color: "text-red-700", bg: "bg-red-100" },
+/* ── Lookup tables ── */
+export const DEPARTMENTS: Record<Department, string> = {
+  roads: "Roads & Infrastructure",
+  water: "Water Supply",
+  electricity: "Electricity",
+  sanitation: "Sanitation",
+  transport: "Transport",
+  housing: "Housing",
+  planning: "Urban Planning",
 };
 
-// Department display config
-export const DEPT_CONFIG: Record<
-  Department,
-  { label: string; icon: string; color: string }
-> = {
-  water: { label: "Water", icon: "💧", color: "#3b82f6" },
-  roads: { label: "Roads", icon: "🛣️", color: "#8b5cf6" },
-  sanitation: { label: "Sanitation", icon: "🗑️", color: "#10b981" },
-  electricity: { label: "Electricity", icon: "⚡", color: "#f59e0b" },
-  parks: { label: "Parks", icon: "🌳", color: "#22c55e" },
-  building: { label: "Building", icon: "🏗️", color: "#6366f1" },
-  traffic: { label: "Traffic", icon: "🚦", color: "#ef4444" },
-  public_health: { label: "Public Health", icon: "🏥", color: "#ec4899" },
-  general: { label: "General", icon: "📋", color: "#6b7280" },
+export const DEPT_LIST: Department[] = [
+  "roads",
+  "water",
+  "electricity",
+  "sanitation",
+  "transport",
+  "housing",
+  "planning",
+];
+
+export const STATUS_META: Record<TicketStatus, { label: string; className: string }> = {
+  pending:           { label: "Pending",           className: "bg-neutral-200 text-neutral-700" },
+  awaiting_approval: { label: "Awaiting Approval", className: "bg-amber-100 text-amber-800" },
+  approved:          { label: "Approved",           className: "bg-emerald-100 text-emerald-800" },
+  rejected:          { label: "Rejected",           className: "bg-red-100 text-red-800" },
+  filed:             { label: "Filed",              className: "bg-sky-100 text-sky-800" },
+  resolved:          { label: "Resolved",           className: "bg-emerald-200 text-emerald-900" },
 };
 
-export const STATUS_CONFIG: Record<
-  TicketStatus,
-  { label: string; color: string; bg: string }
-> = {
-  received: { label: "Received", color: "text-gray-700", bg: "bg-gray-100" },
-  processing: {
-    label: "Processing",
-    color: "text-blue-700",
-    bg: "bg-blue-100",
-  },
-  triaged: {
-    label: "Triaged",
-    color: "text-purple-700",
-    bg: "bg-purple-100",
-  },
-  assigned: {
-    label: "Assigned",
-    color: "text-orange-700",
-    bg: "bg-orange-100",
-  },
-  resolved: {
-    label: "Resolved",
-    color: "text-green-700",
-    bg: "bg-green-100",
-  },
+export const URGENCY_META: Record<number, { label: string; className: string }> = {
+  0: { label: "Low",    className: "bg-neutral-200 text-neutral-600" },
+  1: { label: "Medium", className: "bg-amber-100 text-amber-700" },
+  2: { label: "High",   className: "bg-red-100 text-red-700" },
 };
+
+export const AUTHORITIES = [
+  "BBMP", "GBA", "BWSSB", "BESCOM", "BMTC", "BEML", "BDA", "BMRDA", "KSDB",
+] as const;
