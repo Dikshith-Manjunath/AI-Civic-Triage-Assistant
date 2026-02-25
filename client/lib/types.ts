@@ -79,19 +79,19 @@ export const DEPT_LIST: Department[] = [
   "planning",
 ];
 
-export const STATUS_META: Record<TicketStatus, { label: string; className: string }> = {
-  pending:           { label: "Pending",           className: "bg-neutral-200 text-neutral-700" },
-  awaiting_approval: { label: "Awaiting Approval", className: "bg-amber-100 text-amber-800" },
-  approved:          { label: "Approved",           className: "bg-emerald-100 text-emerald-800" },
-  rejected:          { label: "Rejected",           className: "bg-red-100 text-red-800" },
-  filed:             { label: "Filed",              className: "bg-sky-100 text-sky-800" },
-  resolved:          { label: "Resolved",           className: "bg-emerald-200 text-emerald-900" },
+export const STATUS_META: Record<TicketStatus, { label: string; className: string; color?: string }> = {
+  pending: { label: "Pending", className: "bg-neutral-200 text-neutral-700", color: "blue" },
+  awaiting_approval: { label: "Awaiting Approval", className: "bg-amber-100 text-amber-800", color: "yellow" },
+  approved: { label: "Approved", className: "bg-emerald-100 text-emerald-800", color: "green" },
+  rejected: { label: "Rejected", className: "bg-red-100 text-red-800", color: "red" },
+  filed: { label: "Filed", className: "bg-sky-100 text-sky-800", color: "slate" },
+  resolved: { label: "Resolved", className: "bg-emerald-200 text-emerald-900", color: "green" },
 };
 
 export const URGENCY_META: Record<number, { label: string; className: string }> = {
-  0: { label: "Low",    className: "bg-neutral-200 text-neutral-600" },
+  0: { label: "Low", className: "bg-neutral-200 text-neutral-600" },
   1: { label: "Medium", className: "bg-amber-100 text-amber-700" },
-  2: { label: "High",   className: "bg-red-100 text-red-700" },
+  2: { label: "High", className: "bg-red-100 text-red-700" },
 };
 
 export const AUTHORITIES = [

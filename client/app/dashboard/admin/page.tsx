@@ -5,15 +5,6 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import {
-  Inbox,
-  Clock,
-  ShieldAlert,
-  CheckCircle2,
-  AlertTriangle,
-  FileCheck,
-  XCircle,
-} from "lucide-react";
 import { fetchComplaints } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import type { Ticket, TicketStatus, Department } from "@/lib/types";
@@ -73,63 +64,87 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-neutral-300 border-t-black" />
+      <div className="flex h-[60vh] flex-col items-center justify-center gap-4">
+        <span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
+        <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest animate-pulse">Loading System Data...</p>
       </div>
     );
   }
 
   if (session?.role !== "admin") {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-neutral-500">Admin access required</p>
+      <div className="flex h-[60vh] flex-col items-center justify-center gap-4 text-slate-500">
+        <span className="material-symbols-outlined text-5xl opacity-50">gpp_maybe</span>
+        <p className="text-sm font-bold uppercase tracking-widest">Administrator Access Required</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in p-2 sm:p-0">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-black">Admin Panel</h1>
-        <p className="mt-0.5 text-sm text-neutral-500">
-          Global system overview &middot; {tickets.length} total records
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+        <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary mb-4 border border-primary/20">
+            <span className="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+            <span className="text-xs font-bold uppercase tracking-widest">Global Overview</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
+            System Admin Panel
+          </h1>
+          <p className="text-slate-500 font-medium">
+            Monitor all system activity across authorities and departments.
+          </p>
+        </div>
+        <div className="relative z-10 flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700">
+          <span className="material-symbols-outlined text-slate-400">database</span>
+          <div className="text-right">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Total Records</p>
+            <p className="text-sm font-extrabold text-slate-900 dark:text-white">{tickets.length.toLocaleString()}</p>
+          </div>
+        </div>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-8">
-        <KPICard label="Total" value={kpis.total} icon={<Inbox size={16} />} />
-        <KPICard label="Pending" value={kpis.pending} icon={<Clock size={16} />} />
-        <KPICard label="In Review" value={kpis.awaiting} icon={<ShieldAlert size={16} />} />
-        <KPICard label="Approved" value={kpis.approved} icon={<CheckCircle2 size={16} />} />
-        <KPICard label="Rejected" value={kpis.rejected} icon={<XCircle size={16} />} />
-        <KPICard label="Filed" value={kpis.filed} icon={<FileCheck size={16} />} />
-        <KPICard label="Resolved" value={kpis.resolved} icon={<CheckCircle2 size={16} />} />
-        <KPICard label="High Urgency" value={kpis.highUrgency} icon={<AlertTriangle size={16} />} />
+        <KPICard label="Total" value={kpis.total} icon="inbox" sub="All recorded" trend={{ value: "12%", positive: true }} />
+        <KPICard label="Pending" value={kpis.pending} icon="schedule" sub="Awaiting triage" />
+        <KPICard label="In Review" value={kpis.awaiting} icon="policy" sub="Needs authority approval" />
+        <KPICard label="Approved" value={kpis.approved} icon="check_circle" sub="Ready for filing" />
+        <KPICard label="Rejected" value={kpis.rejected} icon="cancel" sub="Invalid complaints" trend={{ value: "2%", positive: true }} />
+        <KPICard label="Filed" value={kpis.filed} icon="publish" sub="Sent to departments" />
+        <KPICard label="Resolved" value={kpis.resolved} icon="task_alt" sub="Issue fixed" trend={{ value: "8%", positive: true }} />
+        <KPICard label="High Urgency" value={kpis.highUrgency} icon="warning" sub="Needs immediate action" />
       </div>
 
       {/* Breakdowns */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Department */}
-        <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">
-            By Department
-          </h2>
-          <div className="space-y-2">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg">
+              <span className="material-symbols-outlined">domain</span>
+            </div>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
+              Department Workload
+            </h2>
+          </div>
+
+          <div className="space-y-4">
             {DEPT_LIST.map((d) => {
               const count = deptCounts[d] ?? 0;
               const pct = tickets.length ? (count / tickets.length) * 100 : 0;
               return (
-                <div key={d} className="flex items-center gap-3">
-                  <span className="w-28 text-xs text-neutral-500 truncate">{DEPARTMENTS[d]}</span>
-                  <div className="flex-1 h-2 rounded-full bg-neutral-100 overflow-hidden">
+                <div key={d} className="flex items-center gap-4 group">
+                  <span className="w-32 text-xs font-semibold text-slate-600 dark:text-slate-400 truncate">{DEPARTMENTS[d]}</span>
+                  <div className="flex-1 h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
                     <div
-                      className="h-full rounded-full bg-black transition-all"
+                      className="absolute top-0 left-0 h-full rounded-full bg-primary transition-all duration-1000 ease-out group-hover:opacity-80"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <span className="w-8 text-right text-xs font-medium tabular-nums">{count}</span>
+                  <span className="w-10 text-right text-xs font-bold font-mono text-slate-700 dark:text-slate-300">{count}</span>
                 </div>
               );
             })}
@@ -137,15 +152,21 @@ export default function AdminPage() {
         </div>
 
         {/* Status */}
-        <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">
-            By Status
-          </h2>
-          <div className="grid grid-cols-3 gap-2">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-lg">
+              <span className="material-symbols-outlined">donut_large</span>
+            </div>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
+              Status Distribution
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {(Object.keys(STATUS_META) as TicketStatus[]).map((s) => (
-              <div key={s} className="rounded-lg border border-neutral-100 px-3 py-2.5 text-center">
-                <p className="text-lg font-semibold text-black tabular-nums">{statusCounts[s] ?? 0}</p>
-                <p className="text-[11px] text-neutral-400">{STATUS_META[s].label}</p>
+              <div key={s} className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30 p-4 text-center hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors">
+                <p className="text-2xl font-extrabold text-slate-900 dark:text-white tabular-nums tracking-tight mb-1">{statusCounts[s] ?? 0}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{STATUS_META[s].label}</p>
               </div>
             ))}
           </div>
@@ -153,23 +174,45 @@ export default function AdminPage() {
       </div>
 
       {/* Authority breakdown */}
-      <div className="rounded-xl border border-neutral-200 bg-white p-5">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">
-          By Authority
-        </h2>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-lg">
+            <span className="material-symbols-outlined">corporate_fare</span>
+          </div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
+            Tickets By Authority
+          </h2>
+        </div>
+        <p className="text-sm text-slate-500 mb-6">Volume of complaints assigned to municipal authorities.</p>
+
         <div className="flex flex-wrap gap-3">
           {authCounts.map(([auth, count]) => (
-            <div key={auth} className="rounded-lg border border-neutral-100 px-4 py-2.5 text-center min-w-[80px]">
-              <p className="text-lg font-semibold text-black tabular-nums">{count}</p>
-              <p className="text-[11px] font-mono text-neutral-400">{auth}</p>
+            <div key={auth} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-3 text-center min-w-[100px] shadow-sm flex items-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300">
+                {auth.charAt(0)}
+              </span>
+              <div className="text-left">
+                <p className="text-lg font-extrabold text-slate-900 dark:text-white tabular-nums leading-none mb-1">{count}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 leading-none">{auth}</p>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Full complaints table */}
-      <div>
-        <h2 className="mb-3 text-sm font-semibold text-black">All Complaints</h2>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 text-primary rounded-lg border border-primary/20">
+              <span className="material-symbols-outlined">table_chart</span>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Global Complaint Registry</h2>
+              <p className="text-xs font-medium text-slate-500 mt-0.5">Comprehensive view of all system tickets</p>
+            </div>
+          </div>
+        </div>
         <ComplaintsTable tickets={tickets} onSelect={setSelected} />
       </div>
 

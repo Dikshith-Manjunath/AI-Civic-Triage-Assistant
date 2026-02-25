@@ -1,33 +1,27 @@
 /* ──────────────────────────────────────────────
-   CivicFlow — Sidebar  (black & white, minimal)
+   CivicFlow — Sidebar  (Stitch match)
    ────────────────────────────────────────────── */
 
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import {
-  LayoutDashboard,
-  BarChart3,
-  Shield,
-  LogOut,
-  ChevronRight,
-} from "lucide-react";
 
 const DEPT_NAV = [
-  { key: "roads",       label: "Roads" },
-  { key: "water",       label: "Water" },
-  { key: "electricity", label: "Electricity" },
-  { key: "sanitation",  label: "Sanitation" },
-  { key: "transport",   label: "Transport" },
-  { key: "housing",     label: "Housing" },
-  { key: "planning",    label: "Planning" },
+  { key: "roads", label: "Roads", icon: "add_road" },
+  { key: "water", label: "Water", icon: "water_drop" },
+  { key: "electricity", label: "Electricity", icon: "bolt" },
+  { key: "sanitation", label: "Sanitation", icon: "cleaning_services" },
+  { key: "transport", label: "Transport", icon: "directions_bus" },
+  { key: "housing", label: "Housing", icon: "home" },
+  { key: "planning", label: "Planning", icon: "architecture" },
 ] as const;
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { session, logout } = useAuth();
+  const router = useRouter();
 
   if (!session) return null;
 
@@ -40,97 +34,74 @@ export default function Sidebar() {
   }: {
     href: string;
     label: string;
-    icon?: React.ReactNode;
+    icon: string;
   }) {
     const active = pathname === href;
     return (
       <Link
         href={href}
-        className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-[13px] font-medium transition-colors ${
-          active
-            ? "bg-white/10 text-white"
-            : "text-neutral-400 hover:bg-white/5 hover:text-neutral-200"
-        }`}
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${active
+          ? "bg-primary/10 text-primary font-semibold"
+          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }`}
       >
-        {icon ?? <ChevronRight size={14} className="opacity-40" />}
-        {label}
+        <span className="material-symbols-outlined text-[22px]">{icon}</span>
+        <span className="text-sm">{label}</span>
       </Link>
     );
   }
 
+  function handleLogout() {
+    logout();
+    router.replace("/login");
+  }
+
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 flex w-56 flex-col bg-black text-white">
+    <aside className="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col fixed h-full z-20">
       {/* Brand */}
-      <div className="flex items-center gap-2.5 border-b border-white/10 px-4 py-5">
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white text-black text-xs font-bold">
-          C
+      <div className="p-6 flex items-center gap-3">
+        <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+          <span className="material-symbols-outlined block">account_balance</span>
         </div>
-        <span className="text-sm font-semibold tracking-tight">CivicFlow</span>
+        <div>
+          <h1 className="text-primary dark:text-white font-bold text-lg leading-tight tracking-tight">CivicFlow</h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Bengaluru {isAdmin ? 'Admin' : 'Officer'}</p>
+        </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6 scrollbar-hide">
-        {/* Main */}
-        <div>
-          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
-            Main
-          </p>
-          <div className="space-y-0.5">
-            <NavItem href="/dashboard" label="Overview" icon={<LayoutDashboard size={15} />} />
-            <NavItem href="/dashboard/analytics" label="Analytics" icon={<BarChart3 size={15} />} />
-          </div>
-        </div>
+      <nav className="flex-1 px-4 mt-4 space-y-1 overflow-y-auto scrollbar-hide">
+        {/* Main Dashboard - Admin or Officer view */}
+        <NavItem href="/dashboard" label="Global Overview" icon="dashboard" />
+        <NavItem href="/dashboard/tickets" label="Tickets" icon="confirmation_number" />
 
-        {/* Departments */}
-        <div>
-          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
-            Departments
-          </p>
-          <div className="space-y-0.5">
-            {DEPT_NAV.map((d) => {
-              // Officers only see their own department
-              if (!isAdmin && d.key !== session.department) return null;
-              return (
-                <NavItem
-                  key={d.key}
-                  href={`/dashboard/${d.key}`}
-                  label={d.label}
-                />
-              );
-            })}
-          </div>
-        </div>
+        {/* Departments (Only shown for their respective officers or admins wanting isolated views) */}
+        {!isAdmin && (
+          <NavItem href={`/dashboard/${session.department}`} label="My Department" icon="corporate_fare" />
+        )}
 
-        {/* Admin */}
+        {/* Admin only views */}
         {isAdmin && (
-          <div>
-            <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
-              System
-            </p>
-            <div className="space-y-0.5">
-              <NavItem href="/dashboard/admin" label="Admin Panel" icon={<Shield size={15} />} />
-            </div>
-          </div>
+          <>
+            <NavItem href="/dashboard/authorities" label="Authorities" icon="account_balance_wallet" />
+            <NavItem href="/dashboard/analytics" label="Analytics" icon="query_stats" />
+            <NavItem href="/dashboard/audit" label="Audit Log" icon="history_edu" />
+          </>
         )}
       </nav>
 
-      {/* User */}
-      <div className="border-t border-white/10 px-4 py-3">
-        <div className="mb-2">
-          <p className="text-xs font-medium text-white truncate">{session.name}</p>
-          <p className="text-[10px] text-neutral-500 capitalize">
-            {session.role} &middot; {session.department}
-          </p>
-        </div>
+      {/* Footer Actions */}
+      <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <span className="material-symbols-outlined text-[22px]">settings</span>
+          <span className="text-sm">Settings</span>
+        </button>
         <button
-          onClick={() => {
-            logout();
-            window.location.href = "/login";
-          }}
-          className="flex items-center gap-1.5 text-[11px] text-neutral-500 hover:text-red-400 transition-colors"
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
         >
-          <LogOut size={12} />
-          Sign out
+          <span className="material-symbols-outlined text-[22px]">logout</span>
+          <span className="text-sm">Sign out</span>
         </button>
       </div>
     </aside>

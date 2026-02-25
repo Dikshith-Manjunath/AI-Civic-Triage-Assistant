@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CivicFlow | Bengaluru Admin Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1a2a47",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#14181e",
+                        "accent-success": "#07883b",
+                        "accent-warning": "#eab308",
+                        "accent-danger": "#e73908",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col fixed h-full">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div>
+<h1 class="text-primary dark:text-white font-bold text-lg leading-tight">CivicFlow</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400">Bengaluru Admin</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 mt-4">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary font-semibold" href="#">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="text-sm">Global Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
+<span class="text-sm">Authorities</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">confirmation_number</span>
+<span class="text-sm">Tickets</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">query_stats</span>
+<span class="text-sm">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">history_edu</span>
+<span class="text-sm">Audit Log</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="text-sm">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 ml-64">
+<!-- Top Navbar -->
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-10">
+<div class="w-96">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-500" placeholder="Search authorities, tickets, or audit logs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 relative">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 bg-accent-danger rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:border-slate-800 mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right">
+<p class="text-sm font-semibold leading-none">Admin User</p>
+<p class="text-xs text-slate-500 mt-1">Super Administrator</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+<img alt="Admin Avatar" class="w-full h-full object-cover" data-alt="Stylized administrator avatar for the dashboard profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrhsmvs3K9SEYZLx07jDIPMwTWXPBHAxCtEBigusXHam3ykFuBiJsbZQ7Y6xgiVF7P5uKS-U0aPIPBiyspis26S5lRNCvVnNR348MuQfVtLlSWeYzIYPZrjfqOKwrUgDgmmbmmJOAe4PiFwxCu956m3k8FD35SHNMgDWGt4tDRavaR-F6nb8yfP58W9CEV9JP6XCXXECz5GPIK8N3RTxjNE_Ny5uyPHsSqj2ZttM9mk24P7nx9GesFphpeJkf9OH0YlAdlS3XwAwk"/>
+</div>
+</div>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<!-- Header Section -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-3xl font-extrabold text-primary dark:text-white tracking-tight">Global Overview</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-1">System-wide monitoring for Bengaluru Metropolitan services.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">calendar_today</span>
+                            Last 30 Days
+                        </button>
+<button class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">file_download</span>
+                            Export Report
+                        </button>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600">
+<span class="material-symbols-outlined">confirmation_number</span>
+</div>
+<span class="text-accent-success text-sm font-bold flex items-center">+12.5%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Total Tickets</p>
+<h3 class="text-2xl font-bold mt-1">12,840</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg text-yellow-600">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<span class="text-accent-warning text-sm font-bold flex items-center">+5.2%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Pending Actions</p>
+<h3 class="text-2xl font-bold mt-1">452</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-green-600">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<span class="text-accent-danger text-sm font-bold flex items-center">-8.1%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Resolved Today</p>
+<h3 class="text-2xl font-bold mt-1">185</h3>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600">
+<span class="material-symbols-outlined">timer</span>
+</div>
+<span class="text-accent-success text-sm font-bold flex items-center">-0.5%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Avg. Resolution</p>
+<h3 class="text-2xl font-bold mt-1">4.2 Days</h3>
+</div>
+</div>
+<!-- Analytics Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Line Chart Placeholder -->
+<div class="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-bold text-lg">Ticket Trends (30 Days)</h4>
+<div class="flex gap-2">
+<span class="flex items-center gap-1 text-xs font-medium text-slate-500"><span class="w-2 h-2 rounded-full bg-primary"></span> New</span>
+<span class="flex items-center gap-1 text-xs font-medium text-slate-500"><span class="w-2 h-2 rounded-full bg-accent-success"></span> Resolved</span>
+</div>
+</div>
+<div class="h-64 flex items-end justify-between gap-2 px-2">
+<!-- Bar/Line chart visualization mockup with divs -->
+<div class="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg relative group overflow-hidden" style="height: 40%;">
+<div class="absolute bottom-0 w-full bg-primary/20 h-full"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[60%]"></div>
+</div>
+<div class="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg relative group overflow-hidden" style="height: 60%;">
+<div class="absolute bottom-0 w-full bg-primary/20 h-full"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[75%]"></div>
+</div>
+<div class="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg relative group overflow-hidden" style="height: 55%;">
+<div class="absolute bottom-0 w-full bg-primary/20 h-full"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[80%]"></div>
+</div>
+<div class="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg relative group overflow-hidden" style="height: 75%;">
+<div class="absolute bottom-0 w-full bg-primary/20 h-full"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[65%]"></div>
+</div>
+<div class="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg relative group overflow-hidden" style="height: 90%;">
+<div class="absolute bottom-0 w-full bg-primary/20 h-full"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[90%]"></div>
+</div>
+<div class="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg relative group overflow-hidden" style="height: 65%;">
+<div class="absolute bottom-0 w-full bg-primary/20 h-full"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[40%]"></div>
+</div>
+<div class="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg relative group overflow-hidden" style="height: 80%;">
+<div class="absolute bottom-0 w-full bg-primary/20 h-full"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[85%]"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 px-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+<span>Week 1</span>
+<span>Week 2</span>
+<span>Week 3</span>
+<span>Week 4</span>
+</div>
+</div>
+<!-- Pie Chart Placeholder -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+<h4 class="font-bold text-lg mb-6">By Authority</h4>
+<div class="flex justify-center py-4">
+<div class="relative w-48 h-48 rounded-full border-[16px] border-slate-100 dark:border-slate-800 flex items-center justify-center">
+<div class="absolute inset-0 rounded-full border-[16px] border-primary border-r-transparent border-b-transparent border-l-transparent rotate-[45deg]"></div>
+<div class="absolute inset-0 rounded-full border-[16px] border-blue-400 border-r-transparent border-t-transparent border-l-transparent rotate-[160deg]"></div>
+<div class="absolute inset-0 rounded-full border-[16px] border-accent-success border-r-transparent border-t-transparent border-b-transparent rotate-[280deg]"></div>
+<div class="text-center">
+<p class="text-xs text-slate-500 font-medium">Top Authority</p>
+<p class="font-bold text-xl">BBMP</p>
+</div>
+</div>
+</div>
+<div class="mt-4 space-y-2">
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span>BBMP</span>
+</div>
+<span class="font-bold">42%</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-blue-400"></span>
+<span>BWSSB</span>
+</div>
+<span class="font-bold">28%</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-accent-success"></span>
+<span>BESCOM</span>
+</div>
+<span class="font-bold">18%</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-slate-300"></span>
+<span>Other</span>
+</div>
+<span class="font-bold">12%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Table & Feed Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<!-- Authority Workload Table -->
+<div class="xl:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+<h4 class="font-bold text-lg">Authority Workload</h4>
+<button class="text-primary text-sm font-semibold hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-slate-50 dark:bg-slate-800/50">
+<tr>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Authority</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Total Tickets</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Pending</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Resolution</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm font-bold">corporate_fare</span>
+</div>
+<span class="font-semibold text-sm">BBMP</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium">5,420</td>
+<td class="px-6 py-4 text-sm">182</td>
+<td class="px-6 py-4 text-sm">3.8 Days</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                                On Track
+                                            </span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm font-bold">water_drop</span>
+</div>
+<span class="font-semibold text-sm">BWSSB</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium">3,110</td>
+<td class="px-6 py-4 text-sm">145</td>
+<td class="px-6 py-4 text-sm">5.2 Days</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                                Delayed
+                                            </span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm font-bold">bolt</span>
+</div>
+<span class="font-semibold text-sm">BESCOM</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium">2,240</td>
+<td class="px-6 py-4 text-sm">65</td>
+<td class="px-6 py-4 text-sm">2.4 Days</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                                On Track
+                                            </span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm font-bold">traffic</span>
+</div>
+<span class="font-semibold text-sm">BTP</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium">1,850</td>
+<td class="px-6 py-4 text-sm">54</td>
+<td class="px-6 py-4 text-sm">4.1 Days</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                                On Track
+                                            </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Recent Activity Feed -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6 border-b border-slate-200 dark:border-slate-800">
+<h4 class="font-bold text-lg">System Audit Log</h4>
+</div>
+<div class="p-6 space-y-6">
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-[2px] bg-slate-100 dark:bg-slate-800 last:hidden"></div>
+<div class="w-8 h-8 rounded-full bg-accent-danger/10 text-accent-danger flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-sm font-bold">priority_high</span>
+</div>
+<div>
+<p class="text-sm font-bold">New Emergency Ticket</p>
+<p class="text-xs text-slate-500 mt-0.5 line-clamp-2">Major water main burst in Indiranagar. Immediate attention required by BWSSB.</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-2">12 mins ago • #TK-8942</p>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-[2px] bg-slate-100 dark:bg-slate-800 last:hidden"></div>
+<div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-sm font-bold">person_add</span>
+</div>
+<div>
+<p class="text-sm font-bold">User Permission Update</p>
+<p class="text-xs text-slate-500 mt-0.5">Admin elevated BWSSB-Officer-7 to Departmental Head status.</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-2">1 hour ago • AUDIT-772</p>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-[2px] bg-slate-100 dark:bg-slate-800 last:hidden"></div>
+<div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-sm font-bold">download_done</span>
+</div>
+<div>
+<p class="text-sm font-bold">System Backup Completed</p>
+<p class="text-xs text-slate-500 mt-0.5">Weekly database synchronization with Cloud-East-1 success.</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-2">4 hours ago • SYS-LOG</p>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-sm font-bold">warning</span>
+</div>
+<div>
+<p class="text-sm font-bold">Latency Warning</p>
+<p class="text-xs text-slate-500 mt-0.5">API response times for public portal increased by 15%.</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-2">6 hours ago • MONITOR</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="p-8 text-center">
+<p class="text-xs text-slate-400 font-medium">© 2024 CivicFlow Government of Karnataka. Official Administrator Portal.</p>
+</footer>
+</main>
+</div>
+</body></html>

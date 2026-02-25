@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BWSSB Dashboard | CivicFlow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1a2a47",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#14181e",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-primary dark:text-white">CivicFlow</h2>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer">
+<span class="material-symbols-outlined">confirmation_number</span>
+<span class="text-sm font-medium">Tickets</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary dark:bg-primary/20 dark:text-white rounded-lg cursor-pointer">
+<span class="material-symbols-outlined">opacity</span>
+<span class="text-sm font-semibold">BWSSB Workspace</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</div>
+<div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</div>
+</div>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700" data-alt="User profile avatar circle"></div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold truncate">Anand Kumar</p>
+<p class="text-xs text-slate-500 truncate">System Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Header -->
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-8">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/50" placeholder="Search for tickets, zones, or assets..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="size-10 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:border-slate-800"></div>
+<button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">add</span>
+                        New Ticket
+                    </button>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-8">
+<div class="max-w-7xl mx-auto space-y-8">
+<!-- Title Section -->
+<div>
+<h1 class="text-3xl font-black tracking-tight text-primary dark:text-white">BWSSB Dashboard</h1>
+<p class="text-slate-500 dark:text-slate-400 mt-1">Bangalore Water Supply &amp; Sewerage Board Operations Management</p>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Active Complaints</p>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-3xl font-bold">842</span>
+<span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">+12%</span>
+</div>
+<p class="text-xs text-slate-400 mt-2">v/s last 7 days</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Water Leakage Alerts</p>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-3xl font-bold text-rose-600 dark:text-rose-400">18</span>
+<span class="text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30 px-2 py-0.5 rounded-full">-5%</span>
+</div>
+<p class="text-xs text-slate-400 mt-2">Active sensors triggered</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Average Fix Time</p>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-3xl font-bold">5.4h</span>
+<span class="text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30 px-2 py-0.5 rounded-full">-0.8h</span>
+</div>
+<p class="text-xs text-slate-400 mt-2">Operational efficiency</p>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Pressure Compliance</p>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="text-3xl font-bold text-emerald-600">98.2%</span>
+<span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">+0.2%</span>
+</div>
+<p class="text-xs text-slate-400 mt-2">Average across 8 zones</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Main Table Area -->
+<div class="lg:col-span-2 space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold text-primary dark:text-white">Ticket Queue</h2>
+<button class="text-primary dark:text-slate-300 text-sm font-semibold hover:underline">View All</button>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+<table class="w-full text-left">
+<thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+<tr>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Ticket ID</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Issue Category</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Location</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
+<td class="px-6 py-4 text-sm font-medium">#BW-9218</td>
+<td class="px-6 py-4 text-sm">Main Pipe Burst</td>
+<td class="px-6 py-4 text-sm text-slate-500">Indiranagar 100ft Rd</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300">CRITICAL</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-semibold text-amber-600">
+<span class="size-2 rounded-full bg-amber-500"></span> In Progress
+                                                </span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
+<td class="px-6 py-4 text-sm font-medium">#BW-9215</td>
+<td class="px-6 py-4 text-sm">Sewage Overflow</td>
+<td class="px-6 py-4 text-sm text-slate-500">HSR Layout Sector 4</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">HIGH</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-semibold text-blue-600">
+<span class="size-2 rounded-full bg-blue-500"></span> Dispatched
+                                                </span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
+<td class="px-6 py-4 text-sm font-medium">#BW-9214</td>
+<td class="px-6 py-4 text-sm">New Connection Request</td>
+<td class="px-6 py-4 text-sm text-slate-500">Koramangala 3rd Block</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400">LOW</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+<span class="size-2 rounded-full bg-slate-400"></span> Open
+                                                </span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
+<td class="px-6 py-4 text-sm font-medium">#BW-9208</td>
+<td class="px-6 py-4 text-sm">Meter Malfunction</td>
+<td class="px-6 py-4 text-sm text-slate-500">JP Nagar Phase 2</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">MEDIUM</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+<span class="size-2 rounded-full bg-emerald-500"></span> Resolved
+                                                </span>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
+<td class="px-6 py-4 text-sm font-medium">#BW-9201</td>
+<td class="px-6 py-4 text-sm">Main Pipe Burst</td>
+<td class="px-6 py-4 text-sm text-slate-500">Whitefield Outer Ring</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300">CRITICAL</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+<span class="size-2 rounded-full bg-emerald-500"></span> Resolved
+                                                </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Sidebar Stats & Maintenance -->
+<div class="space-y-8">
+<!-- Volume Chart Sidebar -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<h3 class="text-lg font-bold text-primary dark:text-white mb-6">Volume by Issue Type</h3>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-sm mb-1">
+<span class="text-slate-600 dark:text-slate-400">Water Leakage</span>
+<span class="font-bold">42%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 42%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-1">
+<span class="text-slate-600 dark:text-slate-400">Sewage</span>
+<span class="font-bold">28%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 rounded-full" style="width: 28%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-1">
+<span class="text-slate-600 dark:text-slate-400">Bills &amp; Payment</span>
+<span class="font-bold">15%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-slate-400 rounded-full" style="width: 15%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-1">
+<span class="text-slate-600 dark:text-slate-400">Others</span>
+<span class="font-bold">15%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-slate-200 dark:bg-slate-600 rounded-full" style="width: 15%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Maintenance Feed -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<h3 class="text-lg font-bold text-primary dark:text-white mb-6">Recent Maintenance</h3>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="size-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 flex-shrink-0">
+<span class="material-symbols-outlined text-xl">build</span>
+</div>
+<div>
+<p class="text-sm font-semibold">T. Dasarahalli Valve Fix</p>
+<p class="text-xs text-slate-500 mt-0.5">Completed 45m ago by Team Alpha</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 flex-shrink-0">
+<span class="material-symbols-outlined text-xl">settings_input_component</span>
+</div>
+<div>
+<p class="text-sm font-semibold">Pump Station #04 Upgrade</p>
+<p class="text-xs text-slate-500 mt-0.5">Scheduled for Tonight 11:00 PM</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-8 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 flex-shrink-0">
+<span class="material-symbols-outlined text-xl">engineering</span>
+</div>
+<div>
+<p class="text-sm font-semibold">Zone 2 Pipeline Inspection</p>
+<p class="text-xs text-slate-500 mt-0.5">Ongoing - 65% completed</p>
+</div>
+</div>
+<button class="w-full py-2 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                        View Full Schedule
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

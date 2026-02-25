@@ -1,5 +1,5 @@
 /* ──────────────────────────────────────────────
-   CivicFlow — Complaints Table  (TanStack Table)
+   CivicFlow — Complaints Table (Stitch match)
    ────────────────────────────────────────────── */
 
 "use client";
@@ -16,10 +16,38 @@ import {
   type SortingState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Ticket, Department, TicketStatus } from "@/lib/types";
 import { DEPARTMENTS, STATUS_META, DEPT_LIST } from "@/lib/types";
-import { StatusBadge, UrgencyBadge } from "./badges";
+
+// Recreate badges exactly as defined in Stitch markup for the rows
+function StatusBadgeInline({ status }: { status: TicketStatus }) {
+  const meta = STATUS_META[status];
+  let bg = "bg-slate-100 text-slate-700 dark:bg-slate-800/50 dark:text-slate-400";
+  if (meta.color === "blue") bg = "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+  if (meta.color === "yellow") bg = "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400";
+  if (meta.color === "green") bg = "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
+  if (meta.color === "red") bg = "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold ${bg}`}>
+      {meta.label}
+    </span>
+  );
+}
+
+// Map dept to appropriate Material Symbol icon
+function getDeptIcon(dept: string) {
+  const iconMap: Record<string, string> = {
+    roads: "add_road",
+    water: "water_drop",
+    electricity: "bolt",
+    sanitation: "cleaning_services",
+    transport: "directions_bus",
+    housing: "home",
+    planning: "architecture"
+  };
+  return iconMap[dept] || "corporate_fare";
+}
 
 interface ComplaintsTableProps {
   tickets: Ticket[];
@@ -42,29 +70,46 @@ export default function ComplaintsTable({ tickets, onSelect, filterDept }: Compl
   const columns = useMemo<ColumnDef<Ticket>[]>(
     () => [
       {
-        accessorKey: "id",
-        header: "ID",
-        cell: ({ getValue }) => {
-          const id = getValue<string>();
-          return <span className="font-mono text-xs text-neutral-500">{id.slice(0, 8)}</span>;
+        accessorKey: "dept",
+        header: "Authority",
+        cell: ({ row }) => {
+          const dept = row.original.dept;
+          return (
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary dark:text-blue-400">
+                <span className="material-symbols-outlined text-sm font-bold">{getDeptIcon(dept)}</span>
+              </div>
+              <span className="font-semibold text-sm">{DEPARTMENTS[dept] ?? dept}</span>
+              <span className="font-mono text-xs font-semibold text-slate-400 dark:text-slate-500 ml-2">#{row.original.id.slice(0, 6)}</span>
+            </div>
+          );
         },
-        size: 90,
+        filterFn: "equals",
+        size: 200,
+      },
+      {
+        accessorKey: "summary",
+        header: "Issue Summary",
+        cell: ({ getValue }) => (
+          <p className="max-w-xs truncate text-sm font-medium text-slate-700 dark:text-slate-300">{getValue<string>()}</p>
+        ),
+        size: 250,
       },
       {
         accessorKey: "timestamp",
         header: ({ column }) => (
           <button
-            className="flex items-center gap-1 text-left"
+            className="flex items-center gap-1 text-left font-bold text-slate-500 uppercase tracking-wider"
             onClick={() => column.toggleSorting()}
           >
-            Time <ArrowUpDown size={12} className="text-neutral-400" />
+            Reported <span className="material-symbols-outlined text-[16px]">swap_vert</span>
           </button>
         ),
         cell: ({ getValue }) => {
           const ts = getValue<string>();
           try {
             return (
-              <span className="text-xs text-neutral-500 whitespace-nowrap">
+              <span className="text-sm text-slate-500 font-medium whitespace-nowrap">
                 {new Date(ts).toLocaleString("en-IN", {
                   day: "2-digit",
                   month: "short",
@@ -74,76 +119,35 @@ export default function ComplaintsTable({ tickets, onSelect, filterDept }: Compl
               </span>
             );
           } catch {
-            return <span className="text-xs text-neutral-400">{ts}</span>;
+            return <span className="text-sm text-slate-400">{ts}</span>;
           }
         },
-        size: 130,
-      },
-      {
-        accessorKey: "dept",
-        header: "Department",
-        cell: ({ getValue }) => {
-          const dept = getValue<Department>();
-          return (
-            <span className="text-xs font-medium text-neutral-600">
-              {DEPARTMENTS[dept] ?? dept}
-            </span>
-          );
-        },
-        filterFn: "equals",
         size: 140,
-      },
-      {
-        accessorKey: "authority",
-        header: "Authority",
-        cell: ({ getValue }) => (
-          <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-[11px] font-mono font-medium text-neutral-600">
-            {getValue<string>()}
-          </span>
-        ),
-        size: 90,
-      },
-      {
-        accessorKey: "urgency",
-        header: ({ column }) => (
-          <button
-            className="flex items-center gap-1 text-left"
-            onClick={() => column.toggleSorting()}
-          >
-            Urgency <ArrowUpDown size={12} className="text-neutral-400" />
-          </button>
-        ),
-        cell: ({ getValue }) => <UrgencyBadge urgency={getValue<number>()} />,
-        filterFn: "equals",
-        size: 90,
-      },
-      {
-        accessorKey: "summary",
-        header: "Summary",
-        cell: ({ getValue }) => (
-          <p className="max-w-xs truncate text-sm text-neutral-700">{getValue<string>()}</p>
-        ),
-        size: 300,
       },
       {
         accessorKey: "status",
         header: "Status",
-        cell: ({ getValue }) => <StatusBadge status={getValue<TicketStatus>()} />,
+        cell: ({ getValue }) => <StatusBadgeInline status={getValue<TicketStatus>()} />,
         filterFn: "equals",
-        size: 130,
+        size: 140,
       },
       {
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <button
-            onClick={() => onSelect(row.original)}
-            className="rounded-md border border-neutral-200 px-2.5 py-1 text-[11px] font-medium text-neutral-600 hover:border-black hover:text-black transition-colors"
-          >
-            View
-          </button>
+          <div className="flex justify-end pr-4">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(row.original);
+              }}
+              className="text-primary text-sm font-semibold hover:underline"
+            >
+              View Ticket
+            </button>
+          </div>
         ),
-        size: 70,
+        size: 100,
       },
     ],
     [onSelect]
@@ -160,85 +164,71 @@ export default function ComplaintsTable({ tickets, onSelect, filterDept }: Compl
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: { pagination: { pageSize: 15 } },
+    initialState: { pagination: { pageSize: 10 } },
   });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-col sm:flex-row gap-3 px-4">
         {/* Search */}
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+        <div className="relative flex-1">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
           <input
             type="text"
-            placeholder="Search complaints..."
+            placeholder="Search tickets by ID, authority, or keyword..."
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="w-full rounded-lg border border-neutral-200 bg-white py-2 pl-9 pr-3 text-sm placeholder:text-neutral-400 focus:border-black focus:outline-none"
+            className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-500 outline-none transition-all"
           />
         </div>
 
-        {/* Department filter */}
-        {!filterDept && (
+        <div className="flex gap-2">
+          {/* Department filter */}
+          {!filterDept && (
+            <select
+              value={(table.getColumn("dept")?.getFilterValue() as string) ?? ""}
+              onChange={(e) =>
+                table.getColumn("dept")?.setFilterValue(e.target.value || undefined)
+              }
+              className="px-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-primary/20 outline-none appearance-none pr-8 relative bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:1em] bg-[right_0.5rem_center] bg-no-repeat"
+            >
+              <option value="">All Authorities</option>
+              {DEPT_LIST.map((d) => (
+                <option key={d} value={d}>
+                  {DEPARTMENTS[d]}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {/* Status filter */}
           <select
-            value={(table.getColumn("dept")?.getFilterValue() as string) ?? ""}
+            value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
             onChange={(e) =>
-              table.getColumn("dept")?.setFilterValue(e.target.value || undefined)
+              table.getColumn("status")?.setFilterValue(e.target.value || undefined)
             }
-            className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs text-neutral-600 focus:border-black focus:outline-none"
+            className="px-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-primary/20 outline-none appearance-none pr-8 relative bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:1em] bg-[right_0.5rem_center] bg-no-repeat"
           >
-            <option value="">All Departments</option>
-            {DEPT_LIST.map((d) => (
-              <option key={d} value={d}>
-                {DEPARTMENTS[d]}
+            <option value="">All Statuses</option>
+            {Object.entries(STATUS_META).map(([k, v]) => (
+              <option key={k} value={k}>
+                {v.label}
               </option>
             ))}
           </select>
-        )}
-
-        {/* Status filter */}
-        <select
-          value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
-          onChange={(e) =>
-            table.getColumn("status")?.setFilterValue(e.target.value || undefined)
-          }
-          className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs text-neutral-600 focus:border-black focus:outline-none"
-        >
-          <option value="">All Statuses</option>
-          {Object.entries(STATUS_META).map(([k, v]) => (
-            <option key={k} value={k}>
-              {v.label}
-            </option>
-          ))}
-        </select>
-
-        {/* Urgency filter */}
-        <select
-          value={(table.getColumn("urgency")?.getFilterValue() as string) ?? ""}
-          onChange={(e) => {
-            const val = e.target.value;
-            table.getColumn("urgency")?.setFilterValue(val === "" ? undefined : Number(val));
-          }}
-          className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs text-neutral-600 focus:border-black focus:outline-none"
-        >
-          <option value="">All Urgency</option>
-          <option value="0">Low</option>
-          <option value="1">Medium</option>
-          <option value="2">High</option>
-        </select>
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
+      <div className="overflow-x-auto w-full">
         <table className="w-full text-left">
-          <thead>
+          <thead className="bg-slate-50 dark:bg-slate-800/50">
             {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id} className="border-b border-neutral-100">
+              <tr key={hg.id}>
                 {hg.headers.map((h) => (
                   <th
                     key={h.id}
-                    className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-neutral-400"
+                    className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
                     style={{ width: h.getSize() }}
                   >
                     {h.isPlaceholder ? null : flexRender(h.column.columnDef.header, h.getContext())}
@@ -247,22 +237,23 @@ export default function ComplaintsTable({ tickets, onSelect, filterDept }: Compl
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="py-16 text-center text-sm text-neutral-400">
-                  No complaints found
+                <td colSpan={columns.length} className="py-24 text-center">
+                  <span className="material-symbols-outlined text-4xl text-slate-300 block mb-2">inbox</span>
+                  <p className="text-sm font-medium text-slate-500">No tickets match your filters.</p>
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-b border-neutral-50 hover:bg-neutral-50/60 transition-colors cursor-pointer"
+                  className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors cursor-pointer"
                   onClick={() => onSelect(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3">
+                    <td key={cell.id} className="px-6 py-4">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -274,27 +265,24 @@ export default function ComplaintsTable({ tickets, onSelect, filterDept }: Compl
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between text-xs text-neutral-500">
-        <span>
-          {table.getFilteredRowModel().rows.length} complaint{table.getFilteredRowModel().rows.length !== 1 ? "s" : ""}
-        </span>
+      <div className="flex items-center justify-between pt-4 pb-2 px-6 border-t border-slate-200 dark:border-slate-800">
+        <p className="text-sm font-medium text-slate-500">
+          Showing <span className="text-slate-900 dark:text-white font-bold">{table.getRowModel().rows.length}</span> out of <span className="text-slate-900 dark:text-white font-bold">{table.getFilteredRowModel().rows.length}</span> records
+        </p>
         <div className="flex items-center gap-2">
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="rounded-md border border-neutral-200 p-1.5 hover:border-black disabled:opacity-30 disabled:hover:border-neutral-200 transition-colors"
+            className="flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
           >
-            <ChevronLeft size={14} />
+            <span className="material-symbols-outlined text-[18px]">chevron_left</span> Previous
           </button>
-          <span>
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-          </span>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="rounded-md border border-neutral-200 p-1.5 hover:border-black disabled:opacity-30 disabled:hover:border-neutral-200 transition-colors"
+            className="flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
           >
-            <ChevronRight size={14} />
+            Next <span className="material-symbols-outlined text-[18px]">navigate_next</span>
           </button>
         </div>
       </div>

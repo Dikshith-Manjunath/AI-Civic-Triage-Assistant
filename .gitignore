@@ -17,6 +17,9 @@ dist/
 kimik2.5.txt
 .env.local
 .env.*.local
+skills
+skills-lock.json
+
 
 # IDE
 .vscode/
