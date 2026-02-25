@@ -39,6 +39,8 @@ docker-compose.override.yml
 data/
 *.sqlite
 uploads/
+client_backup/
+stitch
 
 # Logs
 *.log

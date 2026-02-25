@@ -1,16 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  serverExternalPackages: ["sqlite3", "bcryptjs"],
-  async rewrites() {
-    return [
+  // Allow external images from google (for Stitch design references)
+  images: {
+    remotePatterns: [
       {
-        source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/:path*`,
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
       },
-    ];
+    ],
   },
+  // node:sqlite is built-in to Node 24 — no native modules needed
+  serverExternalPackages: [],
 };
 
 export default nextConfig;

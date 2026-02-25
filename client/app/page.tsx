@@ -1,186 +1,215 @@
-"use client";
+import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
-import Link from "next/link";
+const AUTHORITIES = [
+  { icon: 'corporate_fare', short: 'BBMP', full: 'Mahanagara Palike' },
+  { icon: 'water_drop', short: 'BWSSB', full: 'Water & Sewerage' },
+  { icon: 'bolt', short: 'BESCOM', full: 'Electricity Supply' },
+  { icon: 'directions_bus', short: 'BMTC', full: 'Metropolitan Transport' },
+  { icon: 'architecture', short: 'BDA', full: 'Development Authority' },
+];
 
-export default function RootPage() {
+const FEATURES = [
+  {
+    icon: 'analytics',
+    title: 'Data-Driven Decisions',
+    desc: 'Leverage advanced analytics to prioritize city-wide infrastructure projects based on real-time urgency and impact.',
+  },
+  {
+    icon: 'dynamic_feed',
+    title: 'Operational Efficiency',
+    desc: 'Streamline service ticket lifecycles across multiple government bodies with automated routing and status tracking.',
+  },
+  {
+    icon: 'verified_user',
+    title: 'Public Trust',
+    desc: 'Transparent governance through secure, verifiable operational tracking that ensures accountability at every level.',
+  },
+];
+
+export default function LandingPage() {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
-      {/* Top Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-background-dark/80">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
-              <span className="material-symbols-outlined">account_balance</span>
-            </div>
-            <h2 className="text-xl font-extrabold tracking-tight text-primary dark:text-white">CivicFlow</h2>
-          </div>
-          <nav className="hidden items-center gap-10 md:flex">
-            <a className="text-sm font-semibold text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-white" href="#about">About</a>
-            <a className="text-sm font-semibold text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-white" href="#authorities">Authorities</a>
-            <a className="text-sm font-semibold text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-white" href="#security">Security</a>
-          </nav>
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-primary/90">
-              Login to Dashboard
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-[#f6f7f8]">
+      <Navbar />
 
       <main className="flex-grow">
-        {/* Hero Section */}
+        {/* ── Hero Section ── */}
         <section className="relative flex min-h-[85vh] items-center justify-center px-6 py-20">
+          {/* Background image with overlay */}
           <div className="absolute inset-0 z-0 overflow-hidden">
-            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] dark:bg-background-dark/70"></div>
-            <img alt="Bengaluru Architecture" className="h-full w-full object-cover" src="https://images.unsplash.com/photo-1596422846543-75c6fc197b0a?q=80&w=2940&auto=format&fit=crop" />
+            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px]" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAU0Pw7909_Ah9eop4cagfHQQ5Wxmvf_dZzjKaXietNqcbIv2xp3zs5RX875D2fN8ND59kWntjGsANPzm7qLQfYlUecyzC5VXxUxjCJxEjOWEtI5NqdSueob-Ju4NYUnKolfz2ZpOXHh04j5iaB5K-OQzYMpkrZTaB5PqoKhq3wAZ4AFTOzows6JJWEy-6ylbhXGH-qYH83qnW-EMC-3pnTkfdnjOQHLLrBkj4TwPkquHo7Jc3FDV9OMPC44YGPOkhdrZlTOKC6724"
+              alt="Bengaluru Vidhana Soudha"
+              className="h-full w-full object-cover"
+            />
           </div>
+
+          {/* Hero content */}
           <div className="relative z-10 mx-auto max-w-4xl text-center">
-            <div className="mb-6 inline-flex items-center rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary dark:bg-primary/30 dark:text-white">
-              <span className="mr-2 flex h-2 w-2 rounded-full bg-primary"></span>
+            <div
+              className="mb-6 inline-flex items-center rounded-full bg-[#1a2a47]/10 px-4 py-1.5 text-sm font-semibold text-[#1a2a47]"
+              style={{ animation: 'fadeInUp 0.5s ease-out forwards' }}
+            >
+              <span className="mr-2 flex h-2 w-2 rounded-full bg-[#1a2a47]" />
               Official Government Portal
             </div>
-            <h1 className="mb-6 text-5xl font-black leading-tight tracking-tight text-slate-900 dark:text-white md:text-7xl">
-              CivicFlow — Powering <span className="text-primary">Bengaluru's</span> Governance
+
+            <h1
+              className="mb-6 text-5xl font-black leading-tight tracking-tight text-slate-900 md:text-7xl"
+              style={{ animation: 'fadeInUp 0.5s 0.1s ease-out both' }}
+            >
+              CivicFlow — Powering{' '}
+              <span className="text-[#1a2a47]">Bengaluru&apos;s</span> Governance
             </h1>
-            <p className="mx-auto mb-10 max-w-2xl text-lg font-medium leading-relaxed text-slate-700 dark:text-slate-300 md:text-xl">
-              A secure, unified platform for civic authorities to manage service tickets, monitor infrastructure, and streamline city operations in real-time.
+
+            <p
+              className="mx-auto mb-10 max-w-2xl text-lg font-medium leading-relaxed text-slate-700 md:text-xl"
+              style={{ animation: 'fadeInUp 0.5s 0.2s ease-out both' }}
+            >
+              A secure, unified platform for civic authorities to manage service tickets, monitor
+              infrastructure, and streamline city operations in real-time.
             </p>
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/login" className="flex h-14 min-w-[200px] items-center justify-center rounded-xl bg-primary px-8 text-lg font-bold text-white shadow-lg shadow-primary/20 transition-all hover:-translate-y-1 hover:shadow-xl">
+
+            <div
+              className="flex flex-col items-center justify-center gap-4 sm:flex-row"
+              style={{ animation: 'fadeInUp 0.5s 0.3s ease-out both' }}
+            >
+              <Link
+                href="/login"
+                className="flex h-14 min-w-[200px] items-center justify-center rounded-xl bg-[#1a2a47] px-8 text-lg font-bold text-white shadow-lg shadow-[#1a2a47]/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:bg-[#243761]"
+              >
                 Access Dashboard
               </Link>
-              <button className="flex h-14 min-w-[200px] items-center justify-center rounded-xl border-2 border-slate-200 bg-white px-8 text-lg font-bold text-slate-700 transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-transparent dark:text-white">
-                View Documentation
-              </button>
+              <a
+                href="#about"
+                className="flex h-14 min-w-[200px] items-center justify-center rounded-xl border-2 border-slate-200 bg-white px-8 text-lg font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300"
+              >
+                Learn More
+              </a>
             </div>
           </div>
         </section>
 
-        {/* About Section */}
-        <section className="bg-white py-24 dark:bg-background-dark/50" id="about">
+        {/* ── Stats Bar ── */}
+        <div className="bg-[#1a2a47] py-8">
+          <div className="mx-auto max-w-7xl px-6 lg:px-10">
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+              {[
+                { value: '5+', label: 'Departments Connected' },
+                { value: '10K+', label: 'Tickets Resolved' },
+                { value: '98%', label: 'Uptime SLA' },
+                { value: '< 2hr', label: 'Avg Response Time' },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div className="text-3xl font-black text-white">{stat.value}</div>
+                  <div className="mt-1 text-sm font-medium text-white/60">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── About Section ── */}
+        <section className="bg-white py-24" id="about">
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <div className="mb-16 max-w-3xl">
-              <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-primary">About CivicFlow</h2>
-              <h3 className="text-4xl font-extrabold text-slate-900 dark:text-white">Built for Trust and Efficiency</h3>
-              <p className="mt-6 text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-                CivicFlow is the central nervous system of Bengaluru's municipal administration. We provide a robust digital infrastructure that connects various departments, enabling data-driven decision making and faster resolution of civic issues.
+              <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-[#1a2a47]">
+                About CivicFlow
+              </h2>
+              <h3 className="text-4xl font-extrabold text-slate-900">
+                Built for Trust and Efficiency
+              </h3>
+              <p className="mt-6 text-lg leading-relaxed text-slate-600">
+                CivicFlow is the central nervous system of Bengaluru&apos;s municipal administration.
+                We provide a robust digital infrastructure that connects various departments, enabling
+                data-driven decision making and faster resolution of civic issues.
               </p>
             </div>
+
             <div className="grid gap-8 md:grid-cols-3">
-              <div className="group rounded-2xl border border-slate-100 bg-slate-50 p-8 transition-all hover:border-primary/20 hover:bg-white hover:shadow-xl dark:border-slate-800 dark:bg-background-dark">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-white">
-                  <span className="material-symbols-outlined">analytics</span>
+              {FEATURES.map((f) => (
+                <div
+                  key={f.title}
+                  className="group rounded-2xl border border-slate-100 bg-slate-50 p-8 transition-all hover:border-[#1a2a47]/20 hover:bg-white hover:shadow-xl"
+                >
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-[#1a2a47] text-white">
+                    <span className="material-symbols-outlined">{f.icon}</span>
+                  </div>
+                  <h4 className="mb-3 text-xl font-bold text-slate-900">{f.title}</h4>
+                  <p className="text-slate-600">{f.desc}</p>
                 </div>
-                <h4 className="mb-3 text-xl font-bold text-slate-900 dark:text-white">Data-Driven Decisions</h4>
-                <p className="text-slate-600 dark:text-slate-400">Leverage advanced analytics to prioritize city-wide infrastructure projects based on real-time urgency and impact.</p>
-              </div>
-              <div className="group rounded-2xl border border-slate-100 bg-slate-50 p-8 transition-all hover:border-primary/20 hover:bg-white hover:shadow-xl dark:border-slate-800 dark:bg-background-dark">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-white">
-                  <span className="material-symbols-outlined">dynamic_feed</span>
-                </div>
-                <h4 className="mb-3 text-xl font-bold text-slate-900 dark:text-white">Operational Efficiency</h4>
-                <p className="text-slate-600 dark:text-slate-400">Streamline service ticket lifecycles across multiple government bodies with automated routing and status tracking.</p>
-              </div>
-              <div className="group rounded-2xl border border-slate-100 bg-slate-50 p-8 transition-all hover:border-primary/20 hover:bg-white hover:shadow-xl dark:border-slate-800 dark:bg-background-dark">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-white">
-                  <span className="material-symbols-outlined">verified_user</span>
-                </div>
-                <h4 className="mb-3 text-xl font-bold text-slate-900 dark:text-white">Public Trust</h4>
-                <p className="text-slate-600 dark:text-slate-400">Transparent governance through secure, verifiable operational tracking that ensures accountability at every level.</p>
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Authorities Section */}
+        {/* ── Authorities Section ── */}
         <section className="py-24" id="authorities">
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <div className="mb-16 text-center">
-              <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white">Authorities Served</h3>
-              <p className="mt-4 text-slate-600 dark:text-slate-400">Unified collaboration between Bengaluru's key governing bodies.</p>
+              <h3 className="text-3xl font-extrabold text-slate-900">Authorities Served</h3>
+              <p className="mt-4 text-slate-600">
+                Unified collaboration between Bengaluru&apos;s key governing bodies.
+              </p>
             </div>
+
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-background-dark/50">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-background-light dark:bg-slate-800">
-                  <span className="material-symbols-outlined text-3xl text-primary">corporate_fare</span>
+              {AUTHORITIES.map((a) => (
+                <div
+                  key={a.short}
+                  className="flex flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-sm transition-all hover:shadow-md hover:-translate-y-1"
+                >
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f6f7f8]">
+                    <span className="material-symbols-outlined text-3xl text-[#1a2a47]">
+                      {a.icon}
+                    </span>
+                  </div>
+                  <p className="text-lg font-bold text-slate-900">{a.short}</p>
+                  <p className="text-xs text-slate-500">{a.full}</p>
                 </div>
-                <p className="text-lg font-bold text-slate-900 dark:text-white">BBMP</p>
-                <p className="text-xs text-slate-500">Mahanagara Palike</p>
-              </div>
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-background-dark/50">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-background-light dark:bg-slate-800">
-                  <span className="material-symbols-outlined text-3xl text-primary">water_drop</span>
-                </div>
-                <p className="text-lg font-bold text-slate-900 dark:text-white">BWSSB</p>
-                <p className="text-xs text-slate-500">Water & Sewerage</p>
-              </div>
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-background-dark/50">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-background-light dark:bg-slate-800">
-                  <span className="material-symbols-outlined text-3xl text-primary">bolt</span>
-                </div>
-                <p className="text-lg font-bold text-slate-900 dark:text-white">BESCOM</p>
-                <p className="text-xs text-slate-500">Electricity Supply</p>
-              </div>
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-background-dark/50">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-background-light dark:bg-slate-800">
-                  <span className="material-symbols-outlined text-3xl text-primary">directions_bus</span>
-                </div>
-                <p className="text-lg font-bold text-slate-900 dark:text-white">BMTC</p>
-                <p className="text-xs text-slate-500">Metropolitan Transport</p>
-              </div>
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-background-dark/50">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-background-light dark:bg-slate-800">
-                  <span className="material-symbols-outlined text-3xl text-primary">architecture</span>
-                </div>
-                <p className="text-lg font-bold text-slate-900 dark:text-white">BDA</p>
-                <p className="text-xs text-slate-500">Development Authority</p>
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Secure Access CTA */}
-        <section className="mx-auto max-w-7xl px-6 py-24 lg:px-10" id="security">
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-primary px-8 py-20 text-center text-white lg:px-16">
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5"></div>
-            <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/5"></div>
+        {/* ── Security CTA ── */}
+        <section className="mx-auto max-w-7xl px-6 pb-24 lg:px-10" id="security">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-[#1a2a47] px-8 py-20 text-center text-white lg:px-16">
+            {/* Decorative blobs */}
+            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5" />
+            <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/5" />
+
             <div className="relative z-10 mx-auto max-w-2xl">
               <span className="material-symbols-outlined mb-6 text-6xl opacity-80">encrypted</span>
-              <h2 className="mb-6 text-4xl font-extrabold tracking-tight md:text-5xl">Secure Access for Officials</h2>
+              <h2 className="mb-6 text-4xl font-extrabold tracking-tight md:text-5xl">
+                Secure Access for Officials
+              </h2>
               <p className="mb-10 text-lg opacity-90">
-                Authorized personnel only. Access requires Multi-Factor Authentication (MFA) and valid government credentials. All sessions are monitored and logged.
+                Authorized personnel only. Access requires valid government credentials. All sessions
+                are monitored and logged by the Department of e-Governance.
               </p>
-              <Link href="/login" className="inline-flex items-center gap-2 rounded-xl bg-white px-10 py-4 text-xl font-bold text-primary transition-all hover:scale-105 active:scale-95">
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-10 py-4 text-xl font-bold text-[#1a2a47] transition-all hover:scale-105 active:scale-95"
+              >
                 Login to Dashboard
                 <span className="material-symbols-outlined">login</span>
               </Link>
-              <p className="mt-6 text-sm opacity-60">Having trouble logging in? <a className="underline" href="#">Contact IT Support</a></p>
+              <p className="mt-6 text-sm opacity-60">
+                Having trouble logging in?{' '}
+                <a href="#" className="underline">
+                  Contact IT Support
+                </a>
+              </p>
             </div>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-12 dark:border-slate-800 dark:bg-background-dark">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded bg-primary text-white">
-                <span className="material-symbols-outlined text-sm">account_balance</span>
-              </div>
-              <h2 className="text-lg font-bold tracking-tight text-primary dark:text-white">CivicFlow</h2>
-            </div>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              © 2024 Government of Bengaluru. Built for transparency and efficiency.
-            </p>
-            <div className="flex gap-6">
-              <a className="text-sm text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white" href="#">Privacy Policy</a>
-              <a className="text-sm text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white" href="#">Security Protocol</a>
-              <a className="text-sm text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white" href="#">Accessibility</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

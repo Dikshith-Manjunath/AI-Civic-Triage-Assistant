@@ -1,239 +1,408 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
-import { DEPT_LIST, DEPARTMENTS, type Department, type UserRole } from "@/lib/types";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+const DEPARTMENTS = [
+    { value: 'bbmp', label: 'BBMP (Bruhat Bengaluru Mahanagara Palike)' },
+    { value: 'bwssb', label: 'BWSSB (Bangalore Water Supply & Sewerage Board)' },
+    { value: 'bescom', label: 'BESCOM (Bangalore Electricity Supply Company)' },
+    { value: 'bmtc', label: 'BMTC (Bangalore Metropolitan Transport Corp)' },
+    { value: 'bda', label: 'BDA (Bangalore Development Authority)' },
+    { value: 'gba', label: 'GBA (Governing Body Authority)' },
+];
+
+// Admin is kept separate — shown at top with a visual divider
+const ADMIN_OPTION = { value: 'admin', label: '⚙ System Administrator' };
 
 export default function LoginPage() {
-  const { login } = useAuth();
-  const router = useRouter();
+    const router = useRouter();
+    const [tab, setTab] = useState<'login' | 'signup'>('login');
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-  const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+    /* ── Login state ── */
+    const [loginForm, setLoginForm] = useState({
+        email: '',
+        password: '',
+        department: '',
+    });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [department, setDepartment] = useState<Department>("roads");
-  const [role, setRole] = useState<UserRole>("officer");
+    /* ── Signup state ── */
+    const [signupForm, setSignupForm] = useState({
+        fullName: '',
+        email: '',
+        username: '',
+        password: '',
+        department: '',
+    });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      if (isLogin) {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Login failed');
-
-        login({
-          token: data.token,
-          name: data.user.name,
-          department: data.user.department,
-          role: data.user.role
-        } as any);
-        router.push("/dashboard");
-
-      } else {
-        const res = await fetch('/api/auth/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, role, department })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Signup failed');
-
-        // Auto-login after successful signup
-        const loginRes = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const loginData = await loginRes.json();
-        if (!loginRes.ok) throw new Error(loginData.error || 'Auto-login failed after signup');
-
-        login({
-          token: loginData.token,
-          name: loginData.user.name,
-          department: loginData.user.department,
-          role: loginData.user.role
-        } as any);
-        router.push("/dashboard");
-      }
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    async function handleLogin(e: React.FormEvent) {
+        e.preventDefault();
+        setError('');
+        if (!loginForm.email || !loginForm.password || !loginForm.department) {
+            setError('All fields are required');
+            return;
+        }
+        setLoading(true);
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(loginForm),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setError(data.error || 'Login failed');
+            } else {
+                router.push(data.redirectUrl || '/dashboard');
+            }
+        } catch {
+            setError('Network error. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     }
-  }
 
-  return (
-    <div className="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col">
-      {/* Background Decoration */}
-      <div className="fixed inset-0 z-0 opacity-10 pointer-events-none overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px]"></div>
-      </div>
+    async function handleSignup(e: React.FormEvent) {
+        e.preventDefault();
+        setError('');
+        if (!signupForm.email || !signupForm.username || !signupForm.password || !signupForm.department) {
+            setError('All required fields must be filled');
+            return;
+        }
+        setLoading(true);
+        try {
+            const res = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(signupForm),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setError(data.error || 'Signup failed');
+            } else {
+                router.push(data.redirectUrl || '/dashboard');
+            }
+        } catch {
+            setError('Network error. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    }
 
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-[440px] bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-          {/* Card Header */}
-          <div className="pt-8 pb-6 px-8 flex flex-col items-center">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="size-10 flex items-center justify-center bg-primary rounded-lg text-white">
-                <svg className="size-6" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
-                </svg>
-              </div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">CivicFlow</h1>
+    const inputClass =
+        'w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1a2a47] focus:border-transparent outline-none transition-all text-sm placeholder:text-slate-400';
+
+    const selectClass =
+        'appearance-none w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1a2a47] focus:border-transparent outline-none transition-all text-sm';
+
+    return (
+        <div className="relative min-h-screen flex flex-col bg-[#f6f7f8]">
+            {/* Background decoration */}
+            <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+                <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#1a2a47] rounded-full blur-3xl opacity-10" />
+                <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#1a2a47]/20 rounded-full blur-[120px] opacity-10" />
             </div>
-            <h2 className="text-slate-900 dark:text-slate-100 text-lg font-semibold">Official Portal {isLogin ? 'Login' : 'Signup'}</h2>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-              {isLogin ? 'Enter your credentials to access the dashboard' : 'Create a new official account for the dashboard'}
-            </p>
-          </div>
 
-          {/* Form */}
-          <div className="px-8 pb-10">
-            {error && (
-              <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/50 dark:text-red-200">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {!isLogin && (
-                <>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Select Authority</label>
-                    <div className="relative">
-                      <select
-                        value={department}
-                        onChange={(e) => setDepartment(e.target.value as Department)}
-                        className="appearance-none w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                      >
-                        {DEPT_LIST.map((d) => (
-                          <option key={d} value={d}>{DEPARTMENTS[d]}</option>
-                        ))}
-                      </select>
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                        <span className="material-symbols-outlined">expand_more</span>
-                      </div>
+            {/* Top bar */}
+            <div className="relative z-10 flex items-center justify-between px-6 py-4 lg:px-10">
+                <Link href="/" className="flex items-center gap-2.5 group">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a2a47] text-white transition-transform group-hover:scale-105">
+                        <span className="material-symbols-outlined text-lg">account_balance</span>
                     </div>
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Role</label>
-                    <div className="relative grid grid-cols-2 gap-3">
-                      {(["officer", "admin"] as UserRole[]).map((r) => (
-                        <button
-                          key={r}
-                          type="button"
-                          onClick={() => setRole(r)}
-                          className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${role === r
-                            ? "border-primary bg-primary/10 text-primary dark:border-primary dark:bg-primary/20 dark:text-white"
-                            : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                            }`}
-                        >
-                          {r === "officer" ? "Officer" : "Administrator"}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* Email/Username */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                    placeholder="e.g. johndoe@karnataka.gov.in"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between items-center">
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
-                </div>
-                <div className="relative">
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
-
-              {isLogin && (
-                <div className="flex items-center justify-end">
-                  <button className="text-sm font-medium text-primary hover:underline" type="button">Forgot Password?</button>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <button disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3.5 rounded-lg shadow-md shadow-primary/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50" type="submit">
-                {loading ? (
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                ) : (
-                  <>
-                    <span className="material-symbols-outlined text-lg">{isLogin ? 'lock' : 'person_add'}</span>
-                    {isLogin ? 'Secure Login' : 'Create Account'}
-                  </>
-                )}
-              </button>
-
-              <div className="text-center mt-4">
-                <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
-                  {isLogin ? "Need access? Request an account" : "Already have an account? Sign in"}
-                </button>
-              </div>
-            </form>
-          </div>
-
-          {/* Warning Banner */}
-          <div className="bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 p-4">
-            <div className="flex items-start gap-3">
-              <span className="material-symbols-outlined text-amber-600 shrink-0">warning</span>
-              <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-400 uppercase tracking-wider font-semibold">
-                Warning: Unauthorized access is prohibited. All activity is monitored and recorded by the Department of e-Governance.
-              </p>
+                    <span className="text-lg font-extrabold tracking-tight text-[#1a2a47]">CivicFlow</span>
+                </Link>
+                <Link href="/" className="text-sm font-medium text-slate-500 hover:text-[#1a2a47] transition-colors flex items-center gap-1">
+                    <span className="material-symbols-outlined text-base">arrow_back</span>
+                    Back to Home
+                </Link>
             </div>
-          </div>
+
+            <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 py-8">
+                <div className="w-full max-w-[460px]">
+                    {/* Card */}
+                    <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                        {/* Card Header */}
+                        <div className="pt-8 pb-4 px-8 flex flex-col items-center">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="h-10 w-10 flex items-center justify-center bg-[#1a2a47] rounded-xl text-white">
+                                    <span className="material-symbols-outlined">account_balance</span>
+                                </div>
+                                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">CivicFlow</h1>
+                            </div>
+                            <h2 className="text-slate-900 text-lg font-semibold">
+                                {tab === 'login' ? 'Official Portal Login' : 'Create Official Account'}
+                            </h2>
+                            <p className="text-slate-500 text-sm mt-1 text-center">
+                                {tab === 'login'
+                                    ? 'Enter your credentials to access the dashboard'
+                                    : 'Register with your government credentials'}
+                            </p>
+                        </div>
+
+                        {/* Tabs */}
+                        <div className="flex mx-8 mb-2 rounded-xl bg-slate-100 p-1">
+                            <button
+                                onClick={() => { setTab('login'); setError(''); }}
+                                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${tab === 'login'
+                                    ? 'bg-white text-[#1a2a47] shadow-sm'
+                                    : 'text-slate-500 hover:text-slate-700'
+                                    }`}
+                            >
+                                Sign In
+                            </button>
+                            <button
+                                onClick={() => { setTab('signup'); setError(''); }}
+                                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${tab === 'signup'
+                                    ? 'bg-white text-[#1a2a47] shadow-sm'
+                                    : 'text-slate-500 hover:text-slate-700'
+                                    }`}
+                            >
+                                Register
+                            </button>
+                        </div>
+
+                        {/* Error banner */}
+                        {error && (
+                            <div className="mx-8 mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-red-500 text-base">error</span>
+                                <p className="text-sm text-red-700 font-medium">{error}</p>
+                            </div>
+                        )}
+
+                        {/* ── LOGIN FORM ── */}
+                        {tab === 'login' && (
+                            <form onSubmit={handleLogin} className="px-8 pb-8 pt-4 space-y-4">
+                                {/* Department */}
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-medium text-slate-700">Select Authority</label>
+                                    <div className="relative">
+                                        <select
+                                            value={loginForm.department}
+                                            onChange={(e) => setLoginForm({ ...loginForm, department: e.target.value })}
+                                            className={selectClass}
+                                        >
+                                            <option value="" disabled>Choose your department</option>
+                                            <option value={ADMIN_OPTION.value}>{ADMIN_OPTION.label}</option>
+                                            <option disabled>──────────────────</option>
+                                            {DEPARTMENTS.map((d) => (
+                                                <option key={d.value} value={d.value}>{d.label}</option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                                            <span className="material-symbols-outlined text-xl">expand_more</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Email / Username */}
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-medium text-slate-700">Username / Email</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. johndoe@karnataka.gov.in"
+                                        value={loginForm.email}
+                                        onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                {/* Password */}
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-medium text-slate-700">Password</label>
+                                    <div className="relative">
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            placeholder="••••••••"
+                                            value={loginForm.password}
+                                            onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                                            className={inputClass}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-[#1a2a47] transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-xl">
+                                                {showPassword ? 'visibility_off' : 'visibility'}
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-end">
+                                    <button type="button" className="text-sm font-medium text-[#1a2a47] hover:underline">
+                                        Forgot Password?
+                                    </button>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-[#1a2a47] hover:bg-[#243761] disabled:opacity-60 text-white font-semibold py-3.5 rounded-lg shadow-md shadow-[#1a2a47]/20 transition-all flex items-center justify-center gap-2"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                                            </svg>
+                                            Authenticating…
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="material-symbols-outlined text-lg">lock</span>
+                                            Secure Login
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        )}
+
+                        {/* ── SIGNUP FORM ── */}
+                        {tab === 'signup' && (
+                            <form onSubmit={handleSignup} className="px-8 pb-8 pt-4 space-y-4">
+                                {/* Full Name */}
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-medium text-slate-700">
+                                        Full Name <span className="text-slate-400 font-normal">(optional)</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Rajesh Kumar"
+                                        value={signupForm.fullName}
+                                        onChange={(e) => setSignupForm({ ...signupForm, fullName: e.target.value })}
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                {/* Department */}
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-medium text-slate-700">Select Authority *</label>
+                                    <div className="relative">
+                                        <select
+                                            value={signupForm.department}
+                                            onChange={(e) => setSignupForm({ ...signupForm, department: e.target.value })}
+                                            className={selectClass}
+                                        >
+                                            <option value="" disabled>Choose your department</option>
+                                            <option value={ADMIN_OPTION.value}>{ADMIN_OPTION.label}</option>
+                                            <option disabled>──────────────────</option>
+                                            {DEPARTMENTS.map((d) => (
+                                                <option key={d.value} value={d.value}>{d.label}</option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                                            <span className="material-symbols-outlined text-xl">expand_more</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Email */}
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-medium text-slate-700">Government Email *</label>
+                                    <input
+                                        type="email"
+                                        placeholder="e.g. johndoe@karnataka.gov.in"
+                                        value={signupForm.email}
+                                        onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                {/* Username */}
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-medium text-slate-700">Username *</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. johndoe"
+                                        value={signupForm.username}
+                                        onChange={(e) => setSignupForm({ ...signupForm, username: e.target.value })}
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                {/* Password */}
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-medium text-slate-700">Password *</label>
+                                    <div className="relative">
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            placeholder="Minimum 8 characters"
+                                            value={signupForm.password}
+                                            onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
+                                            className={inputClass}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-[#1a2a47] transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-xl">
+                                                {showPassword ? 'visibility_off' : 'visibility'}
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-[#1a2a47] hover:bg-[#243761] disabled:opacity-60 text-white font-semibold py-3.5 rounded-lg shadow-md shadow-[#1a2a47]/20 transition-all flex items-center justify-center gap-2"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                                            </svg>
+                                            Creating Account…
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="material-symbols-outlined text-lg">person_add</span>
+                                            Create Account
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        )}
+
+                        {/* Warning Banner */}
+                        <div className="bg-slate-50 border-t border-slate-200 p-4">
+                            <div className="flex items-start gap-3">
+                                <span className="material-symbols-outlined text-amber-600 shrink-0 text-xl">warning</span>
+                                <p className="text-[11px] leading-relaxed text-slate-600 uppercase tracking-wider font-semibold">
+                                    Warning: Unauthorized access is prohibited. All activity is monitored and recorded by the Department of e-Governance.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Branding Footer */}
+                    <footer className="mt-8 flex flex-col items-center gap-4">
+                        <div className="flex items-center gap-6 opacity-70">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTnKg_NZP0B9MhibZaxUaIOYq36Df0mW2_fQr4J9GOQwzeeZFBFdg4oI1loU_4GebhCKe_uNnDp7bMmdoXKFVKqUfs1dFYFOCj7LWsd3gUisxScPQnCO7yYZux9PYbW6MVi9DlDiI4fnQ1lfURbXiTHA-l2koaG0krpKJw5OA2mJjWsne2IHEUYGzDKPWn8ngF5NJCUo0B7fIddaVufsyZ8j14olQ75bDBNLEreHeg4DUKwItYuPECLD1HRkqmlt9Z7i0G6FJt2os"
+                                alt="Government of Karnataka Seal"
+                                className="h-12 w-auto"
+                            />
+                            <div className="h-8 w-px bg-slate-300" />
+                            <div className="flex flex-col items-start leading-none">
+                                <span className="text-slate-900 font-bold text-lg tracking-tight">Bengaluru</span>
+                                <span className="text-slate-500 text-[10px] uppercase font-bold tracking-[0.2em] mt-0.5">
+                                    Smart City Initiative
+                                </span>
+                            </div>
+                        </div>
+                        <p className="text-slate-400 text-xs">© 2025 CivicFlow | Government of Karnataka</p>
+                    </footer>
+                </div>
+            </main>
         </div>
-
-        {/* Branding Footer */}
-        <footer className="mt-8 flex flex-col items-center gap-6">
-          <div className="flex items-center gap-8 opacity-70 grayscale hover:grayscale-0 transition-all">
-            <img alt="Government of Karnataka Seal" className="h-14 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTnKg_NZP0B9MhibZaxUaIOYq36Df0mW2_fQr4J9GOQwzeeZFBFdg4oI1loU_4GebhCKe_uNnDp7bMmdoXKFVKqUfs1dFYFOCj7LWsd3gUisxScPQnCO7yYZux9PYbW6MVi9DlDiI4fnQ1lfURbXiTHA-l2koaG0krpKJw5OA2mJjWsne2IHEUYGzDKPWn8ngF5NJCUo0B7fIddaVufsyZ8j14olQ75bDBNLEreHeg4DUKwItYuPECLD1HRkqmlt9Z7i0G6FJt2os" />
-            <div className="h-10 w-px bg-slate-300 dark:bg-slate-700"></div>
-            <div className="flex flex-col items-start leading-none">
-              <span className="text-slate-900 dark:text-slate-100 font-bold text-xl tracking-tight">Bengaluru</span>
-              <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-[0.2em] mt-1">Smart City Initiative</span>
-            </div>
-          </div>
-          <p className="text-slate-400 dark:text-slate-500 text-xs">
-            © 2024 CivicFlow | Government of Karnataka
-          </p>
-        </footer>
-      </main>
-    </div>
-  );
+    );
 }
