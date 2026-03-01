@@ -7,6 +7,7 @@ type Props = {
     dept: string;
     deptLabel: string;
     deptIcon: string;
+    deptLogo?: string;
     username: string;
     children: React.ReactNode;
 };
@@ -17,16 +18,24 @@ const NAV_ITEMS: NavItem[] = [
     { label: 'Reports', icon: 'bar_chart', href: '#reports' },
 ];
 
-export default function DashboardLayout({ dept, deptLabel, deptIcon, username, children }: Props) {
+export default function DashboardLayout({ dept, deptLabel, deptIcon, deptLogo, username, children }: Props) {
     return (
         <div className="flex h-screen overflow-hidden bg-[#f6f7f8]">
-            {/* ── Sidebar ─────────────────────────────── */}
+            {/* ────────────────────────────── Sidebar ─────────────────────────────── */}
             <aside className="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col">
                 {/* Brand */}
                 <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-                    <div className="size-9 bg-[#1a2a47] rounded-lg flex items-center justify-center text-white flex-shrink-0">
-                        <span className="material-symbols-outlined text-lg">{deptIcon}</span>
-                    </div>
+                    {deptLogo ? (
+                        <img
+                            src={deptLogo}
+                            alt={`${deptLabel} logo`}
+                            className="size-9 rounded-lg object-cover scale-110 flex-shrink-0"
+                        />
+                    ) : (
+                        <div className="size-9 bg-[#1a2a47] rounded-lg flex items-center justify-center text-white flex-shrink-0">
+                            <span className="material-symbols-outlined text-lg">{deptIcon}</span>
+                        </div>
+                    )}
                     <div>
                         <h1 className="font-bold text-lg text-[#1a2a47] leading-tight">CivicFlow</h1>
                         <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">{dept.toUpperCase()} Authority</p>

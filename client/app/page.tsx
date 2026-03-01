@@ -3,11 +3,11 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 const AUTHORITIES = [
-  { icon: 'corporate_fare', short: 'BBMP', full: 'Mahanagara Palike' },
-  { icon: 'water_drop', short: 'BWSSB', full: 'Water & Sewerage' },
-  { icon: 'bolt', short: 'BESCOM', full: 'Electricity Supply' },
-  { icon: 'directions_bus', short: 'BMTC', full: 'Metropolitan Transport' },
-  { icon: 'architecture', short: 'BDA', full: 'Development Authority' },
+  { icon: 'corporate_fare', short: 'BBMP', full: 'Mahanagara Palike', logo: '/logos/BBMP.jpg', href: 'https://bbmp.gov.in/home' },
+  { icon: 'water_drop', short: 'BWSSB', full: 'Water & Sewerage', logo: '/logos/BWSSB.webp', href: 'https://bwssb.karnataka.gov.in/en' },
+  { icon: 'bolt', short: 'BESCOM', full: 'Electricity Supply', logo: '/logos/BESCOM.png', href: 'https://www.bescom.co.in/bescom/main/home' },
+  { icon: 'directions_bus', short: 'BMTC', full: 'Metropolitan Transport', logo: '/logos/BMTC.jpg', href: 'https://mybmtc.karnataka.gov.in' },
+  { icon: 'architecture', short: 'BDA', full: 'Development Authority', logo: '/logos/BDA.png', href: 'https://bdakarnataka.in' },
 ];
 
 const FEATURES = [
@@ -158,18 +158,30 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
               {AUTHORITIES.map((a) => (
-                <div
+                <a
                   key={a.short}
-                  className="flex flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-sm transition-all hover:shadow-md hover:-translate-y-1"
+                  href={a.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-sm transition-all hover:shadow-md hover:-translate-y-1"
                 >
-                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f6f7f8]">
-                    <span className="material-symbols-outlined text-3xl text-[#1a2a47]">
-                      {a.icon}
-                    </span>
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f6f7f8] overflow-hidden">
+                    {a.logo ? (
+                      <img
+                        src={a.logo}
+                        alt={`${a.short} logo`}
+                        className="h-16 w-16 rounded-full object-cover scale-110"
+                      />
+                    ) : (
+                      <span className="material-symbols-outlined text-3xl text-[#1a2a47]">
+                        {a.icon}
+                      </span>
+                    )}
                   </div>
-                  <p className="text-lg font-bold text-slate-900">{a.short}</p>
+                  <p className="text-lg font-bold text-slate-900 group-hover:text-[#1a2a47] transition-colors">{a.short}</p>
                   <p className="text-xs text-slate-500">{a.full}</p>
-                </div>
+                  <span className="material-symbols-outlined text-xs text-slate-300 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
+                </a>
               ))}
             </div>
           </div>

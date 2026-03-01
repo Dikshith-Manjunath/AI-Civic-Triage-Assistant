@@ -1,16 +1,31 @@
 import { cookies } from 'next/headers';
 import { redirect, notFound } from 'next/navigation';
 import { verifyToken } from '@/lib/auth';
-import db from '@/lib/db';
 import DashboardLayout from '@/components/DashboardLayout';
 import TicketTable from '@/components/TicketTable';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+// ── Urgency int → string mapping ──
+const URGENCY_MAP: Record<number, string> = { 0: 'low', 1: 'medium', 2: 'high' };
+
+// ── Server status → client status mapping ──
+const STATUS_MAP: Record<string, string> = {
+    pending: 'open',
+    awaiting_approval: 'in_progress',
+    approved: 'approved',
+    rejected: 'rejected',
+    filed: 'dispatched',
+    resolved: 'resolved',
+};
 
 // ── Dept metadata ─────────────────────────────────────────────────────────
 const DEPT_META: Record<string, {
     label: string;
     fullName: string;
     icon: string;
-    kpiLabel: string; // domain-specific KPI label
+    logo: string;
+    kpiLabel: string;
     kpiIcon: string;
     categories: Array<{ name: string; pct: number; color: string }>;
 }> = {
@@ -18,6 +33,7 @@ const DEPT_META: Record<string, {
         label: 'BBMP',
         fullName: 'Bruhat Bengaluru Mahanagara Palike',
         icon: 'corporate_fare',
+        logo: '/logos/BBMP.jpg',
         kpiLabel: 'SLA Compliance',
         kpiIcon: 'verified',
         categories: [
@@ -31,6 +47,7 @@ const DEPT_META: Record<string, {
         label: 'BWSSB',
         fullName: 'Bangalore Water Supply & Sewerage Board',
         icon: 'water_drop',
+        logo: '/logos/BWSSB.webp',
         kpiLabel: 'Pressure Compliance',
         kpiIcon: 'opacity',
         categories: [
@@ -44,6 +61,7 @@ const DEPT_META: Record<string, {
         label: 'BESCOM',
         fullName: 'Bangalore Electricity Supply Company',
         icon: 'bolt',
+        logo: '/logos/BESCOM.png',
         kpiLabel: 'Grid Uptime',
         kpiIcon: 'electric_bolt',
         categories: [
@@ -57,6 +75,7 @@ const DEPT_META: Record<string, {
         label: 'BMTC',
         fullName: 'Bangalore Metropolitan Transport Corp',
         icon: 'directions_bus',
+        logo: '/logos/BMTC.jpg',
         kpiLabel: 'On-time Rate',
         kpiIcon: 'schedule',
         categories: [
@@ -70,6 +89,7 @@ const DEPT_META: Record<string, {
         label: 'BDA',
         fullName: 'Bangalore Development Authority',
         icon: 'architecture',
+        logo: '/logos/BDA.png',
         kpiLabel: 'Approval Rate',
         kpiIcon: 'assignment_turned_in',
         categories: [
@@ -83,6 +103,7 @@ const DEPT_META: Record<string, {
         label: 'GBA',
         fullName: 'Governing Body Authority',
         icon: 'admin_panel_settings',
+        logo: '/logos/GBA.jpg',
         kpiLabel: 'Compliance Index',
         kpiIcon: 'policy',
         categories: [
@@ -95,6 +116,35 @@ const DEPT_META: Record<string, {
 };
 
 type Props = { params: Promise<{ dept: string }> };
+
+/**
+ * Transform a server-side ClickHouse ticket into the shape expected
+ * by the client's TicketTable / TicketDrawer components.
+ */
+function transformTicket(t: any, idx: number) {
+    const authority = (t.authority || '').toUpperCase();
+    const prefix = authority.slice(0, 2) || 'XX';
+    const ticketNo = `${prefix}-${String(idx + 1).padStart(4, '0')}`;
+
+    return {
+        id: t.id,
+        ticket_no: ticketNo,
+        department: (t.authority || '').toLowerCase(),
+        category: t.dept || 'general',
+        title: t.summary || 'Untitled',
+        description: t.raw_text || t.reply || null,
+        location: null,
+        ward: null,
+        urgency: URGENCY_MAP[t.urgency] ?? 'medium',
+        status: STATUS_MAP[t.status] || t.status || 'open',
+        assignee: t.approved_by || null,
+        created_by: t.channel || 'web',
+        created_at: t.timestamp || new Date().toISOString(),
+        updated_at: t.approved_at && t.approved_at !== '1970-01-01T00:00:00'
+            ? t.approved_at
+            : t.timestamp || new Date().toISOString(),
+    };
+}
 
 export default async function DeptDashboard({ params }: Props) {
     const { dept } = await params;
@@ -109,36 +159,72 @@ export default async function DeptDashboard({ params }: Props) {
     // Officers can only see their own dept; admins can see any
     if (user.role !== 'admin' && user.department !== dept) redirect(`/dashboard/${user.department}`);
 
-    // Fetch tickets (clone to plain objects to fix Next.js RSC serialization error)
-    const rawTickets = db.prepare(
-        `SELECT * FROM tickets WHERE department = ? ORDER BY
-       CASE urgency WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END,
-       created_at DESC`
-    ).all(dept) as any[];
-    const tickets = rawTickets.map(t => ({ ...t }));
+    // ── Fetch tickets from the FastAPI server (ClickHouse) ──
+    let tickets: any[] = [];
+    let serverError = false;
+    try {
+        const res = await fetch(
+            `${API_URL}/api/complaints/by-dept/${encodeURIComponent(dept)}?limit=200`,
+            { cache: 'no-store', signal: AbortSignal.timeout(8000) },
+        );
+        if (res.ok) {
+            const data = await res.json();
+            tickets = (Array.isArray(data) ? data : []).map(transformTicket);
+        } else {
+            console.error(`[dashboard] Server returned ${res.status}`);
+            serverError = true;
+        }
+    } catch (e: any) {
+        console.error('[dashboard] Failed to fetch from server:', e?.message || e);
+        serverError = true;
+    }
 
     // Compute KPIs
-    const activeTickets = tickets.filter(t => !['resolved', 'rejected'].includes(t.status)).length;
-    const criticalCount = tickets.filter(t => t.urgency === 'critical' && t.status !== 'resolved').length;
-    const resolvedToday = tickets.filter(t => {
-        if (t.status !== 'resolved') return false;
-        const updated = new Date(t.updated_at);
-        const today = new Date();
-        return updated.toDateString() === today.toDateString();
-    }).length;
     const totalTickets = tickets.length;
+    const activeTickets = tickets.filter(t => !['resolved', 'rejected'].includes(t.status)).length;
+    const criticalCount = tickets.filter(t => t.urgency === 'high' && t.status !== 'resolved').length;
+
     const resolvedAllTime = tickets.filter(t => t.status === 'resolved').length;
     const resolutionRate = totalTickets > 0 ? ((resolvedAllTime / totalTickets) * 100).toFixed(1) : '0';
 
-    // Recent activity (last 5 events across all tickets)
-    const recentEvents = db.prepare(`
-    SELECT te.*, t.ticket_no, t.category FROM ticket_events te
-    JOIN tickets t ON t.id = te.ticket_id
-    WHERE t.department = ?
-    ORDER BY te.created_at DESC LIMIT 5
-  `).all(dept) as any[];
+    const approvedAllTime = tickets.filter(t => ['approved', 'dispatched', 'resolved'].includes(t.status)).length;
+    const approvalRate = totalTickets > 0 ? ((approvedAllTime / totalTickets) * 100).toFixed(1) : '0';
 
+    // Compute category distribution dynamically from ticket data
+    const categoryCounts: Record<string, number> = {};
+    for (const t of tickets) {
+        const cat = t.category || 'other';
+        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+    }
+    const categoryColors = ['bg-[#1a2a47]', 'bg-blue-500', 'bg-amber-400', 'bg-red-500', 'bg-green-500', 'bg-slate-300'];
+    const dynamicCategories = Object.entries(categoryCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([name, count], i) => ({
+            name: name.charAt(0).toUpperCase() + name.slice(1),
+            pct: totalTickets > 0 ? Math.round((count / totalTickets) * 100) : 0,
+            color: categoryColors[i % categoryColors.length],
+        }));
+
+    // Use dynamic categories if we have real data, otherwise fall back to meta
     const meta = DEPT_META[dept];
+    const displayCategories = dynamicCategories.length > 0 ? dynamicCategories : meta.categories;
+
+    // Create recent "events" from the latest tickets
+    const recentActivity = tickets.slice(0, 5).map((t, i) => ({
+        id: i,
+        ticket_no: t.ticket_no,
+        action: t.status === 'resolved' ? 'resolved'
+            : t.status === 'approved' ? 'approved'
+                : t.status === 'rejected' ? 'rejected'
+                    : t.status === 'in_progress' ? 'assigned'
+                        : t.status === 'dispatched' ? 'dispatched'
+                            : 'created',
+        actor: t.assignee || t.created_by || 'System',
+        note: t.title,
+        created_at: t.created_at,
+        category: t.category,
+    }));
 
     const EVENT_ICON: Record<string, string> = {
         created: 'add_circle', resolved: 'check_circle', approved: 'assignment_turned_in',
@@ -164,12 +250,23 @@ export default async function DeptDashboard({ params }: Props) {
     }
 
     return (
-        <DashboardLayout dept={dept} deptLabel={meta.label} deptIcon={meta.icon} username={user.username}>
+        <DashboardLayout dept={dept} deptLabel={meta.label} deptIcon={meta.icon} deptLogo={meta.logo || undefined} username={user.username}>
             {/* ── Page Title ──────────────────────────────────────── */}
             <div className="mb-8">
                 <h1 className="text-3xl font-black tracking-tight text-[#1a2a47]">{meta.label} Dashboard</h1>
                 <p className="text-slate-500 mt-1">{meta.fullName} — Operations Management</p>
             </div>
+
+            {/* ── Server Status Banner ──────────────────────────────── */}
+            {serverError && (
+                <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
+                    <span className="material-symbols-outlined text-amber-600">warning</span>
+                    <div>
+                        <p className="text-sm font-semibold text-amber-800">Server Connection Issue</p>
+                        <p className="text-xs text-amber-600">Could not fetch live ticket data from the server. Showing cached or empty state.</p>
+                    </div>
+                </div>
+            )}
 
             {/* ── KPI Cards ──────────────────────────────────────── */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
@@ -190,25 +287,25 @@ export default async function DeptDashboard({ params }: Props) {
                             <span className="text-red-600 text-xs font-bold bg-red-50 px-2 py-1 rounded">High Alert</span>
                         )}
                     </div>
-                    <p className="text-slate-500 text-sm font-medium">Critical Urgency</p>
+                    <p className="text-slate-500 text-sm font-medium">High Urgency</p>
                     <h3 className={`text-2xl font-bold mt-1 ${criticalCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
                         {criticalCount}
                     </h3>
                 </div>
-                {/* Resolved Today */}
+                {/* Approval Rate */}
                 <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <div className="flex justify-between items-start mb-4">
-                        <span className="p-2 bg-green-50 text-green-600 rounded-lg material-symbols-outlined">schedule</span>
+                        <span className="p-2 bg-emerald-50 text-emerald-600 rounded-lg material-symbols-outlined">assignment_turned_in</span>
                     </div>
-                    <p className="text-slate-500 text-sm font-medium">Resolved Today</p>
-                    <h3 className="text-2xl font-bold mt-1 text-slate-900">{resolvedToday}</h3>
+                    <p className="text-slate-500 text-sm font-medium">Approval Rate</p>
+                    <h3 className="text-2xl font-bold mt-1 text-slate-900">{approvalRate}%</h3>
                 </div>
                 {/* Resolution Rate */}
                 <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <div className="flex justify-between items-start mb-4">
-                        <span className="p-2 bg-[#1a2a47]/10 text-[#1a2a47] rounded-lg material-symbols-outlined">{meta.kpiIcon}</span>
+                        <span className="p-2 bg-[#1a2a47]/10 text-[#1a2a47] rounded-lg material-symbols-outlined">check_circle</span>
                     </div>
-                    <p className="text-slate-500 text-sm font-medium">{meta.kpiLabel}</p>
+                    <p className="text-slate-500 text-sm font-medium">Resolution Rate</p>
                     <h3 className="text-2xl font-bold mt-1 text-slate-900">{resolutionRate}%</h3>
                 </div>
             </div>
@@ -231,7 +328,7 @@ export default async function DeptDashboard({ params }: Props) {
                     <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                         <h2 className="font-bold text-slate-900 mb-6">Volume by Category</h2>
                         <div className="space-y-4">
-                            {meta.categories.map(cat => (
+                            {displayCategories.map(cat => (
                                 <div key={cat.name} className="space-y-1">
                                     <div className="flex justify-between text-xs font-medium text-slate-500">
                                         <span>{cat.name}</span>
@@ -249,10 +346,10 @@ export default async function DeptDashboard({ params }: Props) {
                     <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                         <h2 className="font-bold text-slate-900 mb-6">Recent Activity</h2>
                         <div className="space-y-5">
-                            {recentEvents.length === 0 && (
+                            {recentActivity.length === 0 && (
                                 <p className="text-sm text-slate-400 text-center py-4">No recent activity.</p>
                             )}
-                            {recentEvents.map(ev => (
+                            {recentActivity.map(ev => (
                                 <div key={ev.id} className="flex gap-4">
                                     <div className={`flex-shrink-0 size-8 rounded-full flex items-center justify-center ${EVENT_COLOR[ev.action] ?? 'bg-slate-50 text-slate-500'}`}>
                                         <span className="material-symbols-outlined text-sm">{EVENT_ICON[ev.action] ?? 'circle'}</span>

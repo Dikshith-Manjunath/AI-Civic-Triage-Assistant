@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Footer from '@/components/Footer';
 
 const DEPARTMENTS = [
     { value: 'bbmp', label: 'BBMP (Bruhat Bengaluru Mahanagara Palike)' },
@@ -382,27 +383,9 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* Branding Footer */}
-                    <footer className="mt-8 flex flex-col items-center gap-4">
-                        <div className="flex items-center gap-6 opacity-70">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTnKg_NZP0B9MhibZaxUaIOYq36Df0mW2_fQr4J9GOQwzeeZFBFdg4oI1loU_4GebhCKe_uNnDp7bMmdoXKFVKqUfs1dFYFOCj7LWsd3gUisxScPQnCO7yYZux9PYbW6MVi9DlDiI4fnQ1lfURbXiTHA-l2koaG0krpKJw5OA2mJjWsne2IHEUYGzDKPWn8ngF5NJCUo0B7fIddaVufsyZ8j14olQ75bDBNLEreHeg4DUKwItYuPECLD1HRkqmlt9Z7i0G6FJt2os"
-                                alt="Government of Karnataka Seal"
-                                className="h-12 w-auto"
-                            />
-                            <div className="h-8 w-px bg-slate-300" />
-                            <div className="flex flex-col items-start leading-none">
-                                <span className="text-slate-900 font-bold text-lg tracking-tight">Bengaluru</span>
-                                <span className="text-slate-500 text-[10px] uppercase font-bold tracking-[0.2em] mt-0.5">
-                                    Smart City Initiative
-                                </span>
-                            </div>
-                        </div>
-                        <p className="text-slate-400 text-xs">© 2025 CivicFlow | Government of Karnataka</p>
-                    </footer>
                 </div>
             </main>
+            <Footer />
         </div>
     );
 }

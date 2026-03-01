@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 export type Ticket = {
-    id: number;
+    id: string | number;
     ticket_no: string;
     department: string;
     category: string;
@@ -26,6 +26,15 @@ type TicketEvent = {
     actor: string;
     note: string | null;
     created_at: string;
+};
+
+type MediaItem = {
+    id: string;
+    type: 'image' | 'audio' | 'pdf';
+    filename: string;
+    content_type: string;
+    size_bytes: number;
+    url: string | null;
 };
 
 type Props = {
@@ -58,26 +67,45 @@ const STATUS_LABEL: Record<string, string> = {
 const ACTION_ICON: Record<string, string> = {
     created: 'add', resolved: 'check_circle', approved: 'assignment_turned_in',
     rejected: 'close', assigned: 'person', dispatched: 'local_shipping',
-    rectify: 'build', reopen: 'refresh', comment: 'comment',
+    review: 'rate_review', reopen: 'refresh', comment: 'comment',
+};
+
+// Map client action → new local status (for optimistic UI update)
+const ACTION_STATUS: Record<string, string> = {
+    review: 'in_progress',
+    approve: 'approved',
+    reject: 'rejected',
+    resolve: 'resolved',
+    reopen: 'open',
 };
 
 export default function TicketDrawer({ ticket: initialTicket, onClose, onUpdate }: Props) {
     const [ticket, setTicket] = useState<Ticket>(initialTicket);
     const [events, setEvents] = useState<TicketEvent[]>([]);
+    const [media, setMedia] = useState<MediaItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const [actionError, setActionError] = useState<string | null>(null);
     const [comment, setComment] = useState('');
     const drawerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setTicket(initialTicket);
-        fetch(`/api/tickets/${initialTicket.id}`)
+        // Fetch ticket details
+        fetch(`/api/server-tickets/${initialTicket.id}`)
             .then(r => r.json())
             .then(data => {
                 if (data.ticket) setTicket(data.ticket);
                 if (data.events) setEvents(data.events);
                 setLoading(false);
             });
+        // Fetch media attachments
+        fetch(`/api/server-tickets/${initialTicket.id}/media`)
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data)) setMedia(data);
+            })
+            .catch(() => { });
     }, [initialTicket.id]);
 
     // Close on outside click
@@ -98,17 +126,36 @@ export default function TicketDrawer({ ticket: initialTicket, onClose, onUpdate 
 
     async function doAction(action: string) {
         setActionLoading(action);
-        const res = await fetch(`/api/tickets/${ticket.id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, note: comment || null }),
-        });
-        const data = await res.json();
-        if (data.ticket) {
-            setTicket(data.ticket);
-            onUpdate(data.ticket);
-            if (data.events) setEvents(data.events);
+        setActionError(null);
+        try {
+            const res = await fetch(`/api/server-tickets/${ticket.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, note: comment || null }),
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                setActionError(data.error || `Failed to ${action} ticket`);
+                setActionLoading(null);
+                return;
+            }
+
+            if (data.ticket) {
+                // Server returned the updated ticket
+                setTicket(data.ticket);
+                onUpdate(data.ticket);
+                if (data.events) setEvents(data.events);
+            } else {
+                // Server action succeeded but no ticket returned — update locally
+                const newStatus = ACTION_STATUS[action] || ticket.status;
+                const updated = { ...ticket, status: newStatus, updated_at: new Date().toISOString() };
+                setTicket(updated);
+                onUpdate(updated);
+            }
             setComment('');
+        } catch (err: any) {
+            setActionError(err?.message || 'Network error — please try again');
         }
         setActionLoading(null);
     }
@@ -116,7 +163,7 @@ export default function TicketDrawer({ ticket: initialTicket, onClose, onUpdate 
     async function addComment() {
         if (!comment.trim()) return;
         setActionLoading('comment');
-        const res = await fetch(`/api/tickets/${ticket.id}`, {
+        const res = await fetch(`/api/server-tickets/${ticket.id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'comment', note: comment }),
@@ -195,6 +242,84 @@ export default function TicketDrawer({ ticket: initialTicket, onClose, onUpdate 
                                     </p>
                                 </div>
                             </section>
+
+                            {/* Media Attachments */}
+                            {media.length > 0 && (
+                                <section>
+                                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                                        Attachments ({media.length})
+                                    </h3>
+                                    <div className="space-y-3">
+                                        {/* Images */}
+                                        {media.filter(m => m.type === 'image').map(m => (
+                                            <div key={m.id} className="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                                                {m.url ? (
+                                                    <a href={m.url} target="_blank" rel="noopener noreferrer">
+                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                        <img
+                                                            src={m.url}
+                                                            alt={m.filename}
+                                                            className="w-full max-h-80 object-contain bg-white"
+                                                        />
+                                                    </a>
+                                                ) : (
+                                                    <div className="flex items-center justify-center h-32 text-slate-400">
+                                                        <span className="material-symbols-outlined text-3xl">broken_image</span>
+                                                    </div>
+                                                )}
+                                                <div className="px-3 py-2 flex items-center gap-2 text-xs text-slate-500 border-t border-slate-200">
+                                                    <span className="material-symbols-outlined text-sm">image</span>
+                                                    <span className="truncate flex-1">{m.filename}</span>
+                                                    <span>{(m.size_bytes / 1024).toFixed(0)} KB</span>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {/* Audio */}
+                                        {media.filter(m => m.type === 'audio').map(m => (
+                                            <div key={m.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                                                <div className="flex items-center gap-2 mb-3 text-xs text-slate-500">
+                                                    <span className="material-symbols-outlined text-sm text-blue-500">audio_file</span>
+                                                    <span className="truncate flex-1 font-medium">{m.filename}</span>
+                                                    <span>{(m.size_bytes / 1024).toFixed(0)} KB</span>
+                                                </div>
+                                                {m.url ? (
+                                                    <audio controls className="w-full" preload="metadata">
+                                                        <source src={m.url} type={m.content_type} />
+                                                        Your browser does not support audio playback.
+                                                    </audio>
+                                                ) : (
+                                                    <p className="text-xs text-slate-400">Audio unavailable</p>
+                                                )}
+                                            </div>
+                                        ))}
+
+                                        {/* PDFs */}
+                                        {media.filter(m => m.type === 'pdf').map(m => (
+                                            <div key={m.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 flex items-center gap-3">
+                                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-500">
+                                                    <span className="material-symbols-outlined">picture_as_pdf</span>
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-medium text-slate-800 truncate">{m.filename}</p>
+                                                    <p className="text-xs text-slate-400">{(m.size_bytes / 1024).toFixed(0)} KB</p>
+                                                </div>
+                                                {m.url && (
+                                                    <a
+                                                        href={m.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-1 text-xs font-semibold text-[#1a2a47] hover:underline"
+                                                    >
+                                                        <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                                        View
+                                                    </a>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
 
                             {/* Location Details */}
                             <section className="grid grid-cols-2 gap-4">
@@ -279,6 +404,17 @@ export default function TicketDrawer({ ticket: initialTicket, onClose, onUpdate 
                     )}
                 </div>
 
+                {/* ── Error message ────────────────────────── */}
+                {actionError && (
+                    <div className="mx-5 mb-2 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-red-500 text-base">error</span>
+                        <p className="text-sm text-red-700 flex-1">{actionError}</p>
+                        <button onClick={() => setActionError(null)} className="text-red-400 hover:text-red-600">
+                            <span className="material-symbols-outlined text-base">close</span>
+                        </button>
+                    </div>
+                )}
+
                 {/* ── Sticky Footer Actions ─────────────────── */}
                 {!isTerminal && (
                     <div className="p-5 border-t border-slate-200 bg-slate-50/80 grid grid-cols-2 gap-3">
@@ -319,16 +455,16 @@ export default function TicketDrawer({ ticket: initialTicket, onClose, onUpdate 
                             Approve
                         </button>
                         <button
-                            onClick={() => doAction('rectify')}
+                            onClick={() => doAction('review')}
                             disabled={!!actionLoading}
                             className="flex items-center justify-center gap-2 border border-slate-200 text-slate-700 font-bold py-3 rounded-xl hover:bg-white disabled:opacity-60 transition-colors"
                         >
-                            {actionLoading === 'rectify' ? (
+                            {actionLoading === 'review' ? (
                                 <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
                             ) : (
-                                <span className="material-symbols-outlined text-sm">build</span>
+                                <span className="material-symbols-outlined text-sm">rate_review</span>
                             )}
-                            Rectify
+                            Review
                         </button>
                     </div>
                 )}

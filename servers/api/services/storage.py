@@ -85,3 +85,20 @@ def upload_to_minio(
         raise
 
     return object_key
+
+
+def get_presigned_url(object_path: str, expires_hours: int = 1) -> str | None:
+    """Generate a presigned URL for downloading a media object from MinIO."""
+    from datetime import timedelta
+    try:
+        client = get_minio_client()
+        bucket = settings.minio_bucket
+        url = client.presigned_get_object(
+            bucket_name=bucket,
+            object_name=object_path,
+            expires=timedelta(hours=expires_hours),
+        )
+        return url
+    except S3Error as exc:
+        logger.error("Failed to generate presigned URL for %s: %s", object_path, exc)
+        return None

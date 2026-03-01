@@ -146,6 +146,24 @@ def insert_media(
     return media_id
 
 
+def fetch_media_for_complaint(complaint_id: str) -> list[dict]:
+    """Return all media metadata rows for a given complaint."""
+    client = get_client()
+    result = client.query(
+        "SELECT id, complaint_id, type, object_path, filename, content_type, size_bytes "
+        "FROM civic_media WHERE complaint_id = %(cid)s ORDER BY type",
+        parameters={"cid": complaint_id},
+    )
+    columns = result.column_names
+    rows: list[dict] = []
+    for row in result.result_rows:
+        d = dict(zip(columns, row))
+        d["id"] = str(d["id"])
+        d["complaint_id"] = str(d["complaint_id"])
+        rows.append(d)
+    return rows
+
+
 def fetch_all_tickets(limit: int = 100) -> list[dict]:
     """Return the most recent tickets."""
     client = get_client()
@@ -162,5 +180,32 @@ def fetch_all_tickets(limit: int = 100) -> list[dict]:
         d["timestamp"] = (
             d["timestamp"].isoformat() if hasattr(d["timestamp"], "isoformat") else str(d["timestamp"])
         )
+        rows.append(d)
+    return rows
+
+
+def fetch_tickets_by_authority(authority: str, limit: int = 200) -> list[dict]:
+    """Return tickets filtered by authority code (e.g. BBMP, BWSSB)."""
+    client = get_client()
+    result = client.query(
+        "SELECT id, timestamp, dept, authority, urgency, summary, reply, status, "
+        "raw_text, channel, approved_by, approved_at "
+        "FROM civic_complaints "
+        "WHERE upper(authority) = %(auth)s "
+        "ORDER BY timestamp DESC LIMIT %(lim)s",
+        parameters={"auth": authority.upper(), "lim": limit},
+    )
+    columns = result.column_names
+    rows: list[dict] = []
+    for row in result.result_rows:
+        d = dict(zip(columns, row))
+        d["id"] = str(d["id"])
+        d["timestamp"] = (
+            d["timestamp"].isoformat() if hasattr(d["timestamp"], "isoformat") else str(d["timestamp"])
+        )
+        if hasattr(d.get("approved_at"), "isoformat"):
+            d["approved_at"] = d["approved_at"].isoformat()
+        else:
+            d["approved_at"] = str(d.get("approved_at", ""))
         rows.append(d)
     return rows

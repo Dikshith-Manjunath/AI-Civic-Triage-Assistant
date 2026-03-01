@@ -7,7 +7,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 
-from api.db.clickhouse import fetch_all_tickets, insert_media, insert_ticket
+from api.db.clickhouse import fetch_all_tickets, fetch_media_for_complaint, fetch_tickets_by_authority, insert_media, insert_ticket
 from api.models.ticket import TicketResponse
 from api.services.embeddings import generate_embedding
 from api.services.preprocess import (
@@ -18,7 +18,7 @@ from api.services.preprocess import (
 )
 from api.services.authority_router import route_authority
 from api.services.notifier import send_approval_request
-from api.services.storage import ensure_bucket, upload_to_minio
+from api.services.storage import ensure_bucket, get_presigned_url, upload_to_minio
 from api.services.ticket_agent import classify_complaint
 from api.services.retrieval import find_similar_complaints
 
@@ -290,3 +290,98 @@ async def list_complaints(limit: int = 50):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Database query failed: {exc}",
         )
+
+
+# ── Department-to-authority mapping ──
+_DEPT_TO_AUTHORITY: dict[str, str] = {
+    "bbmp": "BBMP",
+    "bwssb": "BWSSB",
+    "bescom": "BESCOM",
+    "bmtc": "BMTC",
+    "bda": "BDA",
+    "gba": "GBA",
+    "roads": "BBMP",
+    "sanitation": "BBMP",
+    "water": "BWSSB",
+    "electricity": "BESCOM",
+    "transport": "BMTC",
+    "planning": "BDA",
+    "housing": "KSDB",
+}
+
+
+@router.get(
+    "/by-authority/{authority}",
+    response_model=list[TicketResponse],
+    summary="List tickets by authority",
+    description="Fetch tickets filtered by authority code (e.g. BBMP, BWSSB).",
+)
+async def list_by_authority(authority: str, limit: int = 200):
+    """Return tickets for a specific authority."""
+    try:
+        rows = fetch_tickets_by_authority(authority.upper(), limit=limit)
+        return [TicketResponse(**r) for r in rows]
+    except Exception as exc:
+        logger.exception("Failed to fetch tickets for authority %s", authority)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database query failed: {exc}",
+        )
+
+
+@router.get(
+    "/by-dept/{dept}",
+    response_model=list[TicketResponse],
+    summary="List tickets by department slug",
+    description="Fetch tickets by client department slug (bbmp, bwssb, etc.).",
+)
+async def list_by_dept(dept: str, limit: int = 200):
+    """Return tickets for a department slug, mapped to its authority code."""
+    authority = _DEPT_TO_AUTHORITY.get(dept.lower())
+    if not authority:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Unknown department: {dept}. Valid: {list(_DEPT_TO_AUTHORITY.keys())}",
+        )
+    try:
+        rows = fetch_tickets_by_authority(authority, limit=limit)
+        return [TicketResponse(**r) for r in rows]
+    except Exception as exc:
+        logger.exception("Failed to fetch tickets for dept %s", dept)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database query failed: {exc}",
+        )
+
+
+# ── Media endpoint ───────────────────────────────────────────────────────
+@router.get(
+    "/{complaint_id}/media",
+    summary="List media attachments for a complaint",
+    description="Returns metadata + presigned download URLs for all media files attached to a complaint.",
+)
+async def get_complaint_media(complaint_id: str):
+    """Return all media items (images, audio, PDFs) for a given complaint."""
+    try:
+        media_rows = fetch_media_for_complaint(complaint_id)
+    except Exception as exc:
+        logger.exception("Failed to fetch media for %s", complaint_id)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database query failed: {exc}",
+        )
+
+    # Generate presigned URLs for each media item
+    result = []
+    for m in media_rows:
+        url = get_presigned_url(m["object_path"])
+        result.append({
+            "id": m["id"],
+            "type": m["type"],
+            "filename": m["filename"],
+            "content_type": m["content_type"],
+            "size_bytes": m["size_bytes"],
+            "url": url,
+        })
+
+    return result

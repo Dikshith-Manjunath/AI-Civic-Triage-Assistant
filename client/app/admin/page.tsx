@@ -2,15 +2,16 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { verifyToken, isAdmin } from '@/lib/auth';
 import LogoutButton from '@/components/LogoutButton';
+import Footer from '@/components/Footer';
 import db from '@/lib/db';
 
 const DEPT_CONFIG = [
-    { key: 'bbmp', label: 'BBMP', full: 'Bruhat Bengaluru Mahanagara Palike', icon: 'corporate_fare', color: 'bg-orange-500' },
-    { key: 'bwssb', label: 'BWSSB', full: 'Water Supply & Sewerage Board', icon: 'water_drop', color: 'bg-blue-500' },
-    { key: 'bescom', label: 'BESCOM', full: 'Electricity Supply Company', icon: 'bolt', color: 'bg-yellow-500' },
-    { key: 'bmtc', label: 'BMTC', full: 'Metropolitan Transport Corp', icon: 'directions_bus', color: 'bg-green-500' },
-    { key: 'bda', label: 'BDA', full: 'Bangalore Development Authority', icon: 'architecture', color: 'bg-purple-500' },
-    { key: 'gba', label: 'GBA', full: 'Governing Body Authority', icon: 'admin_panel_settings', color: 'bg-rose-500' },
+    { key: 'bbmp', label: 'BBMP', full: 'Bruhat Bengaluru Mahanagara Palike', icon: 'corporate_fare', logo: '/logos/BBMP.jpg', color: 'bg-orange-500' },
+    { key: 'bwssb', label: 'BWSSB', full: 'Water Supply & Sewerage Board', icon: 'water_drop', logo: '/logos/BWSSB.webp', color: 'bg-blue-500' },
+    { key: 'bescom', label: 'BESCOM', full: 'Electricity Supply Company', icon: 'bolt', logo: '/logos/BESCOM.png', color: 'bg-yellow-500' },
+    { key: 'bmtc', label: 'BMTC', full: 'Metropolitan Transport Corp', icon: 'directions_bus', logo: '/logos/BMTC.jpg', color: 'bg-green-500' },
+    { key: 'bda', label: 'BDA', full: 'Bangalore Development Authority', icon: 'architecture', logo: '/logos/BDA.png', color: 'bg-purple-500' },
+    { key: 'gba', label: 'GBA', full: 'Governing Body Authority', icon: 'admin_panel_settings', logo: '/logos/GBA.jpg', color: 'bg-rose-500' },
 ];
 
 export default async function AdminDashboard() {
@@ -105,9 +106,17 @@ export default async function AdminDashboard() {
                                     key={dept.key}
                                     className="rounded-2xl bg-white border border-slate-100 p-5 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow"
                                 >
-                                    <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${dept.color} text-white`}>
-                                        <span className="material-symbols-outlined">{dept.icon}</span>
-                                    </div>
+                                    {dept.logo ? (
+                                        <img
+                                            src={dept.logo}
+                                            alt={`${dept.label} logo`}
+                                            className="h-12 w-12 shrink-0 rounded-xl object-cover scale-110"
+                                        />
+                                    ) : (
+                                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${dept.color} text-white`}>
+                                            <span className="material-symbols-outlined">{dept.icon}</span>
+                                        </div>
+                                    )}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between">
                                             <p className="font-bold text-slate-900">{dept.label}</p>
@@ -202,6 +211,7 @@ export default async function AdminDashboard() {
                     </div>
                 </section>
             </main>
+            <Footer />
         </div>
     );
 }
