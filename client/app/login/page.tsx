@@ -11,6 +11,7 @@ const DEPARTMENTS = [
     { value: 'bescom', label: 'BESCOM (Bangalore Electricity Supply Company)' },
     { value: 'bmtc', label: 'BMTC (Bangalore Metropolitan Transport Corp)' },
     { value: 'bda', label: 'BDA (Bangalore Development Authority)' },
+    { value: 'bcp', label: 'BCP (Bengaluru City Police)' },
     { value: 'gba', label: 'GBA (Governing Body Authority)' },
 ];
 

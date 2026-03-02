@@ -37,6 +37,21 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }
 
+        // ── Check approval status ──
+        const status = user.status || 'approved'; // fallback for legacy users without status
+        if (status === 'pending') {
+            return NextResponse.json(
+                { error: 'Your account is pending admin approval. Please check back later.' },
+                { status: 403 }
+            );
+        }
+        if (status === 'rejected') {
+            return NextResponse.json(
+                { error: 'Your registration request has been rejected. Contact the administrator for more details.' },
+                { status: 403 }
+            );
+        }
+
         // Update last login
         db.prepare("UPDATE users SET last_login = datetime('now') WHERE id = ?").run(user.id);
 

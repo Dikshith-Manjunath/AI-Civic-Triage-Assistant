@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { verifyToken, isAdmin } from '@/lib/auth';
 import LogoutButton from '@/components/LogoutButton';
+import PendingApprovals from '@/components/PendingApprovals';
 import Footer from '@/components/Footer';
 import db from '@/lib/db';
 
@@ -11,6 +12,7 @@ const DEPT_CONFIG = [
     { key: 'bescom', label: 'BESCOM', full: 'Electricity Supply Company', icon: 'bolt', logo: '/logos/BESCOM.png', color: 'bg-yellow-500' },
     { key: 'bmtc', label: 'BMTC', full: 'Metropolitan Transport Corp', icon: 'directions_bus', logo: '/logos/BMTC.jpg', color: 'bg-green-500' },
     { key: 'bda', label: 'BDA', full: 'Bangalore Development Authority', icon: 'architecture', logo: '/logos/BDA.png', color: 'bg-purple-500' },
+    { key: 'bcp', label: 'BCP', full: 'Bengaluru City Police', icon: 'local_police', logo: '/logos/BCP.jpg', color: 'bg-indigo-500' },
     { key: 'gba', label: 'GBA', full: 'Governing Body Authority', icon: 'admin_panel_settings', logo: '/logos/GBA.jpg', color: 'bg-rose-500' },
 ];
 
@@ -26,6 +28,12 @@ export default async function AdminDashboard() {
     const totalUsers = (db.prepare('SELECT COUNT(*) as n FROM users').get() as any).n as number;
     const adminCount = (db.prepare("SELECT COUNT(*) as n FROM users WHERE role = 'admin'").get() as any).n as number;
     const officerCount = totalUsers - adminCount;
+    const pendingCount = (db.prepare("SELECT COUNT(*) as n FROM users WHERE status = 'pending'").get() as any).n as number;
+
+    // Pending users for approval (convert to plain objects for Client Component)
+    const pendingUsers = JSON.parse(JSON.stringify(
+        db.prepare("SELECT id, email, username, department, role, full_name, created_at FROM users WHERE status = 'pending' ORDER BY created_at ASC").all()
+    ));
 
     // Users per department
     const deptRows = db
@@ -34,9 +42,9 @@ export default async function AdminDashboard() {
     const deptMap = Object.fromEntries(deptRows.map((r) => [r.department, r.n]));
 
     // All users list
-    const allUsers = db
-        .prepare('SELECT id, email, username, department, role, full_name, created_at, last_login FROM users ORDER BY created_at DESC')
-        .all() as any[];
+    const allUsers = JSON.parse(JSON.stringify(
+        db.prepare('SELECT id, email, username, department, role, status, full_name, created_at, last_login FROM users ORDER BY created_at DESC').all()
+    ));
 
     return (
         <div className="min-h-screen bg-[#f6f7f8]">
@@ -74,11 +82,12 @@ export default async function AdminDashboard() {
                 </div>
 
                 {/* ── Summary Cards ── */}
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-4">
                     {[
                         { label: 'Total Users', value: totalUsers, icon: 'group', color: 'text-[#1a2a47]', bg: 'bg-[#1a2a47]/10' },
                         { label: 'Officers', value: officerCount, icon: 'badge', color: 'text-green-700', bg: 'bg-green-100' },
                         { label: 'Admins', value: adminCount, icon: 'shield_person', color: 'text-amber-700', bg: 'bg-amber-100' },
+                        { label: 'Pending Approval', value: pendingCount, icon: 'hourglass_top', color: 'text-orange-700', bg: 'bg-orange-100' },
                     ].map((s) => (
                         <div key={s.label} className="rounded-2xl bg-white border border-slate-100 p-6 shadow-sm flex items-center gap-5">
                             <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl ${s.bg}`}>
@@ -91,6 +100,20 @@ export default async function AdminDashboard() {
                         </div>
                     ))}
                 </div>
+
+                {/* ── Pending Approvals ── */}
+                <section>
+                    <h2 className="mb-5 text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-base text-orange-500">hourglass_top</span>
+                        Pending Approvals
+                        {pendingCount > 0 && (
+                            <span className="ml-1 rounded-full bg-orange-100 px-2.5 py-0.5 text-sm font-bold text-orange-700">
+                                {pendingCount}
+                            </span>
+                        )}
+                    </h2>
+                    <PendingApprovals initialUsers={pendingUsers} />
+                </section>
 
                 {/* ── Per-Department Breakdown ── */}
                 <section>
@@ -150,6 +173,7 @@ export default async function AdminDashboard() {
                                         <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
                                         <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Department</th>
                                         <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Role</th>
+                                        <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
                                         <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Joined</th>
                                         <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Last Login</th>
                                     </tr>
@@ -162,7 +186,7 @@ export default async function AdminDashboard() {
                                             </td>
                                         </tr>
                                     ) : (
-                                        allUsers.map((u) => (
+                                        allUsers.map((u: any) => (
                                             <tr key={u.id} className="hover:bg-slate-50 transition-colors">
                                                 <td className="px-5 py-4">
                                                     <div className="flex items-center gap-3">
@@ -195,6 +219,14 @@ export default async function AdminDashboard() {
                                                             Officer
                                                         </span>
                                                     )}
+                                                </td>
+                                                <td className="px-5 py-4">
+                                                    <span className={`inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${u.status === 'approved' ? 'bg-green-100 text-green-700'
+                                                        : u.status === 'rejected' ? 'bg-red-100 text-red-600'
+                                                            : 'bg-amber-100 text-amber-700'
+                                                        }`}>
+                                                        {u.status || 'approved'}
+                                                    </span>
                                                 </td>
                                                 <td className="px-5 py-4 text-slate-500 text-xs">
                                                     {u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '—'}

@@ -8,6 +8,7 @@ const AUTHORITIES = [
   { icon: 'bolt', short: 'BESCOM', full: 'Electricity Supply', logo: '/logos/BESCOM.png', href: 'https://www.bescom.co.in/bescom/main/home' },
   { icon: 'directions_bus', short: 'BMTC', full: 'Metropolitan Transport', logo: '/logos/BMTC.jpg', href: 'https://mybmtc.karnataka.gov.in' },
   { icon: 'architecture', short: 'BDA', full: 'Development Authority', logo: '/logos/BDA.png', href: 'https://bdakarnataka.in' },
+  { icon: 'local_police', short: 'BCP', full: 'City Police', logo: '/logos/BCP.jpg', href: 'https://bcp.karnataka.gov.in/' },
 ];
 
 const FEATURES = [

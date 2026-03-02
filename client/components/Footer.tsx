@@ -6,6 +6,7 @@ const DEPARTMENTS = [
     { label: 'BESCOM', full: 'Electricity Supply Company', href: 'https://www.bescom.co.in/bescom/main/home' },
     { label: 'BMTC', full: 'Metropolitan Transport Corp', href: 'https://mybmtc.karnataka.gov.in' },
     { label: 'BDA', full: 'Development Authority', href: 'https://bdakarnataka.in' },
+    { label: 'BCP', full: 'Bengaluru City Police', href: 'https://bcp.karnataka.gov.in/' },
     { label: 'GBA', full: 'Governing Body Authority', href: 'https://bbmp.gov.in/KnowYourNewCorporation/index.html' },
 ];
 

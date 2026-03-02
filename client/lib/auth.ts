@@ -47,6 +47,7 @@ export const DEPARTMENTS = [
     { value: 'bescom', label: 'BESCOM', fullName: 'Bangalore Electricity Supply Company' },
     { value: 'bmtc', label: 'BMTC', fullName: 'Bangalore Metropolitan Transport Corp' },
     { value: 'bda', label: 'BDA', fullName: 'Bangalore Development Authority' },
+    { value: 'bcp', label: 'BCP', fullName: 'Bengaluru City Police' },
     { value: 'gba', label: 'GBA', fullName: 'Governing Body Authority' },
 ] as const;
 

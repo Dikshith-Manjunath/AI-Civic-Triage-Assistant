@@ -23,13 +23,22 @@ db.exec(`
     password    TEXT    NOT NULL,
     department  TEXT    NOT NULL,
     role        TEXT    NOT NULL DEFAULT 'officer',
+    status      TEXT    NOT NULL DEFAULT 'pending',
     full_name   TEXT,
     created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
     last_login  TEXT
   );
   CREATE INDEX IF NOT EXISTS idx_users_email      ON users(email);
   CREATE INDEX IF NOT EXISTS idx_users_department ON users(department);
+  CREATE INDEX IF NOT EXISTS idx_users_status     ON users(status);
 `);
+
+// Migration: add status column for existing databases
+try {
+  db.exec("ALTER TABLE users ADD COLUMN status TEXT NOT NULL DEFAULT 'approved'");
+} catch {
+  // Column already exists — ignore
+}
 
 // ── Tickets ────────────────────────────────────────────────────────────────
 db.exec(`
