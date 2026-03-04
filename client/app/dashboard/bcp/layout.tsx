@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import LogoutButton from '@/components/LogoutButton';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { verifyToken } from '@/lib/auth';
@@ -50,10 +51,8 @@ export default async function BCPLayout({ children }: { children: React.ReactNod
                     </Link>
                 </nav>
                 <div className="p-4 border-t border-slate-200">
-                    <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
-                        <span className="material-symbols-outlined text-[22px]">logout</span>
-                        <span className="text-sm">Logout</span>
-                    </Link>
+                    <LogoutButton />
+
                     <div className="mt-4 p-3 bg-slate-50 rounded-lg">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-[#1a2a47]/20 flex items-center justify-center text-[#1a2a47] font-bold text-xs uppercase">
