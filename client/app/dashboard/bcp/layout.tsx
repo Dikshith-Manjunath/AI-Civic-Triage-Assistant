@@ -41,14 +41,15 @@ export default async function BCPLayout({ children }: { children: React.ReactNod
                         <span className="material-symbols-outlined text-[22px]">analytics</span>
                         <span className="text-sm">Reports & Charts</span>
                     </Link>
-                    <Link href="#" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                    <Link href="/dashboard/bcp" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
                         <span className="material-symbols-outlined text-[22px]">confirmation_number</span>
                         <span className="text-sm">Incident Tickets</span>
                     </Link>
-                    <Link href="#" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                    <span className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 cursor-not-allowed">
                         <span className="material-symbols-outlined text-[22px]">shield_person</span>
                         <span className="text-sm">Patrol Status</span>
-                    </Link>
+                        <span className="ml-auto text-[9px] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded font-bold uppercase">Soon</span>
+                    </span>
                 </nav>
                 <div className="p-4 border-t border-slate-200">
                     <LogoutButton />

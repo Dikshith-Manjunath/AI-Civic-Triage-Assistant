@@ -1,23 +1,76 @@
-import db from '@/lib/db';
-import Link from 'next/link';
+import TicketTable from '@/components/TicketTable';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+// ── Urgency int → string mapping ──
+const URGENCY_MAP: Record<number, string> = { 0: 'low', 1: 'medium', 2: 'high' };
+
+// ── Server status → client status mapping ──
+const STATUS_MAP: Record<string, string> = {
+    pending: 'open',
+    awaiting_approval: 'in_progress',
+    approved: 'approved',
+    rejected: 'rejected',
+    filed: 'dispatched',
+    resolved: 'resolved',
+};
+
+/**
+ * Transform a server-side ClickHouse ticket into the shape expected
+ * by the client's TicketTable / TicketDrawer components.
+ */
+function transformTicket(t: any, idx: number) {
+    const authority = (t.authority || '').toUpperCase();
+    const prefix = authority.slice(0, 2) || 'BC';
+    const ticketNo = `${prefix}-${String(idx + 1).padStart(4, '0')}`;
+
+    return {
+        id: t.id,
+        ticket_no: ticketNo,
+        department: (t.authority || 'bcp').toLowerCase(),
+        category: t.dept || 'general',
+        title: t.summary || 'Untitled',
+        description: t.raw_text || t.reply || null,
+        location: null,
+        ward: null,
+        urgency: URGENCY_MAP[t.urgency] ?? 'medium',
+        status: STATUS_MAP[t.status] || t.status || 'open',
+        assignee: t.approved_by || null,
+        created_by: t.channel || 'web',
+        created_at: t.timestamp || new Date().toISOString(),
+        updated_at: t.approved_at && t.approved_at !== '1970-01-01T00:00:00'
+            ? t.approved_at
+            : t.timestamp || new Date().toISOString(),
+    };
+}
 
 export default async function BCPDashboard() {
-    // Fetch tickets for BCP
-    const tickets = db
-        .prepare("SELECT * FROM tickets WHERE department = 'bcp' ORDER BY created_at DESC")
-        .all() as any[];
+    // ── Fetch tickets from the FastAPI server (ClickHouse) ──
+    let tickets: any[] = [];
+    let serverError = false;
+    try {
+        const res = await fetch(
+            `${API_URL}/api/complaints/by-dept/${encodeURIComponent('bcp')}?limit=200`,
+            { cache: 'no-store', signal: AbortSignal.timeout(8000) },
+        );
+        if (res.ok) {
+            const data = await res.json();
+            tickets = (Array.isArray(data) ? data : []).map(transformTicket);
+        } else {
+            console.error(`[bcp-dashboard] Server returned ${res.status}`);
+            serverError = true;
+        }
+    } catch (e: any) {
+        console.error('[bcp-dashboard] Failed to fetch from server:', e?.message || e);
+        serverError = true;
+    }
 
-    // Fallback static tickets if database is empty for BCP (for demonstration of the Stitch design)
-    const displayTickets = tickets.length > 0 ? tickets : [
-        { ticket_no: 'TK-89422', category: 'Traffic', location: 'Indiranagar, 12th Main', urgency: 'high', status: 'in_progress', icon: 'directions_car' },
-        { ticket_no: 'TK-89421', category: 'Public Nuisance', location: 'Koramangala, 5th Block', urgency: 'medium', status: 'open', icon: 'campaign' },
-        { ticket_no: 'TK-89420', category: 'Theft', location: 'MG Road Metro', urgency: 'high', status: 'resolved', icon: 'shopping_bag' },
-        { ticket_no: 'TK-89419', category: 'Traffic', location: 'Whitefield Main Rd', urgency: 'low', status: 'approved', icon: 'directions_car' },
-    ];
-
-    const totalIncidents = tickets.length > 0 ? tickets.length : 842;
-    const activePatrols = tickets.length > 0 ? Math.floor(tickets.length / 3) : 156;
-    const pendingCases = tickets.length > 0 ? tickets.filter(t => t.status !== 'resolved').length : 42;
+    // ── Compute KPIs ──
+    const totalIncidents = tickets.length;
+    const activeTickets = tickets.filter(t => !['resolved', 'rejected'].includes(t.status)).length;
+    const criticalCount = tickets.filter(t => t.urgency === 'high' && t.status !== 'resolved').length;
+    const resolvedCount = tickets.filter(t => t.status === 'resolved').length;
+    const resolutionRate = totalIncidents > 0 ? ((resolvedCount / totalIncidents) * 100).toFixed(1) : '0';
 
     return (
         <div className="space-y-6">
@@ -32,12 +85,19 @@ export default async function BCPDashboard() {
                         <span className="material-symbols-outlined text-lg">calendar_today</span>
                         <span>Last 24 Hours</span>
                     </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#1a2a47] text-white rounded-lg text-sm font-semibold hover:bg-[#1a2a47]/90 transition-shadow shadow-md">
-                        <span className="material-symbols-outlined text-lg">add</span>
-                        <span>New Incident</span>
-                    </button>
                 </div>
             </div>
+
+            {/* Server Error Banner */}
+            {serverError && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
+                    <span className="material-symbols-outlined text-amber-600">warning</span>
+                    <div>
+                        <p className="text-sm font-semibold text-amber-800">Server Connection Issue</p>
+                        <p className="text-xs text-amber-600">Could not fetch live ticket data from the server. Showing cached or empty state.</p>
+                    </div>
+                </div>
+            )}
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -52,129 +112,65 @@ export default async function BCPDashboard() {
                         </div>
                     </div>
                     <div className="mt-4 flex items-center gap-2 text-xs font-medium">
-                        <span className="text-red-600 flex items-center">+5.2%</span>
-                        <span className="text-slate-400">vs last week</span>
+                        <span className="text-slate-400">from server</span>
                     </div>
                 </div>
 
                 <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
                     <div className="flex justify-between items-start">
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Emergency Response</p>
-                            <h3 className="text-3xl font-bold mt-1 text-slate-900">7.2 <span className="text-lg font-normal text-slate-400">mins</span></h3>
+                            <p className="text-sm font-medium text-slate-500">Active Cases</p>
+                            <h3 className="text-3xl font-bold mt-1 text-slate-900">{activeTickets}</h3>
                         </div>
                         <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
                             <span className="material-symbols-outlined">bolt</span>
                         </div>
                     </div>
                     <div className="mt-4 flex items-center gap-2 text-xs font-medium">
-                        <span className="text-emerald-600 flex items-center"><span className="material-symbols-outlined text-xs mr-1">trending_down</span> 1.4% faster</span>
-                        <span className="text-slate-400">Target: 8.0 mins</span>
+                        <span className="text-emerald-600 flex items-center">Pending resolution</span>
                     </div>
                 </div>
 
                 <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
                     <div className="flex justify-between items-start">
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Active Patrols</p>
-                            <h3 className="text-3xl font-bold mt-1 text-slate-900">{activePatrols}</h3>
+                            <p className="text-sm font-medium text-slate-500">High Urgency</p>
+                            <h3 className={`text-3xl font-bold mt-1 ${criticalCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>{criticalCount}</h3>
                         </div>
-                        <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
-                            <span className="material-symbols-outlined">local_police</span>
-                        </div>
-                    </div>
-                    <div className="mt-4 flex items-center gap-2 text-xs font-medium">
-                        <span className="text-emerald-600">+12 units</span>
-                        <span className="text-slate-400">currently on field</span>
-                    </div>
-                </div>
-
-                <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-sm font-medium text-slate-500">Pending Investigation</p>
-                            <h3 className="text-3xl font-bold mt-1 text-slate-900">{pendingCases}</h3>
-                        </div>
-                        <div className="p-2 bg-amber-50 rounded-lg text-amber-600">
-                            <span className="material-symbols-outlined">pending_actions</span>
+                        <div className="p-2 bg-red-50 rounded-lg text-red-600">
+                            <span className="material-symbols-outlined">priority_high</span>
                         </div>
                     </div>
                     <div className="mt-4 flex items-center gap-2">
-                        <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded uppercase">High Priority Cases</span>
+                        {criticalCount > 0 && (
+                            <span className="px-2 py-0.5 bg-red-100 text-red-800 text-[10px] font-bold rounded uppercase">Needs Attention</span>
+                        )}
+                    </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <p className="text-sm font-medium text-slate-500">Resolution Rate</p>
+                            <h3 className="text-3xl font-bold mt-1 text-slate-900">{resolutionRate}%</h3>
+                        </div>
+                        <div className="p-2 bg-[#1a2a47]/10 rounded-lg text-[#1a2a47]">
+                            <span className="material-symbols-outlined">check_circle</span>
+                        </div>
+                    </div>
+                    <div className="mt-4 flex items-center gap-2 text-xs font-medium">
+                        <span className="text-slate-400">{resolvedCount} resolved of {totalIncidents}</span>
                     </div>
                 </div>
             </div>
 
-            {/* Table Section */}
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                <div className="p-6 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Ticket Queue — Interactive */}
+            <div className="space-y-4">
+                <div className="flex justify-between items-center">
                     <h4 className="font-bold text-slate-900">Incident Ticket Queue</h4>
-                    <div className="flex gap-2">
-                        <button className="px-3 py-1.5 text-xs font-semibold bg-slate-100 rounded-lg border border-slate-200">Export CSV</button>
-                        <button className="px-3 py-1.5 text-xs font-semibold bg-white rounded-lg border border-slate-200">Filter Status</button>
-                    </div>
+                    <span className="text-sm text-slate-500">{totalIncidents} total</span>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 text-slate-500 font-semibold uppercase text-[11px] tracking-wider">
-                            <tr>
-                                <th className="px-6 py-4">Ticket ID</th>
-                                <th className="px-6 py-4">Category</th>
-                                <th className="px-6 py-4">Location</th>
-                                <th className="px-6 py-4">Urgency</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {displayTickets.map((t) => (
-                                <tr key={t.ticket_no} className="hover:bg-slate-50 transition-colors">
-                                    <td className="px-6 py-4 font-mono font-bold text-[#1a2a47]">#{t.ticket_no}</td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2 text-slate-700">
-                                            <span className="material-symbols-outlined text-slate-400 text-base">{t.icon || 'receipt_long'}</span>
-                                            {t.category}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-600">{t.location || 'Bengaluru City'}</td>
-                                    <td className="px-6 py-4">
-                                        {t.urgency === 'high' || t.urgency === 'critical' ? (
-                                            <span className="px-2 py-1 bg-red-100 text-red-700 text-[10px] font-bold rounded uppercase">{t.urgency}</span>
-                                        ) : t.urgency === 'medium' ? (
-                                            <span className="px-2 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded uppercase">{t.urgency}</span>
-                                        ) : (
-                                            <span className="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded uppercase">{t.urgency}</span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            {t.status === 'in_progress' || t.status === 'open' ? (
-                                                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                                            ) : t.status === 'resolved' ? (
-                                                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                            ) : (
-                                                <span className="w-2 h-2 rounded-full bg-slate-400"></span>
-                                            )}
-                                            <span className="text-slate-700">{t.status.replace('_', ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button className="text-slate-400 hover:text-[#1a2a47] transition-colors">
-                                            <span className="material-symbols-outlined">more_vert</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                    <span className="text-xs text-slate-500">Showing {displayTickets.length} of {tickets.length > 0 ? tickets.length : 42} pending investigations</span>
-                    <div className="flex gap-2">
-                        <button className="px-3 py-1 bg-white border border-slate-200 rounded text-xs disabled:opacity-50" disabled>Previous</button>
-                        <button className="px-3 py-1 bg-white border border-slate-200 rounded text-xs">Next</button>
-                    </div>
-                </div>
+                <TicketTable initialTickets={tickets} />
             </div>
         </div>
     );

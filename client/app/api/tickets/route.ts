@@ -41,7 +41,6 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'category and title are required' }, { status: 400 });
         }
 
-        // Generate ticket number: DEPT prefix + timestamp suffix
         const prefix = user.department.toUpperCase().slice(0, 2);
         const num = Date.now().toString().slice(-4);
         const ticket_no = `${prefix}-${num}`;
