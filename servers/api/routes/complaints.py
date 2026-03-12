@@ -7,20 +7,26 @@ from typing import Annotated
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 
-from api.db.clickhouse import fetch_all_tickets, fetch_media_for_complaint, fetch_tickets_by_authority, insert_media, insert_ticket
+from api.db.clickhouse import (
+    fetch_all_tickets,
+    fetch_media_for_complaint,
+    fetch_tickets_by_authority,
+    insert_media,
+    insert_ticket,
+)
 from api.models.ticket import TicketResponse
+from api.services.authority_router import route_authority
 from api.services.embeddings import generate_embedding
+from api.services.notifier import send_approval_request
 from api.services.preprocess import (
     caption_image,
     extract_pdf_text,
     transcribe_audio,
     unify_inputs_to_text,
 )
-from api.services.authority_router import route_authority
-from api.services.notifier import send_approval_request
+from api.services.retrieval import find_similar_complaints
 from api.services.storage import ensure_bucket, get_presigned_url, upload_to_minio
 from api.services.ticket_agent import classify_complaint
-from api.services.retrieval import find_similar_complaints
 
 logger = logging.getLogger("civicflow.routes.complaints")
 

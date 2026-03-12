@@ -157,12 +157,12 @@ async def discord_interactions(
                     "flags": 64,
                 },
             })
-        except Exception as exc:
+        except Exception:
             logger.exception("Discord interaction handler error for ticket %s", ticket_id)
             return JSONResponse({
                 "type": 4,
                 "data": {
-                    "content": f"Internal error processing action. Please try again.",
+                    "content": "Internal error processing action. Please try again.",
                     "flags": 64,
                 },
             })
