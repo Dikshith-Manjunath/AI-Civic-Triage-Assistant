@@ -26,6 +26,7 @@ dependencies = [
     # ── Utilities ──
     "python-dotenv>=1.0.0",
     "pynacl>=1.6.2",
+    "matplotlib>=3.10.8",
 ]
 
 [project.optional-dependencies]
