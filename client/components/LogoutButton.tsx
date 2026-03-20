@@ -17,7 +17,7 @@ export default function LogoutButton({ compact }: Props) {
             <button
                 onClick={handleLogout}
                 title="Sign out"
-                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
             >
                 <span className="material-symbols-outlined text-base">logout</span>
             </button>
@@ -27,7 +27,7 @@ export default function LogoutButton({ compact }: Props) {
     return (
         <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-red-600 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
         >
             <span className="material-symbols-outlined text-base">logout</span>
             Sign Out

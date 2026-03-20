@@ -220,7 +220,21 @@ export async function PATCH(request: NextRequest, { params }: Params) {
         await new Promise(resolve => setTimeout(resolve, 500));
 
         // Refetch the updated ticket to return it in the expected format
-        const dept = user.department;
+        // For admins, we must resolve the real dept from the complaint (user.department = 'admin')
+        let dept = user.department;
+        if (!dept || dept === 'admin') {
+            try {
+                const listRes = await fetch(`${API_URL}/api/complaints?limit=500`, {
+                    cache: 'no-store',
+                    signal: AbortSignal.timeout(6000),
+                });
+                if (listRes.ok) {
+                    const allTickets = await listRes.json();
+                    const match = (Array.isArray(allTickets) ? allTickets : []).find((t: any) => t.id === id);
+                    if (match?.authority) dept = (match.authority as string).toLowerCase();
+                }
+            } catch { /* fall back to admin — refetch will fail gracefully */ }
+        }
         const updatedTicket = await refetchTicket(id, dept);
 
         if (updatedTicket) {

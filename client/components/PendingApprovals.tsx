@@ -35,10 +35,14 @@ export default function PendingApprovals({ initialUsers }: { initialUsers: Pendi
 
     if (users.length === 0) {
         return (
-            <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-8 text-center">
-                <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">how_to_reg</span>
-                <p className="text-slate-500 font-medium">No pending approvals</p>
-                <p className="text-xs text-slate-400 mt-1">New user registrations will appear here</p>
+            <div className="rounded-2xl border border-white/[0.07] p-10 text-center" style={{ background: 'var(--bg-surface)' }}>
+                <div className="flex justify-center mb-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#22C55E]/10">
+                        <span className="material-symbols-outlined text-3xl text-[#22C55E]" style={{ fontVariationSettings: "'FILL' 1" }}>how_to_reg</span>
+                    </div>
+                </div>
+                <p className="text-slate-300 font-semibold">No pending approvals</p>
+                <p className="text-xs text-slate-600 mt-1">New user registrations will appear here</p>
             </div>
         );
     }
@@ -48,23 +52,24 @@ export default function PendingApprovals({ initialUsers }: { initialUsers: Pendi
             {users.map((u) => (
                 <div
                     key={u.id}
-                    className="rounded-xl bg-white border border-slate-100 shadow-sm p-5 flex items-center gap-4"
+                    className="rounded-xl border border-white/[0.07] p-5 flex items-center gap-4 transition-all hover:border-white/[0.12]"
+                    style={{ background: 'var(--bg-surface)' }}
                 >
                     {/* Avatar */}
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 border border-amber-200 text-amber-600">
-                        <span className="material-symbols-outlined text-lg">person</span>
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F97316]/10 border border-[#F97316]/20 text-[#F97316]">
+                        <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
                     </div>
 
                     {/* User info */}
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                            <p className="text-sm font-bold text-slate-900">{u.full_name || u.username}</p>
-                            <span className="rounded-full bg-amber-100 text-amber-700 px-2 py-0.5 text-xs font-semibold">
+                            <p className="text-sm font-bold text-white">{u.full_name || u.username}</p>
+                            <span className="rounded-full bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                                 Pending
                             </span>
                         </div>
                         <p className="text-xs text-slate-500 mt-0.5 truncate">{u.email}</p>
-                        <div className="flex gap-3 mt-1 text-xs text-slate-400">
+                        <div className="flex gap-3 mt-1.5 text-[11px] text-slate-600">
                             <span className="flex items-center gap-1">
                                 <span className="material-symbols-outlined text-[11px]">corporate_fare</span>
                                 {u.department.toUpperCase()}
@@ -81,7 +86,7 @@ export default function PendingApprovals({ initialUsers }: { initialUsers: Pendi
                         <button
                             onClick={() => handleAction(u.id, 'approve')}
                             disabled={loading === u.id}
-                            className="flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 shadow-sm"
+                            className="flex items-center gap-1.5 px-4 py-2 bg-[#22C55E]/15 text-[#22C55E] border border-[#22C55E]/25 text-sm font-semibold rounded-lg hover:bg-[#22C55E]/25 transition-colors disabled:opacity-50 cursor-pointer"
                         >
                             {loading === u.id ? (
                                 <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
@@ -93,7 +98,7 @@ export default function PendingApprovals({ initialUsers }: { initialUsers: Pendi
                         <button
                             onClick={() => handleAction(u.id, 'reject')}
                             disabled={loading === u.id}
-                            className="flex items-center gap-1.5 px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
+                            className="flex items-center gap-1.5 px-4 py-2 bg-[#F87171]/10 text-[#F87171] border border-[#F87171]/20 text-sm font-semibold rounded-lg hover:bg-[#F87171]/20 transition-colors disabled:opacity-50 cursor-pointer"
                         >
                             <span className="material-symbols-outlined text-sm">close</span>
                             Reject

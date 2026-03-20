@@ -6,10 +6,7 @@ import TicketTable from '@/components/TicketTable';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-// ── Urgency int → string mapping ──
 const URGENCY_MAP: Record<number, string> = { 0: 'low', 1: 'medium', 2: 'high' };
-
-// ── Server status → client status mapping ──
 const STATUS_MAP: Record<string, string> = {
     pending: 'open',
     awaiting_approval: 'in_progress',
@@ -19,7 +16,6 @@ const STATUS_MAP: Record<string, string> = {
     resolved: 'resolved',
 };
 
-// ── Dept metadata ─────────────────────────────────────────────────────────
 const DEPT_META: Record<string, {
     label: string;
     fullName: string;
@@ -27,105 +23,77 @@ const DEPT_META: Record<string, {
     logo: string;
     kpiLabel: string;
     kpiIcon: string;
+    accent: string;
     categories: Array<{ name: string; pct: number; color: string }>;
 }> = {
     bbmp: {
-        label: 'BBMP',
-        fullName: 'Bruhat Bengaluru Mahanagara Palike',
-        icon: 'corporate_fare',
-        logo: '/logos/BBMP.jpg',
-        kpiLabel: 'SLA Compliance',
-        kpiIcon: 'verified',
+        label: 'BBMP', fullName: 'Bruhat Bengaluru Mahanagara Palike', icon: 'corporate_fare', logo: '/logos/BBMP.jpg',
+        kpiLabel: 'SLA Compliance', kpiIcon: 'verified', accent: '#F97316',
         categories: [
-            { name: 'Road Maintenance', pct: 45, color: 'bg-[#1a2a47]' },
+            { name: 'Road Maintenance', pct: 45, color: 'bg-orange-500' },
             { name: 'Waste Management', pct: 28, color: 'bg-blue-500' },
             { name: 'Public Lighting', pct: 15, color: 'bg-amber-400' },
-            { name: 'Others', pct: 12, color: 'bg-slate-300' },
+            { name: 'Others', pct: 12, color: 'bg-slate-600' },
         ],
     },
     bwssb: {
-        label: 'BWSSB',
-        fullName: 'Bangalore Water Supply & Sewerage Board',
-        icon: 'water_drop',
-        logo: '/logos/BWSSB.webp',
-        kpiLabel: 'Pressure Compliance',
-        kpiIcon: 'opacity',
+        label: 'BWSSB', fullName: 'Bangalore Water Supply & Sewerage Board', icon: 'water_drop', logo: '/logos/BWSSB.webp',
+        kpiLabel: 'Pressure Compliance', kpiIcon: 'opacity', accent: '#38BDF8',
         categories: [
-            { name: 'Water Leakage', pct: 42, color: 'bg-[#1a2a47]' },
-            { name: 'Sewage', pct: 28, color: 'bg-blue-500' },
-            { name: 'Bills & Payment', pct: 15, color: 'bg-slate-400' },
-            { name: 'Others', pct: 15, color: 'bg-slate-200' },
+            { name: 'Water Leakage', pct: 42, color: 'bg-sky-500' },
+            { name: 'Sewage', pct: 28, color: 'bg-blue-600' },
+            { name: 'Bills & Payment', pct: 15, color: 'bg-slate-500' },
+            { name: 'Others', pct: 15, color: 'bg-slate-600' },
         ],
     },
     bescom: {
-        label: 'BESCOM',
-        fullName: 'Bangalore Electricity Supply Company',
-        icon: 'bolt',
-        logo: '/logos/BESCOM.png',
-        kpiLabel: 'Grid Uptime',
-        kpiIcon: 'electric_bolt',
+        label: 'BESCOM', fullName: 'Bangalore Electricity Supply Company', icon: 'bolt', logo: '/logos/BESCOM.png',
+        kpiLabel: 'Grid Uptime', kpiIcon: 'electric_bolt', accent: '#FACC15',
         categories: [
-            { name: 'Power Outage', pct: 38, color: 'bg-[#1a2a47]' },
+            { name: 'Power Outage', pct: 38, color: 'bg-yellow-500' },
             { name: 'Meter Issues', pct: 25, color: 'bg-amber-500' },
             { name: 'Street Lights', pct: 22, color: 'bg-blue-500' },
-            { name: 'Billing Disputes', pct: 15, color: 'bg-slate-300' },
+            { name: 'Billing Disputes', pct: 15, color: 'bg-slate-600' },
         ],
     },
     bmtc: {
-        label: 'BMTC',
-        fullName: 'Bangalore Metropolitan Transport Corp',
-        icon: 'directions_bus',
-        logo: '/logos/BMTC.jpg',
-        kpiLabel: 'On-time Rate',
-        kpiIcon: 'schedule',
+        label: 'BMTC', fullName: 'Bangalore Metropolitan Transport Corp', icon: 'directions_bus', logo: '/logos/BMTC.jpg',
+        kpiLabel: 'On-time Rate', kpiIcon: 'schedule', accent: '#22C55E',
         categories: [
-            { name: 'Route Disruptions', pct: 40, color: 'bg-[#1a2a47]' },
+            { name: 'Route Disruptions', pct: 40, color: 'bg-green-500' },
             { name: 'Bus Breakdown', pct: 30, color: 'bg-red-500' },
             { name: 'Overcrowding', pct: 20, color: 'bg-amber-400' },
-            { name: 'Stop Damage', pct: 10, color: 'bg-slate-300' },
+            { name: 'Stop Damage', pct: 10, color: 'bg-slate-600' },
         ],
     },
     bda: {
-        label: 'BDA',
-        fullName: 'Bangalore Development Authority',
-        icon: 'architecture',
-        logo: '/logos/BDA.png',
-        kpiLabel: 'Approval Rate',
-        kpiIcon: 'assignment_turned_in',
+        label: 'BDA', fullName: 'Bangalore Development Authority', icon: 'architecture', logo: '/logos/BDA.png',
+        kpiLabel: 'Approval Rate', kpiIcon: 'assignment_turned_in', accent: '#A78BFA',
         categories: [
             { name: 'Illegal Construction', pct: 35, color: 'bg-red-500' },
-            { name: 'Encroachment', pct: 28, color: 'bg-[#1a2a47]' },
+            { name: 'Encroachment', pct: 28, color: 'bg-purple-500' },
             { name: 'OC Requests', pct: 22, color: 'bg-green-500' },
             { name: 'Layout Violations', pct: 15, color: 'bg-amber-400' },
         ],
     },
     gba: {
-        label: 'GBA',
-        fullName: 'Governing Body Authority',
-        icon: 'admin_panel_settings',
-        logo: '/logos/GBA.jpg',
-        kpiLabel: 'Compliance Index',
-        kpiIcon: 'policy',
+        label: 'GBA', fullName: 'Governing Body Authority', icon: 'admin_panel_settings', logo: '/logos/GBA.jpg',
+        kpiLabel: 'Compliance Index', kpiIcon: 'policy', accent: '#FB7185',
         categories: [
-            { name: 'Policy Queries', pct: 40, color: 'bg-[#1a2a47]' },
+            { name: 'Policy Queries', pct: 40, color: 'bg-rose-500' },
             { name: 'Audit Findings', pct: 30, color: 'bg-amber-500' },
             { name: 'Directives', pct: 20, color: 'bg-blue-500' },
-            { name: 'Others', pct: 10, color: 'bg-slate-300' },
+            { name: 'Others', pct: 10, color: 'bg-slate-600' },
         ],
     },
 };
 
 type Props = { params: Promise<{ dept: string }> };
 
-/**
- * Transform a server-side ClickHouse ticket into the shape expected
- * by the client's TicketTable / TicketDrawer components.
- */
 function transformTicket(t: any, idx: number) {
     const authority = (t.authority || '').toUpperCase();
     const prefix = authority.slice(0, 2) || 'XX';
     const ticketNo = `${prefix}-${String(idx + 1).padStart(4, '0')}`;
-
     return {
         id: t.id,
         ticket_no: ticketNo,
@@ -133,16 +101,14 @@ function transformTicket(t: any, idx: number) {
         category: t.dept || 'general',
         title: t.summary || 'Untitled',
         description: t.raw_text || t.reply || null,
-        location: null,
-        ward: null,
+        location: null, ward: null,
         urgency: URGENCY_MAP[t.urgency] ?? 'medium',
         status: STATUS_MAP[t.status] || t.status || 'open',
         assignee: t.approved_by || null,
         created_by: t.channel || 'web',
         created_at: t.timestamp || new Date().toISOString(),
         updated_at: t.approved_at && t.approved_at !== '1970-01-01T00:00:00'
-            ? t.approved_at
-            : t.timestamp || new Date().toISOString(),
+            ? t.approved_at : t.timestamp || new Date().toISOString(),
     };
 }
 
@@ -150,16 +116,13 @@ export default async function DeptDashboard({ params }: Props) {
     const { dept } = await params;
     if (!DEPT_META[dept]) notFound();
 
-    // Auth
     const cookieStore = await cookies();
     const token = cookieStore.get('civicflow_token')?.value;
     if (!token) redirect('/login');
     const user = await verifyToken(token);
     if (!user) redirect('/login');
-    // Officers can only see their own dept; admins can see any
     if (user.role !== 'admin' && user.department !== dept) redirect(`/dashboard/${user.department}`);
 
-    // ── Fetch tickets from the FastAPI server (ClickHouse) ──
     let tickets: any[] = [];
     let serverError = false;
     try {
@@ -171,55 +134,46 @@ export default async function DeptDashboard({ params }: Props) {
             const data = await res.json();
             tickets = (Array.isArray(data) ? data : []).map(transformTicket);
         } else {
-            console.error(`[dashboard] Server returned ${res.status}`);
             serverError = true;
         }
-    } catch (e: any) {
-        console.error('[dashboard] Failed to fetch from server:', e?.message || e);
+    } catch {
         serverError = true;
     }
 
-    // Compute KPIs
     const totalTickets = tickets.length;
     const activeTickets = tickets.filter(t => !['resolved', 'rejected'].includes(t.status)).length;
     const criticalCount = tickets.filter(t => t.urgency === 'high' && t.status !== 'resolved').length;
-
     const resolvedAllTime = tickets.filter(t => t.status === 'resolved').length;
     const resolutionRate = totalTickets > 0 ? ((resolvedAllTime / totalTickets) * 100).toFixed(1) : '0';
-
     const approvedAllTime = tickets.filter(t => ['approved', 'dispatched', 'resolved'].includes(t.status)).length;
     const approvalRate = totalTickets > 0 ? ((approvedAllTime / totalTickets) * 100).toFixed(1) : '0';
 
-    // Compute category distribution dynamically from ticket data
     const categoryCounts: Record<string, number> = {};
     for (const t of tickets) {
         const cat = t.category || 'other';
         categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
     }
-    const categoryColors = ['bg-[#1a2a47]', 'bg-blue-500', 'bg-amber-400', 'bg-red-500', 'bg-green-500', 'bg-slate-300'];
+    const catColors = ['bg-[#38BDF8]', 'bg-[#818CF8]', 'bg-[#FACC15]', 'bg-[#F87171]', 'bg-[#22C55E]', 'bg-slate-600'];
     const dynamicCategories = Object.entries(categoryCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 6)
+        .sort((a, b) => b[1] - a[1]).slice(0, 6)
         .map(([name, count], i) => ({
             name: name.charAt(0).toUpperCase() + name.slice(1),
             pct: totalTickets > 0 ? Math.round((count / totalTickets) * 100) : 0,
-            color: categoryColors[i % categoryColors.length],
+            color: catColors[i % catColors.length],
         }));
 
-    // Use dynamic categories if we have real data, otherwise fall back to meta
     const meta = DEPT_META[dept];
     const displayCategories = dynamicCategories.length > 0 ? dynamicCategories : meta.categories;
 
-    // Create recent "events" from the latest tickets
     const recentActivity = tickets.slice(0, 5).map((t, i) => ({
         id: i,
         ticket_no: t.ticket_no,
         action: t.status === 'resolved' ? 'resolved'
             : t.status === 'approved' ? 'approved'
-                : t.status === 'rejected' ? 'rejected'
-                    : t.status === 'in_progress' ? 'assigned'
-                        : t.status === 'dispatched' ? 'dispatched'
-                            : 'created',
+            : t.status === 'rejected' ? 'rejected'
+            : t.status === 'in_progress' ? 'assigned'
+            : t.status === 'dispatched' ? 'dispatched'
+            : 'created',
         actor: t.assignee || t.created_by || 'System',
         note: t.title,
         created_at: t.created_at,
@@ -229,14 +183,14 @@ export default async function DeptDashboard({ params }: Props) {
     const EVENT_ICON: Record<string, string> = {
         created: 'add_circle', resolved: 'check_circle', approved: 'assignment_turned_in',
         rejected: 'cancel', assigned: 'person', dispatched: 'local_shipping',
-        rectify: 'build', reopen: 'refresh', comment: 'chat',
     };
-    const EVENT_COLOR: Record<string, string> = {
-        created: 'bg-blue-50 text-blue-600', resolved: 'bg-green-50 text-green-600',
-        approved: 'bg-emerald-50 text-emerald-600', rejected: 'bg-red-50 text-red-600',
-        assigned: 'bg-blue-50 text-blue-600', dispatched: 'bg-indigo-50 text-indigo-600',
-        rectify: 'bg-amber-50 text-amber-600', comment: 'bg-slate-50 text-slate-500',
-        reopen: 'bg-slate-50 text-slate-500',
+    const EVENT_COLOR: Record<string, { text: string; bg: string }> = {
+        created:    { text: 'text-[#38BDF8]', bg: 'bg-[#38BDF8]/15' },
+        resolved:   { text: 'text-[#22C55E]', bg: 'bg-[#22C55E]/15' },
+        approved:   { text: 'text-[#22C55E]', bg: 'bg-[#22C55E]/15' },
+        rejected:   { text: 'text-[#F87171]', bg: 'bg-[#F87171]/15' },
+        assigned:   { text: 'text-[#38BDF8]', bg: 'bg-[#38BDF8]/15' },
+        dispatched: { text: 'text-[#818CF8]', bg: 'bg-[#818CF8]/15' },
     };
 
     function timeAgo(dateStr: string) {
@@ -249,93 +203,101 @@ export default async function DeptDashboard({ params }: Props) {
         return `${Math.floor(hrs / 24)}d ago`;
     }
 
+    const kpiCards = [
+        {
+            label: 'Active Tickets', value: activeTickets, icon: 'receipt_long',
+            color: '#38BDF8', bg: 'rgba(56,189,248,0.1)', badge: 'Live',
+        },
+        {
+            label: 'High Urgency', value: criticalCount, icon: 'priority_high',
+            color: criticalCount > 0 ? '#F87171' : '#94A3B8',
+            bg: criticalCount > 0 ? 'rgba(248,113,113,0.1)' : 'rgba(148,163,184,0.1)',
+            badge: criticalCount > 0 ? 'Alert' : null,
+        },
+        {
+            label: 'Approval Rate', value: `${approvalRate}%`, icon: 'assignment_turned_in',
+            color: '#22C55E', bg: 'rgba(34,197,94,0.1)', badge: null,
+        },
+        {
+            label: 'Resolution Rate', value: `${resolutionRate}%`, icon: 'check_circle',
+            color: meta.accent, bg: `${meta.accent}1A`, badge: null,
+        },
+    ];
+
     return (
         <DashboardLayout dept={dept} deptLabel={meta.label} deptIcon={meta.icon} deptLogo={meta.logo || undefined} username={user.username}>
-            {/* ── Page Title ──────────────────────────────────────── */}
+            {/* Page Title */}
             <div className="mb-8">
-                <h1 className="text-3xl font-black tracking-tight text-[#1a2a47]">{meta.label} Dashboard</h1>
-                <p className="text-slate-500 mt-1">{meta.fullName} — Operations Management</p>
+                <div className="flex items-center gap-3 mb-2">
+                    {meta.logo && (
+                        <img src={meta.logo} alt={`${meta.label} logo`} className="h-10 w-10 rounded-xl object-cover ring-1 ring-white/10" />
+                    )}
+                    <div>
+                        <h1 className="font-display text-2xl font-800 text-white">{meta.label} Dashboard</h1>
+                        <p className="text-slate-500 text-sm">{meta.fullName} — Operations Management</p>
+                    </div>
+                </div>
             </div>
 
-            {/* ── Server Status Banner ──────────────────────────────── */}
+            {/* Server Error Banner */}
             {serverError && (
-                <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
-                    <span className="material-symbols-outlined text-amber-600">warning</span>
+                <div className="mb-6 border border-[#F97316]/20 rounded-xl p-4 flex items-center gap-3" style={{ background: 'rgba(249,115,22,0.08)' }}>
+                    <span className="material-symbols-outlined text-[#F97316]" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
                     <div>
-                        <p className="text-sm font-semibold text-amber-800">Server Connection Issue</p>
-                        <p className="text-xs text-amber-600">Could not fetch live ticket data from the server. Showing cached or empty state.</p>
+                        <p className="text-sm font-semibold text-[#F97316]">Server Connection Issue</p>
+                        <p className="text-xs text-slate-500 mt-0.5">Could not fetch live ticket data. Showing empty state.</p>
                     </div>
                 </div>
             )}
 
-            {/* ── KPI Cards ──────────────────────────────────────── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                {/* Active Tickets */}
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                        <span className="p-2 bg-blue-50 text-blue-600 rounded-lg material-symbols-outlined">receipt_long</span>
-                        <span className="text-green-600 text-xs font-bold bg-green-50 px-2 py-1 rounded">Active</span>
+            {/* KPI Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {kpiCards.map((k) => (
+                    <div key={k.label} className="rounded-2xl border border-white/[0.07] p-6 transition-all hover:border-white/[0.12]" style={{ background: 'var(--bg-surface)' }}>
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: k.bg }}>
+                                <span className="material-symbols-outlined text-xl" style={{ color: k.color, fontVariationSettings: "'FILL' 1" }}>{k.icon}</span>
+                            </div>
+                            {k.badge && (
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full" style={{ background: k.bg, color: k.color }}>
+                                    {k.badge}
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">{k.label}</p>
+                        <h3 className="font-display text-2xl font-800 mt-1" style={{ color: k.color }}>{k.value}</h3>
                     </div>
-                    <p className="text-slate-500 text-sm font-medium">Active Tickets</p>
-                    <h3 className="text-2xl font-bold mt-1 text-slate-900">{activeTickets.toLocaleString()}</h3>
-                </div>
-                {/* Critical */}
-                <div className="bg-white p-6 rounded-xl border border-red-100 shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                        <span className="p-2 bg-red-50 text-red-600 rounded-lg material-symbols-outlined">priority_high</span>
-                        {criticalCount > 0 && (
-                            <span className="text-red-600 text-xs font-bold bg-red-50 px-2 py-1 rounded">High Alert</span>
-                        )}
-                    </div>
-                    <p className="text-slate-500 text-sm font-medium">High Urgency</p>
-                    <h3 className={`text-2xl font-bold mt-1 ${criticalCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
-                        {criticalCount}
-                    </h3>
-                </div>
-                {/* Approval Rate */}
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                        <span className="p-2 bg-emerald-50 text-emerald-600 rounded-lg material-symbols-outlined">assignment_turned_in</span>
-                    </div>
-                    <p className="text-slate-500 text-sm font-medium">Approval Rate</p>
-                    <h3 className="text-2xl font-bold mt-1 text-slate-900">{approvalRate}%</h3>
-                </div>
-                {/* Resolution Rate */}
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                        <span className="p-2 bg-[#1a2a47]/10 text-[#1a2a47] rounded-lg material-symbols-outlined">check_circle</span>
-                    </div>
-                    <p className="text-slate-500 text-sm font-medium">Resolution Rate</p>
-                    <h3 className="text-2xl font-bold mt-1 text-slate-900">{resolutionRate}%</h3>
-                </div>
+                ))}
             </div>
 
-            {/* ── Main Grid ──────────────────────────────────────── */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left: Ticket Queue (col-span-2) */}
+            {/* Main Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Ticket Queue (col-span-2) */}
                 <div className="lg:col-span-2 space-y-4">
                     <div className="flex justify-between items-center">
-                        <h2 className="font-bold text-lg text-slate-900">Ticket Queue</h2>
-                        <span className="text-sm text-slate-500">{totalTickets} total</span>
+                        <h2 className="font-bold text-white">Ticket Queue</h2>
+                        <span className="text-xs text-slate-500 font-semibold">{totalTickets} total</span>
                     </div>
-                    {/* TicketTable is a Client Component */}
                     <TicketTable initialTickets={tickets} />
                 </div>
 
-                {/* Right: Volume chart + Activity feed */}
-                <div className="space-y-8">
+                {/* Right column */}
+                <div className="space-y-6">
                     {/* Volume by Category */}
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                        <h2 className="font-bold text-slate-900 mb-6">Volume by Category</h2>
+                    <div className="rounded-2xl border border-white/[0.07] p-6" style={{ background: 'var(--bg-surface)' }}>
+                        <h2 className="font-bold text-white mb-5 text-sm">Volume by Category</h2>
                         <div className="space-y-4">
                             {displayCategories.map(cat => (
-                                <div key={cat.name} className="space-y-1">
-                                    <div className="flex justify-between text-xs font-medium text-slate-500">
-                                        <span>{cat.name}</span>
+                                <div key={cat.name} className="space-y-1.5">
+                                    <div className="flex justify-between text-xs font-semibold text-slate-500">
+                                        <span className="capitalize">{cat.name}</span>
                                         <span>{cat.pct}%</span>
                                     </div>
-                                    <div className="w-full bg-slate-100 rounded-full h-2">
-                                        <div className={`${cat.color} h-2 rounded-full transition-all`} style={{ width: `${cat.pct}%` }} />
+                                    <div className="w-full rounded-full h-1.5" style={{ background: 'var(--bg-elevated)' }}>
+                                        <div
+                                            className={`${cat.color} h-1.5 rounded-full transition-all duration-700`}
+                                            style={{ width: `${cat.pct}%` }}
+                                        />
                                     </div>
                                 </div>
                             ))}
@@ -343,29 +305,34 @@ export default async function DeptDashboard({ params }: Props) {
                     </div>
 
                     {/* Recent Activity */}
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                        <h2 className="font-bold text-slate-900 mb-6">Recent Activity</h2>
-                        <div className="space-y-5">
+                    <div className="rounded-2xl border border-white/[0.07] p-6" style={{ background: 'var(--bg-surface)' }}>
+                        <h2 className="font-bold text-white mb-5 text-sm">Recent Activity</h2>
+                        <div className="space-y-4">
                             {recentActivity.length === 0 && (
-                                <p className="text-sm text-slate-400 text-center py-4">No recent activity.</p>
+                                <p className="text-xs text-slate-600 text-center py-4">No recent activity.</p>
                             )}
-                            {recentActivity.map(ev => (
-                                <div key={ev.id} className="flex gap-4">
-                                    <div className={`flex-shrink-0 size-8 rounded-full flex items-center justify-center ${EVENT_COLOR[ev.action] ?? 'bg-slate-50 text-slate-500'}`}>
-                                        <span className="material-symbols-outlined text-sm">{EVENT_ICON[ev.action] ?? 'circle'}</span>
+                            {recentActivity.map(ev => {
+                                const ec = EVENT_COLOR[ev.action] ?? { text: 'text-slate-500', bg: 'bg-slate-800' };
+                                return (
+                                    <div key={ev.id} className="flex gap-3">
+                                        <div className={`flex-shrink-0 size-8 rounded-full flex items-center justify-center ${ec.bg}`}>
+                                            <span className={`material-symbols-outlined text-sm ${ec.text}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                                                {EVENT_ICON[ev.action] ?? 'circle'}
+                                            </span>
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-xs font-semibold text-slate-300 truncate">
+                                                #{ev.ticket_no} — {ev.action.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
+                                            </p>
+                                            <p className="text-[11px] text-slate-600 mt-0.5 truncate">
+                                                {timeAgo(ev.created_at)}
+                                                {ev.actor && ` • ${ev.actor}`}
+                                                {ev.note && ` — "${ev.note}"`}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-800">
-                                            #{ev.ticket_no} — {ev.action.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
-                                        </p>
-                                        <p className="text-xs text-slate-400 mt-0.5">
-                                            {timeAgo(ev.created_at)}
-                                            {ev.actor && ` • by ${ev.actor}`}
-                                            {ev.note && ` — "${ev.note}"`}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

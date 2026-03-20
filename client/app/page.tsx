@@ -6,7 +6,7 @@ const AUTHORITIES = [
   { icon: 'corporate_fare', short: 'BBMP', full: 'Mahanagara Palike', logo: '/logos/BBMP.jpg', href: 'https://bbmp.gov.in/home' },
   { icon: 'water_drop', short: 'BWSSB', full: 'Water & Sewerage', logo: '/logos/BWSSB.webp', href: 'https://bwssb.karnataka.gov.in/en' },
   { icon: 'bolt', short: 'BESCOM', full: 'Electricity Supply', logo: '/logos/BESCOM.png', href: 'https://www.bescom.co.in/bescom/main/home' },
-  { icon: 'directions_bus', short: 'BMTC', full: 'Metropolitan Transport', logo: '/logos/BMTC.jpg', href: 'https://mybmtc.karnataka.gov.in' },
+  { icon: 'directions_bus', short: 'BMTC', full: 'Metro Transport', logo: '/logos/BMTC.jpg', href: 'https://mybmtc.karnataka.gov.in' },
   { icon: 'architecture', short: 'BDA', full: 'Development Authority', logo: '/logos/BDA.png', href: 'https://bdakarnataka.in' },
   { icon: 'local_police', short: 'BCP', full: 'City Police', logo: '/logos/BCP.jpg', href: 'https://bcp.karnataka.gov.in/' },
 ];
@@ -16,157 +16,202 @@ const FEATURES = [
     icon: 'analytics',
     title: 'Data-Driven Decisions',
     desc: 'Leverage advanced analytics to prioritize city-wide infrastructure projects based on real-time urgency and impact.',
+    color: '#38BDF8',
   },
   {
     icon: 'dynamic_feed',
     title: 'Operational Efficiency',
     desc: 'Streamline service ticket lifecycles across multiple government bodies with automated routing and status tracking.',
+    color: '#818CF8',
   },
   {
     icon: 'verified_user',
     title: 'Public Trust',
     desc: 'Transparent governance through secure, verifiable operational tracking that ensures accountability at every level.',
+    color: '#34D399',
   },
+];
+
+const STATS = [
+  { value: '6+', label: 'Departments' },
+  { value: '10K+', label: 'Tickets Resolved' },
+  { value: '98%', label: 'Uptime SLA' },
+  { value: '<2hr', label: 'Avg Response' },
 ];
 
 export default function LandingPage() {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-[#f6f7f8]">
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden" style={{ background: 'var(--bg)' }}>
       <Navbar />
 
       <main className="flex-grow">
-        {/* ── Hero Section ── */}
-        <section className="relative flex min-h-[85vh] items-center justify-center px-6 py-20">
-          {/* Background image with overlay */}
-          <div className="absolute inset-0 z-0 overflow-hidden">
-            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px]" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+        {/* ── Hero ──────────────────────────────────────────── */}
+        <section className="relative flex min-h-[90vh] items-center justify-center px-6 py-24 overflow-hidden grain-overlay">
+          {/* Background image + dark overlay */}
+          <div className="absolute inset-0 z-0">
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAU0Pw7909_Ah9eop4cagfHQQ5Wxmvf_dZzjKaXietNqcbIv2xp3zs5RX875D2fN8ND59kWntjGsANPzm7qLQfYlUecyzC5VXxUxjCJxEjOWEtI5NqdSueob-Ju4NYUnKolfz2ZpOXHh04j5iaB5K-OQzYMpkrZTaB5PqoKhq3wAZ4AFTOzows6JJWEy-6ylbhXGH-qYH83qnW-EMC-3pnTkfdnjOQHLLrBkj4TwPkquHo7Jc3FDV9OMPC44YGPOkhdrZlTOKC6724"
               alt="Bengaluru Vidhana Soudha"
               className="h-full w-full object-cover"
             />
+            {/* Multi-layer overlay for depth */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/85 via-[#020617]/75 to-[#020617]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#020617]/60 via-transparent to-[#020617]/60" />
           </div>
 
-          {/* Hero content */}
+          {/* Radial glow centers */}
+          <div className="pointer-events-none absolute inset-0 z-0">
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-[#38BDF8]/5 blur-[120px]" />
+            <div className="absolute bottom-0 left-1/4 h-[300px] w-[300px] rounded-full bg-[#818CF8]/8 blur-[90px]" />
+          </div>
+
+          {/* Content */}
           <div className="relative z-10 mx-auto max-w-4xl text-center">
+            {/* Badge */}
             <div
-              className="mb-6 inline-flex items-center rounded-full bg-[#1a2a47]/10 px-4 py-1.5 text-sm font-semibold text-[#1a2a47]"
-              style={{ animation: 'fadeInUp 0.5s ease-out forwards' }}
+              className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#38BDF8]/20 bg-[#38BDF8]/8 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#38BDF8] animate-fade-in-up"
             >
-              <span className="mr-2 flex h-2 w-2 rounded-full bg-[#1a2a47]" />
-              Official Government Portal
+              <span className="flex h-1.5 w-1.5 rounded-full bg-[#38BDF8] shadow-[0_0_6px_rgba(56,189,248,0.8)]" />
+              Official Government Portal — Karnataka
             </div>
 
+            {/* Heading */}
             <h1
-              className="mb-6 text-5xl font-black leading-tight tracking-tight text-slate-900 md:text-7xl"
-              style={{ animation: 'fadeInUp 0.5s 0.1s ease-out both' }}
+              className="font-display mb-6 text-5xl font-800 leading-[1.05] tracking-tight text-white md:text-7xl animate-fade-in-up animate-delay-100"
             >
-              CivicFlow — Powering{' '}
-              <span className="text-[#1a2a47]">Bengaluru&apos;s</span> Governance
+              CivicFlow —{' '}
+              <span className="gradient-text">Powering</span>
+              <br />
+              <span className="text-white">Bengaluru&apos;s</span>{' '}
+              <span className="text-slate-400">Governance</span>
             </h1>
 
+            {/* Sub */}
             <p
-              className="mx-auto mb-10 max-w-2xl text-lg font-medium leading-relaxed text-slate-700 md:text-xl"
-              style={{ animation: 'fadeInUp 0.5s 0.2s ease-out both' }}
+              className="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-slate-400 animate-fade-in-up animate-delay-200"
             >
-              A secure, unified platform for civic authorities to manage service tickets, monitor
-              infrastructure, and streamline city operations in real-time.
+              A secure, unified platform for civic authorities to manage service tickets,
+              monitor critical infrastructure, and streamline city operations in real-time.
             </p>
 
+            {/* CTAs */}
             <div
-              className="flex flex-col items-center justify-center gap-4 sm:flex-row"
-              style={{ animation: 'fadeInUp 0.5s 0.3s ease-out both' }}
+              className="flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in-up animate-delay-300"
             >
               <Link
                 href="/login"
-                className="flex h-14 min-w-[200px] items-center justify-center rounded-xl bg-[#1a2a47] px-8 text-lg font-bold text-white shadow-lg shadow-[#1a2a47]/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:bg-[#243761]"
+                className="btn-accent flex h-14 min-w-[200px] items-center justify-center gap-2 rounded-xl px-8 text-base font-bold shadow-[0_8px_32px_rgba(56,189,248,0.25)]"
               >
+                <span className="material-symbols-outlined text-xl">login</span>
                 Access Dashboard
               </Link>
               <a
                 href="#about"
-                className="flex h-14 min-w-[200px] items-center justify-center rounded-xl border-2 border-slate-200 bg-white px-8 text-lg font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300"
+                className="flex h-14 min-w-[200px] items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 text-base font-bold text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/20"
               >
+                <span className="material-symbols-outlined text-xl">info</span>
                 Learn More
               </a>
             </div>
           </div>
+
+          {/* Bottom fade */}
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#020617] to-transparent" />
         </section>
 
-        {/* ── Stats Bar ── */}
-        <div className="bg-[#1a2a47] py-8">
+        {/* ── Stats Bar ────────────────────────────────────── */}
+        <div className="relative border-y py-10" style={{ borderColor: 'var(--border)', background: 'var(--bg-surface)' }}>
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
-            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-              {[
-                { value: '5+', label: 'Departments Connected' },
-                { value: '10K+', label: 'Tickets Resolved' },
-                { value: '98%', label: 'Uptime SLA' },
-                { value: '< 2hr', label: 'Avg Response Time' },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-3xl font-black text-white">{stat.value}</div>
-                  <div className="mt-1 text-sm font-medium text-white/60">{stat.label}</div>
+            <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+              {STATS.map((s) => (
+                <div key={s.label} className="text-center">
+                  <div className="font-display text-4xl font-800" style={{ color: 'var(--text-primary)' }}>{s.value}</div>
+                  <div className="mt-1 text-sm font-medium" style={{ color: 'var(--text-muted)' }}>{s.label}</div>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* ── About Section ── */}
-        <section className="bg-white py-24" id="about">
+        {/* ── About / Features ─────────────────────────────── */}
+        <section className="py-28" id="about" style={{ background: 'var(--bg)' }}>
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
+            {/* Section label */}
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-px flex-1 max-w-[3rem] bg-[#38BDF8]/40" />
+              <span className="text-xs font-bold uppercase tracking-widest text-[#38BDF8]">About CivicFlow</span>
+            </div>
+
             <div className="mb-16 max-w-3xl">
-              <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-[#1a2a47]">
-                About CivicFlow
+              <h2 className="font-display text-4xl font-800 leading-tight" style={{ color: 'var(--text-primary)' }}>
+                Built for Trust<br />
+                <span style={{ color: 'var(--text-muted)' }}>and Efficiency</span>
               </h2>
-              <h3 className="text-4xl font-extrabold text-slate-900">
-                Built for Trust and Efficiency
-              </h3>
-              <p className="mt-6 text-lg leading-relaxed text-slate-600">
+              <p className="mt-6 text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 CivicFlow is the central nervous system of Bengaluru&apos;s municipal administration.
                 We provide a robust digital infrastructure that connects various departments, enabling
                 data-driven decision making and faster resolution of civic issues.
               </p>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-3">
-              {FEATURES.map((f) => (
+            <div className="grid gap-6 md:grid-cols-3">
+              {FEATURES.map((f, i) => (
                 <div
                   key={f.title}
-                  className="group rounded-2xl border border-slate-100 bg-slate-50 p-8 transition-all hover:border-[#1a2a47]/20 hover:bg-white hover:shadow-xl"
+                  className="group relative rounded-2xl p-8 transition-all duration-300 animate-fade-in-up"
+                  style={{ animationDelay: `${i * 0.1}s`, background: 'var(--bg-surface)', border: '1px solid var(--border)' }}
                 >
-                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-[#1a2a47] text-white">
-                    <span className="material-symbols-outlined">{f.icon}</span>
+                  {/* Top accent line on hover */}
+                  <div
+                    className="absolute inset-x-0 top-0 h-px rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{ background: `linear-gradient(90deg, transparent, ${f.color}, transparent)` }}
+                  />
+
+                  <div
+                    className="mb-6 flex h-13 w-13 items-center justify-center rounded-xl"
+                    style={{ background: `${f.color}1A` }}
+                  >
+                    <span
+                      className="material-symbols-outlined text-2xl"
+                      style={{ color: f.color, fontVariationSettings: "'FILL' 1" }}
+                    >
+                      {f.icon}
+                    </span>
                   </div>
-                  <h4 className="mb-3 text-xl font-bold text-slate-900">{f.title}</h4>
-                  <p className="text-slate-600">{f.desc}</p>
+                  <h3 className="mb-3 text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{f.title}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{f.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── Authorities Section ── */}
-        <section className="py-24" id="authorities">
+        {/* ── Authorities ──────────────────────────────────── */}
+        <section className="py-24 border-t border-white/[0.05]" id="authorities" style={{ background: 'var(--bg-surface)' }}>
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
-            <div className="mb-16 text-center">
-              <h3 className="text-3xl font-extrabold text-slate-900">Authorities Served</h3>
-              <p className="mt-4 text-slate-600">
+            <div className="mb-14 text-center">
+              <div className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#38BDF8]">
+                <span className="h-px w-8 bg-[#38BDF8]/40" />
+                Partner Bodies
+                <span className="h-px w-8 bg-[#38BDF8]/40" />
+              </div>
+              <h2 className="font-display text-3xl font-800" style={{ color: 'var(--text-primary)' }}>Authorities Served</h2>
+              <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>
                 Unified collaboration between Bengaluru&apos;s key governing bodies.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
               {AUTHORITIES.map((a) => (
                 <a
                   key={a.short}
                   href={a.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-sm transition-all hover:shadow-md hover:-translate-y-1"
+                  className="group flex flex-col items-center justify-center rounded-2xl p-6 text-center transition-all duration-300 cursor-pointer"
+                  style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
                 >
-                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f6f7f8] overflow-hidden">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full overflow-hidden" style={{ background: 'var(--bg-hover)', border: '1px solid var(--border)' }}>
                     {a.logo ? (
                       <img
                         src={a.logo}
@@ -174,49 +219,68 @@ export default function LandingPage() {
                         className="h-16 w-16 rounded-full object-cover scale-110"
                       />
                     ) : (
-                      <span className="material-symbols-outlined text-3xl text-[#1a2a47]">
+                      <span className="material-symbols-outlined text-3xl text-[#38BDF8]" style={{ fontVariationSettings: "'FILL' 1" }}>
                         {a.icon}
                       </span>
                     )}
                   </div>
-                  <p className="text-lg font-bold text-slate-900 group-hover:text-[#1a2a47] transition-colors">{a.short}</p>
-                  <p className="text-xs text-slate-500">{a.full}</p>
-                  <span className="material-symbols-outlined text-xs text-slate-300 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
+                  <p className="text-sm font-bold transition-colors" style={{ color: 'var(--text-primary)' }}>{a.short}</p>
+                  <p className="mt-0.5 text-[10px]" style={{ color: 'var(--text-muted)' }}>{a.full}</p>
+                  <span className="material-symbols-outlined mt-2 text-[11px] text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    open_in_new
+                  </span>
                 </a>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── Security CTA ── */}
-        <section className="mx-auto max-w-7xl px-6 pb-24 lg:px-10" id="security">
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-[#1a2a47] px-8 py-20 text-center text-white lg:px-16">
-            {/* Decorative blobs */}
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5" />
-            <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/5" />
+        {/* ── Security CTA ─────────────────────────────────── */}
+        <section className="py-24 px-6 lg:px-10" id="security" style={{ background: 'var(--bg)' }}>
+          <div className="mx-auto max-w-7xl">
+            <div className="relative overflow-hidden rounded-3xl px-8 py-20 text-center" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+              {/* Background glow */}
+              <div className="pointer-events-none absolute inset-0">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-[#38BDF8]/5 blur-[100px]" />
+              </div>
+              {/* Grid pattern */}
+              <div
+                className="pointer-events-none absolute inset-0 opacity-[0.03]"
+                style={{
+                  backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+                  backgroundSize: '48px 48px',
+                }}
+              />
 
-            <div className="relative z-10 mx-auto max-w-2xl">
-              <span className="material-symbols-outlined mb-6 text-6xl opacity-80">encrypted</span>
-              <h2 className="mb-6 text-4xl font-extrabold tracking-tight md:text-5xl">
-                Secure Access for Officials
-              </h2>
-              <p className="mb-10 text-lg opacity-90">
-                Authorized personnel only. Access requires valid government credentials. All sessions
-                are monitored and logged by the Department of e-Governance.
-              </p>
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-10 py-4 text-xl font-bold text-[#1a2a47] transition-all hover:scale-105 active:scale-95"
-              >
-                Login to Dashboard
-                <span className="material-symbols-outlined">login</span>
-              </Link>
-              <p className="mt-6 text-sm opacity-60">
-                Having trouble logging in?{' '}
-                <a href="#" className="underline">
-                  Contact IT Support
-                </a>
-              </p>
+              <div className="relative z-10 mx-auto max-w-2xl">
+                <div className="mb-6 flex justify-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#38BDF8]/20 bg-[#38BDF8]/10">
+                    <span className="material-symbols-outlined text-3xl text-[#38BDF8]" style={{ fontVariationSettings: "'FILL' 1" }}>encrypted</span>
+                  </div>
+                </div>
+                <h2 className="font-display mb-6 text-4xl font-800 tracking-tight md:text-5xl" style={{ color: 'var(--text-primary)' }}>
+                  Secure Access
+                  <br />
+                  <span className="gradient-text">for Officials</span>
+                </h2>
+                <p className="mb-10 text-lg" style={{ color: 'var(--text-secondary)' }}>
+                  Authorized personnel only. Access requires valid government credentials. All sessions
+                  are monitored and logged by the Department of e-Governance.
+                </p>
+                <Link
+                  href="/login"
+                  className="btn-accent inline-flex items-center gap-2 rounded-xl px-10 py-4 text-lg font-bold shadow-[0_8px_32px_rgba(56,189,248,0.3)]"
+                >
+                  Login to Dashboard
+                  <span className="material-symbols-outlined">arrow_forward</span>
+                </Link>
+                <p className="mt-6 text-sm text-slate-600">
+                  Having trouble?{' '}
+                  <a href="#" className="text-slate-400 hover:text-white transition-colors underline underline-offset-2">
+                    Contact IT Support
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
         </section>

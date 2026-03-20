@@ -6,17 +6,16 @@ import Link from 'next/link';
 import Footer from '@/components/Footer';
 
 const DEPARTMENTS = [
-    { value: 'bbmp', label: 'BBMP (Bruhat Bengaluru Mahanagara Palike)' },
-    { value: 'bwssb', label: 'BWSSB (Bangalore Water Supply & Sewerage Board)' },
-    { value: 'bescom', label: 'BESCOM (Bangalore Electricity Supply Company)' },
-    { value: 'bmtc', label: 'BMTC (Bangalore Metropolitan Transport Corp)' },
-    { value: 'bda', label: 'BDA (Bangalore Development Authority)' },
-    { value: 'bcp', label: 'BCP (Bengaluru City Police)' },
-    { value: 'gba', label: 'GBA (Governing Body Authority)' },
+    { value: 'bbmp', label: 'BBMP — Bruhat Bengaluru Mahanagara Palike' },
+    { value: 'bwssb', label: 'BWSSB — Water Supply & Sewerage Board' },
+    { value: 'bescom', label: 'BESCOM — Electricity Supply Company' },
+    { value: 'bmtc', label: 'BMTC — Metropolitan Transport Corp' },
+    { value: 'bda', label: 'BDA — Bangalore Development Authority' },
+    { value: 'bcp', label: 'BCP — Bengaluru City Police' },
+    { value: 'gba', label: 'GBA — Governing Body Authority' },
 ];
 
-// Admin is kept separate — shown at top with a visual divider
-const ADMIN_OPTION = { value: 'admin', label: '⚙ System Administrator' };
+const ADMIN_OPTION = { value: 'admin', label: 'System Administrator' };
 
 export default function LoginPage() {
     const router = useRouter();
@@ -25,21 +24,8 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    /* ── Login state ── */
-    const [loginForm, setLoginForm] = useState({
-        email: '',
-        password: '',
-        department: '',
-    });
-
-    /* ── Signup state ── */
-    const [signupForm, setSignupForm] = useState({
-        fullName: '',
-        email: '',
-        username: '',
-        password: '',
-        department: '',
-    });
+    const [loginForm, setLoginForm] = useState({ email: '', password: '', department: '' });
+    const [signupForm, setSignupForm] = useState({ fullName: '', email: '', username: '', password: '', department: '' });
 
     async function handleLogin(e: React.FormEvent) {
         e.preventDefault();
@@ -95,47 +81,42 @@ export default function LoginPage() {
         }
     }
 
-    const inputClass =
-        'w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1a2a47] focus:border-transparent outline-none transition-all text-sm placeholder:text-slate-400';
-
-    const selectClass =
-        'appearance-none w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1a2a47] focus:border-transparent outline-none transition-all text-sm';
-
     return (
-        <div className="relative min-h-screen flex flex-col bg-[#f6f7f8]">
-            {/* Background decoration */}
-            <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#1a2a47] rounded-full blur-3xl opacity-10" />
-                <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#1a2a47]/20 rounded-full blur-[120px] opacity-10" />
+        <div className="relative min-h-screen flex flex-col" style={{ background: 'var(--bg)' }}>
+            {/* Background glows */}
+            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+                <div className="absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full bg-[#38BDF8]/5 blur-[120px]" />
+                <div className="absolute -bottom-32 -right-32 h-[500px] w-[500px] rounded-full bg-[#818CF8]/6 blur-[120px]" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-[#0F172A]/60 blur-[80px]" />
             </div>
 
             {/* Top bar */}
-            <div className="relative z-10 flex items-center justify-between px-6 py-4 lg:px-10">
+            <div className="relative z-10 flex items-center justify-between px-6 py-5 lg:px-10">
                 <Link href="/" className="flex items-center gap-2.5 group">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a2a47] text-white transition-transform group-hover:scale-105">
-                        <span className="material-symbols-outlined text-lg">account_balance</span>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#38BDF8] to-[#0EA5E9] text-[#020617] shadow-[0_0_16px_rgba(56,189,248,0.2)] transition-all group-hover:shadow-[0_0_24px_rgba(56,189,248,0.35)] group-hover:scale-105">
+                        <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance</span>
                     </div>
-                    <span className="text-lg font-extrabold tracking-tight text-[#1a2a47]">CivicFlow</span>
+                    <span className="font-display text-lg font-700 text-white">Civic<span className="text-[#38BDF8]">Flow</span></span>
                 </Link>
-                <Link href="/" className="text-sm font-medium text-slate-500 hover:text-[#1a2a47] transition-colors flex items-center gap-1">
+                <Link href="/" className="flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-300 transition-colors">
                     <span className="material-symbols-outlined text-base">arrow_back</span>
                     Back to Home
                 </Link>
             </div>
 
             <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 py-8">
-                <div className="w-full max-w-[460px]">
+                <div className="w-full max-w-[460px] animate-fade-in-up">
                     {/* Card */}
-                    <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <div className="rounded-2xl border border-white/[0.08] overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.5)]" style={{ background: 'var(--bg-surface)' }}>
                         {/* Card Header */}
-                        <div className="pt-8 pb-4 px-8 flex flex-col items-center">
+                        <div className="pt-8 pb-5 px-8 flex flex-col items-center border-b border-white/[0.06]">
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="h-10 w-10 flex items-center justify-center bg-[#1a2a47] rounded-xl text-white">
-                                    <span className="material-symbols-outlined">account_balance</span>
+                                <div className="h-10 w-10 flex items-center justify-center bg-gradient-to-br from-[#38BDF8] to-[#0EA5E9] rounded-xl text-[#020617] shadow-[0_0_16px_rgba(56,189,248,0.3)]">
+                                    <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance</span>
                                 </div>
-                                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">CivicFlow</h1>
+                                <h1 className="font-display text-2xl font-700 text-white tracking-tight">CivicFlow</h1>
                             </div>
-                            <h2 className="text-slate-900 text-lg font-semibold">
+                            <h2 className="text-white text-base font-semibold">
                                 {tab === 'login' ? 'Official Portal Login' : 'Create Official Account'}
                             </h2>
                             <p className="text-slate-500 text-sm mt-1 text-center">
@@ -146,46 +127,48 @@ export default function LoginPage() {
                         </div>
 
                         {/* Tabs */}
-                        <div className="flex mx-8 mb-2 rounded-xl bg-slate-100 p-1">
+                        <div className="flex mx-8 mt-5 mb-2 rounded-xl p-1 border border-white/[0.06]" style={{ background: 'var(--bg-elevated)' }}>
                             <button
                                 onClick={() => { setTab('login'); setError(''); }}
-                                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${tab === 'login'
-                                    ? 'bg-white text-[#1a2a47] shadow-sm'
-                                    : 'text-slate-500 hover:text-slate-700'
-                                    }`}
+                                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer ${
+                                    tab === 'login'
+                                        ? 'bg-[#38BDF8] text-[#020617] shadow-[0_2px_8px_rgba(56,189,248,0.3)]'
+                                        : 'text-slate-400 hover:text-slate-200'
+                                }`}
                             >
                                 Sign In
                             </button>
                             <button
                                 onClick={() => { setTab('signup'); setError(''); }}
-                                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${tab === 'signup'
-                                    ? 'bg-white text-[#1a2a47] shadow-sm'
-                                    : 'text-slate-500 hover:text-slate-700'
-                                    }`}
+                                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer ${
+                                    tab === 'signup'
+                                        ? 'bg-[#38BDF8] text-[#020617] shadow-[0_2px_8px_rgba(56,189,248,0.3)]'
+                                        : 'text-slate-400 hover:text-slate-200'
+                                }`}
                             >
                                 Register
                             </button>
                         </div>
 
-                        {/* Error banner */}
+                        {/* Error */}
                         {error && (
-                            <div className="mx-8 mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-red-500 text-base">error</span>
-                                <p className="text-sm text-red-700 font-medium">{error}</p>
+                            <div className="mx-8 mt-3 border border-red-500/20 rounded-lg px-4 py-3 flex items-center gap-2" style={{ background: 'rgba(248,113,113,0.08)' }}>
+                                <span className="material-symbols-outlined text-red-400 text-base">error</span>
+                                <p className="text-sm text-red-300 font-medium">{error}</p>
                             </div>
                         )}
 
                         {/* ── LOGIN FORM ── */}
                         {tab === 'login' && (
                             <form onSubmit={handleLogin} className="px-8 pb-8 pt-4 space-y-4">
-                                {/* Department */}
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-sm font-medium text-slate-700">Select Authority</label>
+                                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Select Authority</label>
                                     <div className="relative">
                                         <select
                                             value={loginForm.department}
                                             onChange={(e) => setLoginForm({ ...loginForm, department: e.target.value })}
-                                            className={selectClass}
+                                            className="input-dark appearance-none pr-10 cursor-pointer"
+                                            style={{ background: 'var(--bg-elevated)', color: loginForm.department ? 'var(--text-primary)' : 'var(--text-muted)' }}
                                         >
                                             <option value="" disabled>Choose your department</option>
                                             <option value={ADMIN_OPTION.value}>{ADMIN_OPTION.label}</option>
@@ -200,33 +183,31 @@ export default function LoginPage() {
                                     </div>
                                 </div>
 
-                                {/* Email / Username */}
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-sm font-medium text-slate-700">Username / Email</label>
+                                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Username / Email</label>
                                     <input
                                         type="text"
                                         placeholder="e.g. johndoe@karnataka.gov.in"
                                         value={loginForm.email}
                                         onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                                        className={inputClass}
+                                        className="input-dark"
                                     />
                                 </div>
 
-                                {/* Password */}
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-sm font-medium text-slate-700">Password</label>
+                                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Password</label>
                                     <div className="relative">
                                         <input
                                             type={showPassword ? 'text' : 'password'}
                                             placeholder="••••••••"
                                             value={loginForm.password}
                                             onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                                            className={inputClass}
+                                            className="input-dark pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-[#1a2a47] transition-colors"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
                                         >
                                             <span className="material-symbols-outlined text-xl">
                                                 {showPassword ? 'visibility_off' : 'visibility'}
@@ -236,7 +217,7 @@ export default function LoginPage() {
                                 </div>
 
                                 <div className="flex items-center justify-end">
-                                    <button type="button" className="text-sm font-medium text-[#1a2a47] hover:underline">
+                                    <button type="button" className="text-xs font-semibold text-[#38BDF8] hover:text-[#7DD3FC] transition-colors cursor-pointer">
                                         Forgot Password?
                                     </button>
                                 </div>
@@ -244,7 +225,7 @@ export default function LoginPage() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full bg-[#1a2a47] hover:bg-[#243761] disabled:opacity-60 text-white font-semibold py-3.5 rounded-lg shadow-md shadow-[#1a2a47]/20 transition-all flex items-center justify-center gap-2"
+                                    className="btn-accent w-full py-3.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {loading ? (
                                         <>
@@ -267,28 +248,27 @@ export default function LoginPage() {
                         {/* ── SIGNUP FORM ── */}
                         {tab === 'signup' && (
                             <form onSubmit={handleSignup} className="px-8 pb-8 pt-4 space-y-4">
-                                {/* Full Name */}
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-sm font-medium text-slate-700">
-                                        Full Name <span className="text-slate-400 font-normal">(optional)</span>
+                                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+                                        Full Name <span className="normal-case tracking-normal">(optional)</span>
                                     </label>
                                     <input
                                         type="text"
                                         placeholder="e.g. Rajesh Kumar"
                                         value={signupForm.fullName}
                                         onChange={(e) => setSignupForm({ ...signupForm, fullName: e.target.value })}
-                                        className={inputClass}
+                                        className="input-dark"
                                     />
                                 </div>
 
-                                {/* Department */}
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-sm font-medium text-slate-700">Select Authority *</label>
+                                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Select Authority *</label>
                                     <div className="relative">
                                         <select
                                             value={signupForm.department}
                                             onChange={(e) => setSignupForm({ ...signupForm, department: e.target.value })}
-                                            className={selectClass}
+                                            className="input-dark appearance-none pr-10 cursor-pointer"
+                                            style={{ background: 'var(--bg-elevated)' }}
                                         >
                                             <option value="" disabled>Choose your department</option>
                                             <option value={ADMIN_OPTION.value}>{ADMIN_OPTION.label}</option>
@@ -303,45 +283,42 @@ export default function LoginPage() {
                                     </div>
                                 </div>
 
-                                {/* Email */}
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-sm font-medium text-slate-700">Government Email *</label>
+                                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Government Email *</label>
                                     <input
                                         type="email"
                                         placeholder="e.g. johndoe@karnataka.gov.in"
                                         value={signupForm.email}
                                         onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
-                                        className={inputClass}
+                                        className="input-dark"
                                     />
                                 </div>
 
-                                {/* Username */}
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-sm font-medium text-slate-700">Username *</label>
+                                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Username *</label>
                                     <input
                                         type="text"
                                         placeholder="e.g. johndoe"
                                         value={signupForm.username}
                                         onChange={(e) => setSignupForm({ ...signupForm, username: e.target.value })}
-                                        className={inputClass}
+                                        className="input-dark"
                                     />
                                 </div>
 
-                                {/* Password */}
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-sm font-medium text-slate-700">Password *</label>
+                                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Password *</label>
                                     <div className="relative">
                                         <input
                                             type={showPassword ? 'text' : 'password'}
                                             placeholder="Minimum 8 characters"
                                             value={signupForm.password}
                                             onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
-                                            className={inputClass}
+                                            className="input-dark pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-[#1a2a47] transition-colors"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
                                         >
                                             <span className="material-symbols-outlined text-xl">
                                                 {showPassword ? 'visibility_off' : 'visibility'}
@@ -353,7 +330,7 @@ export default function LoginPage() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full bg-[#1a2a47] hover:bg-[#243761] disabled:opacity-60 text-white font-semibold py-3.5 rounded-lg shadow-md shadow-[#1a2a47]/20 transition-all flex items-center justify-center gap-2"
+                                    className="btn-accent w-full py-3.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {loading ? (
                                         <>
@@ -374,18 +351,18 @@ export default function LoginPage() {
                         )}
 
                         {/* Warning Banner */}
-                        <div className="bg-slate-50 border-t border-slate-200 p-4">
+                        <div className="border-t border-white/[0.06] px-6 py-4" style={{ background: 'var(--bg-elevated)' }}>
                             <div className="flex items-start gap-3">
-                                <span className="material-symbols-outlined text-amber-600 shrink-0 text-xl">warning</span>
-                                <p className="text-[11px] leading-relaxed text-slate-600 uppercase tracking-wider font-semibold">
+                                <span className="material-symbols-outlined text-yellow-500 shrink-0 text-base mt-0.5">warning</span>
+                                <p className="text-[10px] leading-relaxed text-slate-500 uppercase tracking-wider font-semibold">
                                     Warning: Unauthorized access is prohibited. All activity is monitored and recorded by the Department of e-Governance.
                                 </p>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </main>
+
             <Footer />
         </div>
     );

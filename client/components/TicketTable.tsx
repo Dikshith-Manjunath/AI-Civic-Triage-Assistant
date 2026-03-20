@@ -4,19 +4,28 @@ import { useState } from 'react';
 import TicketDrawer, { type Ticket } from './TicketDrawer';
 
 const URGENCY_BADGE: Record<string, string> = {
-    critical: 'bg-red-50 text-red-700',
-    high: 'bg-orange-50 text-orange-700',
-    medium: 'bg-amber-50 text-amber-700',
-    low: 'bg-slate-100 text-slate-600',
+    critical: 'badge-high',
+    high:     'badge-high',
+    medium:   'badge-medium',
+    low:      'badge-low',
+};
+
+const STATUS_BADGE: Record<string, string> = {
+    open:        'badge-open',
+    in_progress: 'badge-inprogress',
+    dispatched:  'badge-dispatched',
+    resolved:    'badge-resolved',
+    approved:    'badge-approved',
+    rejected:    'badge-rejected',
 };
 
 const STATUS_DOT: Record<string, string> = {
-    open: 'bg-slate-400',
-    in_progress: 'bg-blue-500',
-    dispatched: 'bg-indigo-500',
-    resolved: 'bg-green-500',
-    approved: 'bg-emerald-500',
-    rejected: 'bg-red-500',
+    open:        'bg-[#38BDF8]',
+    in_progress: 'bg-[#FACC15]',
+    dispatched:  'bg-[#818CF8]',
+    resolved:    'bg-[#22C55E]',
+    approved:    'bg-[#22C55E]',
+    rejected:    'bg-[#F87171]',
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -24,9 +33,7 @@ const STATUS_LABEL: Record<string, string> = {
     resolved: 'Resolved', approved: 'Approved', rejected: 'Rejected',
 };
 
-type Props = {
-    initialTickets: Ticket[];
-};
+type Props = { initialTickets: Ticket[] };
 
 export default function TicketTable({ initialTickets }: Props) {
     const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
@@ -49,53 +56,53 @@ export default function TicketTable({ initialTickets }: Props) {
         <>
             {/* Search bar */}
             <div className="relative mb-4">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+                <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600 text-lg">search</span>
                 <input
-                    className="w-full pl-10 pr-4 py-2 bg-slate-100 border-none rounded-lg text-sm focus:ring-2 focus:ring-[#1a2a47]/20 outline-none placeholder:text-slate-400"
-                    placeholder="Search tickets by ID, category, status..."
+                    className="input-dark pl-11 py-2.5"
+                    placeholder="Search by ID, category, status…"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                 />
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="rounded-xl border border-white/[0.07] overflow-hidden" style={{ background: 'var(--bg-surface)' }}>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-slate-50 border-b border-slate-200">
-                            <tr>
-                                <th className="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Ticket ID</th>
-                                <th className="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Category</th>
-                                <th className="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Title</th>
-                                <th className="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Urgency</th>
-                                <th className="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                                <th className="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Assignee</th>
+                        <thead>
+                            <tr className="border-b border-white/[0.06]" style={{ background: 'var(--bg-elevated)' }}>
+                                <th className="px-5 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ticket ID</th>
+                                <th className="px-5 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Category</th>
+                                <th className="px-5 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden md:table-cell">Title</th>
+                                <th className="px-5 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Urgency</th>
+                                <th className="px-5 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</th>
+                                <th className="px-5 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden lg:table-cell">Assignee</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-white/[0.04]">
                             {filtered.map(ticket => (
                                 <tr
                                     key={ticket.id}
                                     onClick={() => setSelected(ticket)}
-                                    className="hover:bg-slate-50/70 transition-colors cursor-pointer group"
+                                    className="hover:bg-white/[0.025] transition-colors cursor-pointer group"
                                 >
-                                    <td className="px-5 py-4 text-sm font-bold text-[#1a2a47] group-hover:text-blue-600 transition-colors">
+                                    <td className="px-5 py-4 text-sm font-bold text-[#38BDF8] group-hover:text-[#7DD3FC] transition-colors">
                                         #{ticket.ticket_no}
                                     </td>
-                                    <td className="px-5 py-4 text-sm text-slate-700 whitespace-nowrap">
+                                    <td className="px-5 py-4 text-sm text-slate-300 whitespace-nowrap capitalize">
                                         {ticket.category}
                                     </td>
                                     <td className="px-5 py-4 text-sm text-slate-500 hidden md:table-cell max-w-xs truncate">
                                         {ticket.title}
                                     </td>
                                     <td className="px-5 py-4">
-                                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tight ${URGENCY_BADGE[ticket.urgency] ?? 'bg-slate-100 text-slate-600'}`}>
+                                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${URGENCY_BADGE[ticket.urgency] ?? 'badge-low'}`}>
                                             {ticket.urgency}
                                         </span>
                                     </td>
                                     <td className="px-5 py-4">
-                                        <span className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                                            <span className={`size-2 rounded-full flex-shrink-0 ${STATUS_DOT[ticket.status] ?? 'bg-slate-400'}`} />
+                                        <span className={`flex items-center gap-2 text-xs font-semibold rounded-full px-2.5 py-1 w-fit ${STATUS_BADGE[ticket.status] ?? 'badge-open'}`}>
+                                            <span className={`size-1.5 rounded-full flex-shrink-0 ${STATUS_DOT[ticket.status] ?? 'bg-slate-400'}`} />
                                             {STATUS_LABEL[ticket.status] ?? ticket.status}
                                         </span>
                                     </td>
@@ -106,8 +113,8 @@ export default function TicketTable({ initialTickets }: Props) {
                             ))}
                             {filtered.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="px-5 py-12 text-center text-slate-400">
-                                        <span className="material-symbols-outlined text-3xl mb-2 block">search_off</span>
+                                    <td colSpan={6} className="px-5 py-14 text-center text-slate-600">
+                                        <span className="material-symbols-outlined text-4xl mb-3 block text-slate-700">search_off</span>
                                         No tickets match your search.
                                     </td>
                                 </tr>
@@ -117,7 +124,6 @@ export default function TicketTable({ initialTickets }: Props) {
                 </div>
             </div>
 
-            {/* Drawer */}
             {selected && (
                 <TicketDrawer
                     ticket={selected}

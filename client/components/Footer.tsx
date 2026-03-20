@@ -25,26 +25,28 @@ const LEGAL_LINKS = [
 
 export default function Footer() {
     return (
-        <footer className="bg-[#1a2a47] text-white">
+        <footer style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
             {/* Main Footer */}
             <div className="mx-auto max-w-7xl px-6 lg:px-10 py-14">
-                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Brand */}
                     <div className="lg:col-span-1">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-white">
-                                <span className="material-symbols-outlined text-lg">account_balance</span>
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#38BDF8] to-[#0EA5E9] text-[#020617] shadow-[0_0_16px_rgba(56,189,248,0.25)]">
+                                <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance</span>
                             </div>
-                            <h2 className="text-xl font-bold tracking-tight">CivicFlow</h2>
+                            <span className="font-display text-xl font-700" style={{ color: 'var(--text-primary)' }}>
+                                Civic<span className="text-[#38BDF8]">Flow</span>
+                            </span>
                         </div>
-                        <p className="text-sm text-white/60 leading-relaxed max-w-xs">
-                            A secure, unified platform for Bengaluru&apos;s civic authorities to manage service tickets, monitor infrastructure, and streamline city operations.
+                        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                            A secure, unified platform for Bengaluru&apos;s civic authorities to manage service tickets and streamline city operations.
                         </p>
                     </div>
 
                     {/* Departments */}
                     <div>
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-4">Departments</h3>
+                        <h3 className="text-xs font-bold uppercase tracking-widest mb-5" style={{ color: 'var(--text-muted)' }}>Departments</h3>
                         <ul className="space-y-2.5">
                             {DEPARTMENTS.map(dept => (
                                 <li key={dept.label}>
@@ -52,11 +54,12 @@ export default function Footer() {
                                         href={dept.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="group flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+                                        className="group flex items-center gap-2 text-sm transition-colors hover:text-white"
+                                        style={{ color: 'var(--text-secondary)' }}
                                     >
-                                        <span className="font-semibold text-white/90 group-hover:text-white">{dept.label}</span>
-                                        <span className="hidden sm:inline text-white/40">—</span>
-                                        <span className="hidden sm:inline truncate">{dept.full}</span>
+                                        <span className="font-semibold transition-colors" style={{ color: 'var(--text-primary)' }}>{dept.label}</span>
+                                        <span className="hidden sm:inline text-slate-600">—</span>
+                                        <span className="hidden sm:inline truncate text-slate-500">{dept.full}</span>
                                         <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-60 transition-opacity">open_in_new</span>
                                     </a>
                                 </li>
@@ -66,13 +69,14 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div>
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-4">Quick Links</h3>
+                        <h3 className="text-xs font-bold uppercase tracking-widest mb-5" style={{ color: 'var(--text-muted)' }}>Quick Links</h3>
                         <ul className="space-y-2.5">
                             {QUICK_LINKS.map(link => (
                                 <li key={link.label}>
                                     <Link
                                         href={link.href}
-                                        className="text-sm text-white/70 hover:text-white transition-colors"
+                                        className="text-sm transition-colors hover:text-white"
+                                        style={{ color: 'var(--text-secondary)' }}
                                     >
                                         {link.label}
                                     </Link>
@@ -83,13 +87,14 @@ export default function Footer() {
 
                     {/* Legal */}
                     <div>
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-4">Legal</h3>
+                        <h3 className="text-xs font-bold uppercase tracking-widest mb-5" style={{ color: 'var(--text-muted)' }}>Legal</h3>
                         <ul className="space-y-2.5">
                             {LEGAL_LINKS.map(link => (
                                 <li key={link.label}>
                                     <Link
                                         href={link.href}
-                                        className="text-sm text-white/70 hover:text-white transition-colors"
+                                        className="text-sm transition-colors hover:text-white"
+                                        style={{ color: 'var(--text-secondary)' }}
                                     >
                                         {link.label}
                                     </Link>
@@ -101,12 +106,12 @@ export default function Footer() {
             </div>
 
             {/* Bottom Bar */}
-            <div className="border-t border-white/10">
-                <div className="mx-auto max-w-7xl px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-xs text-white/40">
+            <div style={{ borderTop: '1px solid var(--border)' }}>
+                <div className="mx-auto max-w-7xl px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                         © 2026 Government of Bengaluru. Official Government Information System.
                     </p>
-                    <p className="text-xs text-white/40">
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                         Built for transparency and efficiency.
                     </p>
                 </div>
