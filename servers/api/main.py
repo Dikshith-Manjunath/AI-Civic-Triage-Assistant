@@ -39,7 +39,9 @@ async def lifespan(app: FastAPI):
         logger.info("✅ ClickHouse ready")
     except Exception as exc:
         logger.error("❌ ClickHouse init failed: %s", exc)
-        logger.warning("Server will start but DB operations will fail until ClickHouse is available")
+        logger.warning(
+            "Server will start but DB operations will fail until ClickHouse is available"
+        )
 
     # Initialise MinIO bucket
     try:

@@ -78,7 +78,10 @@ def upload_to_minio(
         )
         logger.info(
             "Uploaded %s to MinIO: %s/%s (%d bytes)",
-            media_type, bucket, object_key, length,
+            media_type,
+            bucket,
+            object_key,
+            length,
         )
     except S3Error as exc:
         logger.error("MinIO upload failed: %s", exc)
@@ -90,6 +93,7 @@ def upload_to_minio(
 def get_presigned_url(object_path: str, expires_hours: int = 1) -> str | None:
     """Generate a presigned URL for downloading a media object from MinIO."""
     from datetime import timedelta
+
     try:
         client = get_minio_client()
         bucket = settings.minio_bucket
@@ -102,3 +106,18 @@ def get_presigned_url(object_path: str, expires_hours: int = 1) -> str | None:
     except S3Error as exc:
         logger.error("Failed to generate presigned URL for %s: %s", object_path, exc)
         return None
+
+
+def download_from_minio(object_path: str) -> bytes:
+    """Download an object's content from MinIO as bytes."""
+    client = get_minio_client()
+    bucket = settings.minio_bucket
+    try:
+        response = client.get_object(bucket, object_path)
+        content = response.read()
+        response.close()
+        response.release_conn()
+        return content
+    except S3Error as exc:
+        logger.error("MinIO download failed for %s: %s", object_path, exc)
+        raise

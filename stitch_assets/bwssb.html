@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BWSSB Department Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@100..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#fffbff",
+                      "secondary-fixed": "#6ffbbe",
+                      "secondary": "#006c49",
+                      "surface-variant": "#e5e2dc",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed": "#261a00",
+                      "on-primary-fixed": "#410007",
+                      "surface-container-highest": "#e5e2dc",
+                      "surface-container-high": "#ebe8e2",
+                      "outline": "#8f6f6e",
+                      "on-surface": "#1c1c18",
+                      "tertiary-fixed-dim": "#f9bd22",
+                      "surface-container-low": "#f6f3ed",
+                      "secondary-container": "#6cf8bb",
+                      "on-tertiary-fixed-variant": "#5c4300",
+                      "secondary-fixed-dim": "#4edea3",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#fffbff",
+                      "error-container": "#ffdad6",
+                      "tertiary": "#765700",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container": "#f0eee8",
+                      "background": "#fcf9f3",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#5b403f",
+                      "on-secondary-container": "#00714d",
+                      "primary-fixed-dim": "#ffb3b1",
+                      "inverse-surface": "#31312d",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#ffb3b1",
+                      "on-background": "#1c1c18",
+                      "on-primary-fixed-variant": "#92001c",
+                      "surface-bright": "#fcf9f3",
+                      "surface-dim": "#dcdad4",
+                      "outline-variant": "#e4bebc",
+                      "surface": "#fcf9f3",
+                      "on-secondary-fixed-variant": "#005236",
+                      "on-secondary-fixed": "#002113",
+                      "on-primary": "#ffffff",
+                      "primary": "#b7102a",
+                      "tertiary-fixed": "#ffdf9f",
+                      "tertiary-container": "#956e00",
+                      "inverse-on-surface": "#f3f0ea",
+                      "surface-tint": "#bb152c",
+                      "primary-fixed": "#ffdad8",
+                      "primary-container": "#db313f",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Public Sans"],
+                      "display": ["Public Sans"],
+                      "body": ["Public Sans"],
+                      "label": ["Public Sans"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e5e2dc; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body min-h-screen flex">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="bg-[#f6f3ed] dark:bg-stone-950 h-screen w-64 fixed left-0 top-0 z-50 flex flex-col pt-20 pb-8 space-y-2 font-['Public_Sans'] font-medium text-sm tracking-wide">
+<div class="px-8 mb-8">
+<h1 class="font-black text-red-800 dark:text-red-600 text-xl tracking-tighter uppercase">BWSSB</h1>
+<p class="text-on-surface-variant text-xs opacity-70">City Water &amp; Sewage</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 rounded-r-full font-bold ease-in-out duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-r-full ease-in-out duration-300" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-r-full ease-in-out duration-300" href="#">
+<span class="material-symbols-outlined">map</span>
+<span>Ward Map</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-r-full ease-in-out duration-300" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span>Crew Dispatch</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 rounded-r-full ease-in-out duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full bg-primary py-3 px-4 rounded-xl text-white font-bold flex items-center justify-center space-x-2 hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm">water_drop</span>
+<span>Report Leak</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar (Authority: JSON) -->
+<header class="bg-[#fcf9f3]/80 dark:bg-stone-900/80 backdrop-blur-xl fixed top-0 right-0 left-64 z-40 h-16 flex justify-between items-center px-8 shadow-[0_8px_24px_rgba(0,0,0,0.04)] font-['Public_Sans'] tracking-tight">
+<div class="flex items-center space-x-6">
+<span class="text-lg font-black uppercase tracking-tighter text-stone-900 dark:text-stone-50">BWSSB Department</span>
+<div class="h-8 w-[1px] bg-stone-200/50"></div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-1.5 text-sm focus:ring-2 focus:ring-emerald-600/20 w-64" placeholder="Search ward, crew, or ticket..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="p-2 text-on-surface-variant hover:bg-stone-100/50 rounded-full active:scale-95 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-stone-100/50 rounded-full active:scale-95 transition-all">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="close-up portrait of a professional urban infrastructure manager in a clean white office setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEjAdFP8th6U7ISnkyBJkAJRbXnfVELuP-F9FhSwXeqPECHQlvZwjDd3PmIPIQJ-mGS15DY00MtQO8BNwHnvRYjuo2xjFYF4dNkYOtJwL1f8n00itPutGDjcDBwf4qrL9z1fFYuuzn03YzwAmsOsYYsupPrCn-IQu97pCKyaGNbDRwM3ppigaEDukKJ9YdJSezYUuAqB9_od9a-BPZ6xFTsu59NR4mk-NBRsfZYLV9MkZK8TJKYhFxaKXbF_w-DhTsO_FJYF4TgAA"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="pt-24 px-8 pb-12 flex-1 flex flex-col space-y-8">
+<!-- Section 1: Metrics (Bento Grid Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-4 border-primary transition-all hover:translate-y-[-4px]">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-error-container rounded-lg">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">water_damage</span>
+</div>
+<span class="text-primary font-bold text-xs uppercase tracking-widest">+4 today</span>
+</div>
+<div class="mt-4">
+<p class="text-on-surface-variant text-sm font-medium">Pipe Burst Reports</p>
+<h3 class="text-4xl font-black text-on-surface tracking-tighter mt-1">18</h3>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-4 border-tertiary transition-all hover:translate-y-[-4px]">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-tertiary-fixed rounded-lg">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<span class="text-tertiary font-bold text-xs uppercase tracking-widest">Ongoing</span>
+</div>
+<div class="mt-4">
+<p class="text-on-surface-variant text-sm font-medium">Active Sewage Overflows</p>
+<h3 class="text-4xl font-black text-on-surface tracking-tighter mt-1">12</h3>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-4 border-secondary transition-all hover:translate-y-[-4px]">
+<div class="flex justify-between items-start">
+<div class="p-3 bg-secondary-container rounded-lg">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="text-secondary font-bold text-xs uppercase tracking-widest">Completed</span>
+</div>
+<div class="mt-4">
+<p class="text-on-surface-variant text-sm font-medium">Resolved Today</p>
+<h3 class="text-4xl font-black text-on-surface tracking-tighter mt-1">24</h3>
+</div>
+</div>
+</section>
+<!-- Section 2: Ticket Feed (Split View) -->
+<section class="flex-1 grid grid-cols-12 gap-8 min-h-0">
+<!-- Left Column: List -->
+<div class="col-span-4 flex flex-col space-y-4">
+<div class="flex justify-between items-center">
+<h2 class="text-xl font-black text-on-surface uppercase tracking-tight">Active Feed</h2>
+<span class="text-xs font-bold text-on-surface-variant bg-surface-container-highest px-3 py-1 rounded-full uppercase">32 New Alerts</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 space-y-4">
+<!-- Card 1: Selected -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border-l-8 border-primary relative">
+<div class="absolute top-4 right-4">
+<span class="bg-error-container text-on-error-container text-[10px] font-black px-2 py-0.5 rounded uppercase">Urgent</span>
+</div>
+<h4 class="font-bold text-on-surface pr-12">Main Pipe Burst</h4>
+<p class="text-sm text-on-surface-variant mt-1 flex items-center">
+<span class="material-symbols-outlined text-xs mr-1">location_on</span>
+                                Indiranagar 100ft Rd
+                            </p>
+<div class="mt-4 flex items-center justify-between">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-surface bg-surface-container"></div>
+<div class="w-6 h-6 rounded-full border-2 border-surface bg-surface-container-high"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Reported 12m ago</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-low p-5 rounded-xl hover:bg-surface-container-lowest transition-colors cursor-pointer group">
+<div class="absolute top-4 right-4">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-black px-2 py-0.5 rounded uppercase">Pending</span>
+</div>
+<h4 class="font-bold text-on-surface pr-12 group-hover:text-primary transition-colors">Sewage Overflow</h4>
+<p class="text-sm text-on-surface-variant mt-1 flex items-center">
+<span class="material-symbols-outlined text-xs mr-1">location_on</span>
+                                Koramangala 4th Block
+                            </p>
+<div class="mt-4 flex items-center justify-between opacity-60">
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Reported 45m ago</span>
+</div>
+</div>
+<!-- Other mock cards for visual density -->
+<div class="bg-surface-container-low p-5 rounded-xl opacity-80">
+<h4 class="font-bold text-on-surface">Valve Malfunction</h4>
+<p class="text-sm text-on-surface-variant mt-1">Jayanagar 5th Main</p>
+</div>
+<div class="bg-surface-container-low p-5 rounded-xl opacity-60">
+<h4 class="font-bold text-on-surface">Leakage Reported</h4>
+<p class="text-sm text-on-surface-variant mt-1">HSR Layout Sector 2</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Detail View -->
+<div class="col-span-8 bg-surface-container-lowest rounded-xl flex flex-col overflow-hidden">
+<header class="px-8 py-6 border-b border-surface-variant/20 flex justify-between items-center">
+<div>
+<h2 class="text-2xl font-black text-on-surface tracking-tighter">Main Pipe Burst - Indiranagar</h2>
+<p class="text-sm text-on-surface-variant flex items-center mt-1">
+<span class="material-symbols-outlined text-primary text-xs mr-1" style="font-variation-settings: 'FILL' 1;">emergency_home</span>
+                                Incident #48291 • Critical Infrastructure Risk
+                            </p>
+</div>
+<div class="flex space-x-2">
+<button class="p-2 bg-surface-container-low rounded-lg hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 bg-surface-container-low rounded-lg hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-8 space-y-8">
+<!-- Main Visual -->
+<div class="w-full h-72 rounded-xl overflow-hidden relative">
+<img alt="Incident Site" class="w-full h-full object-cover" data-alt="dramatic wide shot of a flooded city street at dusk with high-pressure water gushing from an underground pipe burst" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzZ8CFPgghLyx9e1FivjUK52tHsN2cpOf_5_tuwVSOA7gYiH4ffprh9R05RvMYvGCbxg-SPOgMnMoazODYDF2pwrxy4P5fx-cPtcPNfhI3bQxxz1Og-XEEt_YVoToVv1T9Liu-Mxx-1Tx1EV9BN4yEkn3wylJr6LDOvcHfv84jLnrj91NgndSTIjnsH2ofg1784ykAxGVq0qh-ARGF696i1P-Eyx0JD2kQKude3fs8t7V-BP5SUQBMjZ3_WAaW51Ps6a6J_8wchk4"/>
+<div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center space-x-2 text-white text-xs">
+<span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+<span class="font-bold uppercase tracking-widest">Live Feed Access Required</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<!-- Multimodal Box -->
+<div class="space-y-4">
+<div class="bg-surface-container-low p-5 rounded-xl space-y-4">
+<div class="flex items-center space-x-2 text-primary">
+<span class="material-symbols-outlined text-sm">psychology</span>
+<span class="text-xs font-black uppercase tracking-widest">AI Analysis</span>
+</div>
+<p class="text-sm leading-relaxed text-on-surface font-medium">
+                                        Heavy flow detected from 12-inch main line. High probability of basement flooding in adjacent properties. Immediate isolation required at Substation B-14.
+                                    </p>
+<div class="pt-4 border-t border-outline-variant/20">
+<div class="flex items-center space-x-2 text-on-surface-variant mb-2">
+<span class="material-symbols-outlined text-sm">graphic_eq</span>
+<span class="text-xs font-bold uppercase tracking-widest">Audio Transcript</span>
+</div>
+<p class="text-xs italic text-on-surface-variant bg-surface-container-lowest p-3 rounded-lg">
+                                            "Water is gushing out and flooding the nearby basements... the pressure is increasing every minute. We need help now!"
+                                        </p>
+</div>
+</div>
+</div>
+<!-- Map Box -->
+<div class="space-y-4">
+<div class="w-full h-full min-h-[240px] bg-surface-container-high rounded-xl overflow-hidden relative border-outline-variant/10 border">
+<img alt="Ward Map" class="w-full h-full object-cover" data-alt="clean minimalist city map interface with a bright red pulsating dot marking a specific street intersection" data-location="Indiranagar, Bangalore" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVawNeSswHeS6CUqnU0j9ozzB-87z-yYdgLRV2gnRIii8AnQXDDO6gP7Lau30yRllZHBU1CPYFa194WYv0gs9r5EZOqgYMK3NyobJXyUnjU1D6RgLKpmgniZWEIMqQVQdtVG3chdz7sWGEsvQZJXWPB8-Z8sOyTtOJ5e1dXEZDPrzjqJH1MJ_SJyskDfvjwYuFdBNBS1OAbcHIISQNEGhIjgjSRuSA0iGLzoKUUo8TPlH3Na6heiDrgzWlktwM4dnzYCLA_yufmBs"/>
+<div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+<div class="relative">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<span class="absolute top-0 left-0 w-full h-full bg-primary/30 rounded-full scale-[2] animate-ping"></span>
+</div>
+</div>
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur p-2 rounded-lg text-[10px] font-black uppercase">
+                                        Sector 4-B Control
+                                    </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<footer class="p-8 border-t border-surface-variant/20 flex items-center justify-end space-x-4 bg-surface-container-low/30">
+<button class="px-6 py-3 border-2 border-primary text-primary rounded-xl font-bold hover:bg-primary/5 active:scale-95 transition-all">
+                            Escalate to Chief Engineer
+                        </button>
+<button class="px-10 py-3 bg-secondary text-white rounded-xl font-bold flex items-center space-x-2 hover:bg-secondary/90 shadow-lg shadow-secondary/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined">send</span>
+<span>Dispatch Crew</span>
+</button>
+</footer>
+</div>
+</section>
+</div>
+</main>
+</body></html>

@@ -43,12 +43,14 @@ def retrieve_relevant_sops(
         )
         rows: list[dict] = []
         for row in result.result_rows:
-            rows.append({
-                "id": str(row[0]),
-                "source": row[1],
-                "chunk_text": row[2],
-                "score": round(1.0 - row[3], 4),  # cosine similarity
-            })
+            rows.append(
+                {
+                    "id": str(row[0]),
+                    "source": row[1],
+                    "chunk_text": row[2],
+                    "score": round(1.0 - row[3], 4),  # cosine similarity
+                }
+            )
 
         logger.info(
             "Retrieved %d SOP chunks (limit=%d, top_score=%.4f)",

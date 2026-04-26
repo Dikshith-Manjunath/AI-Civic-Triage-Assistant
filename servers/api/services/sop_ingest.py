@@ -14,9 +14,9 @@ from api.services.embeddings import generate_embedding
 logger = logging.getLogger("civicflow.sop_ingest")
 
 # ── Chunking parameters ──
-CHUNK_SIZE = 600       # target tokens (~chars / 4, but we use chars as proxy)
-CHUNK_CHARS = 2400     # ~600 tokens × 4 chars/token
-OVERLAP_CHARS = 400    # ~100 tokens overlap
+CHUNK_SIZE = 600  # target tokens (~chars / 4, but we use chars as proxy)
+CHUNK_CHARS = 2400  # ~600 tokens × 4 chars/token
+OVERLAP_CHARS = 400  # ~100 tokens overlap
 
 SOP_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "sops"
 
@@ -30,11 +30,15 @@ def _extract_text_from_pdf(pdf_path: Path) -> str:
         if text:
             pages.append(text.strip())
     full_text = "\n\n".join(pages)
-    logger.debug("Extracted %d chars from %s (%d pages)", len(full_text), pdf_path.name, len(reader.pages))
+    logger.debug(
+        "Extracted %d chars from %s (%d pages)", len(full_text), pdf_path.name, len(reader.pages)
+    )
     return full_text
 
 
-def _chunk_text(text: str, chunk_size: int = CHUNK_CHARS, overlap: int = OVERLAP_CHARS) -> list[str]:
+def _chunk_text(
+    text: str, chunk_size: int = CHUNK_CHARS, overlap: int = OVERLAP_CHARS
+) -> list[str]:
     """Split text into overlapping chunks.
 
     Args:
@@ -123,12 +127,14 @@ def ingest_pdf(pdf_path: Path) -> int:
     rows: list[list] = []
     for chunk in chunks:
         embedding = generate_embedding(chunk)
-        rows.append([
-            str(uuid.uuid4()),
-            source,
-            chunk,
-            embedding,
-        ])
+        rows.append(
+            [
+                str(uuid.uuid4()),
+                source,
+                chunk,
+                embedding,
+            ]
+        )
 
     # Bulk insert
     client.insert(

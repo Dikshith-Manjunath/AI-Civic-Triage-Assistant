@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     minio_secret_key: str = "minioadmin"
     minio_bucket: str = "civic-media"
     minio_secure: bool = False
+    
+    # ── Kafka ──
+    kafka_bootstrap_servers: str = "localhost:9092"
+    kafka_topic_complaints: str = "civic.complaints"
 
     # ── Discord Webhooks (per-department) ──
     discord_webhook_roads: str = ""

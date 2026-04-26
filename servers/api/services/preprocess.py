@@ -12,6 +12,7 @@ logger = logging.getLogger("civicflow.preprocess")
 
 # ── Audio transcription (faster-whisper) ─────────────────────────────────────
 
+
 def transcribe_audio(audio_bytes: bytes, filename: str = "audio.wav") -> str:
     """
     Transcribe audio bytes using faster-whisper (local).
@@ -37,7 +38,9 @@ def transcribe_audio(audio_bytes: bytes, filename: str = "audio.wav") -> str:
         transcript = " ".join(seg.text.strip() for seg in segments)
         logger.info(
             "Transcription complete: language=%s  prob=%.2f  chars=%d",
-            info.language, info.language_probability, len(transcript),
+            info.language,
+            info.language_probability,
+            len(transcript),
         )
         return transcript if transcript else "[Audio file uploaded — no speech detected]"
     except Exception as exc:
@@ -48,6 +51,7 @@ def transcribe_audio(audio_bytes: bytes, filename: str = "audio.wav") -> str:
 
 
 # ── PDF text extraction ──────────────────────────────────────────────────────
+
 
 def extract_pdf_text(pdf_bytes: bytes, filename: str = "document.pdf") -> str:
     """Extract text from a PDF using pypdf."""
@@ -62,12 +66,14 @@ def extract_pdf_text(pdf_bytes: bytes, filename: str = "document.pdf") -> str:
     try:
         reader = PdfReader(io.BytesIO(pdf_bytes))
         pages_text: list[str] = []
-        for i, page in enumerate(reader.pages):
+        for _i, page in enumerate(reader.pages):
             text = page.extract_text()
             if text:
                 pages_text.append(text.strip())
         full_text = "\n\n".join(pages_text)
-        logger.info("PDF extraction complete: %d pages, %d chars", len(reader.pages), len(full_text))
+        logger.info(
+            "PDF extraction complete: %d pages, %d chars", len(reader.pages), len(full_text)
+        )
         return full_text if full_text else "[PDF file uploaded — no extractable text found]"
     except Exception as exc:
         logger.error("PDF text extraction failed: %s", exc)
@@ -76,17 +82,21 @@ def extract_pdf_text(pdf_bytes: bytes, filename: str = "document.pdf") -> str:
 
 # ── Image captioning (placeholder) ───────────────────────────────────────────
 
+
 def caption_image(image_bytes: bytes, filename: str = "image.jpg") -> str:
     """
     Generate a description for an uploaded image.
     Phase 2 placeholder — returns a generic caption.
     Future: integrate a vision model for real captioning.
     """
-    logger.info("Image received: %s (%d bytes) — using placeholder caption", filename, len(image_bytes))
+    logger.info(
+        "Image received: %s (%d bytes) — using placeholder caption", filename, len(image_bytes)
+    )
     return "Citizen uploaded an image related to civic complaint"
 
 
 # ── Unified text merger ──────────────────────────────────────────────────────
+
 
 def unify_inputs_to_text(
     text: str | None = None,
@@ -113,7 +123,9 @@ def unify_inputs_to_text(
         parts.append(f"[Image Description]\n{image_caption.strip()}")
 
     if not parts:
-        raise ValueError("No usable input provided — at least one of text, audio, pdf, or image is required")
+        raise ValueError(
+            "No usable input provided — at least one of text, audio, pdf, or image is required"
+        )
 
     merged = "\n\n".join(parts)
     logger.info("Unified complaint text: %d chars from %d source(s)", len(merged), len(parts))

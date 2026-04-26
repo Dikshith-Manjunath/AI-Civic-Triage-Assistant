@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BMTC Department Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#780015",
+                    "on-secondary-container": "#6f5100",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#1c1c14",
+                    "on-primary-fixed-variant": "#005236",
+                    "inverse-surface": "#313128",
+                    "surface-container": "#f0eee0",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#eae9da",
+                    "secondary-fixed": "#ffdf9f",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#261a00",
+                    "error": "#ba1a1a",
+                    "primary-container": "#10b981",
+                    "on-surface-variant": "#3c4a42",
+                    "on-tertiary-fixed-variant": "#92001c",
+                    "tertiary-container": "#ff797a",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#fcfaeb",
+                    "surface-dim": "#dcdacd",
+                    "background": "#fcfaeb",
+                    "surface-tint": "#006c49",
+                    "inverse-on-surface": "#f3f1e3",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#e5e3d5",
+                    "surface-container-low": "#f6f4e6",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-tertiary-fixed": "#410007",
+                    "primary": "#006c49",
+                    "surface-container-highest": "#e5e3d5",
+                    "secondary": "#795900",
+                    "on-primary-container": "#00422b",
+                    "secondary-fixed-dim": "#f9bd22",
+                    "outline-variant": "#bbcabf",
+                    "tertiary-fixed-dim": "#ffb3b1",
+                    "surface": "#fcfaeb",
+                    "tertiary-fixed": "#ffdad8",
+                    "tertiary": "#bb152c",
+                    "secondary-container": "#ffc329",
+                    "inverse-primary": "#4edea3",
+                    "outline": "#6c7a71",
+                    "on-surface": "#1c1c14",
+                    "primary-fixed": "#6ffbbe",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#002113",
+                    "on-secondary-fixed-variant": "#5c4300"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.5rem",
+                    "lg": "0.75rem",
+                    "xl": "1rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "display": ["Plus Jakarta Sans"],
+                    "body": ["Public Sans"],
+                    "label": ["Public Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e5e3d5; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface flex min-h-screen">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-screen w-64 z-40 bg-[#fcfaeb] dark:bg-stone-900 border-r border-[#1c1c14]/10 flex flex-col py-6 shadow-[24px_0_48px_rgba(28,28,20,0.04)] font-public-sans text-sm tracking-wide">
+<div class="px-6 mb-10 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+</div>
+<div>
+<h2 class="text-lg font-black text-[#006c49]">BMTC Admin</h2>
+<p class="text-[10px] uppercase tracking-widest opacity-60">City Infrastructure</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-[#1c1c14] dark:text-[#fcfaeb] opacity-60 px-4 py-3 mx-2 hover:bg-[#f5f3e0] dark:hover:bg-stone-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-3 bg-[#006c49] text-white rounded-lg px-4 py-3 mx-2 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+<span class="font-bold">Routes</span>
+</a>
+<a class="flex items-center gap-3 text-[#1c1c14] dark:text-[#fcfaeb] opacity-60 px-4 py-3 mx-2 hover:bg-[#f5f3e0] dark:hover:bg-stone-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">bus_alert</span>
+<span>Shelters</span>
+</a>
+<a class="flex items-center gap-3 text-[#1c1c14] dark:text-[#fcfaeb] opacity-60 px-4 py-3 mx-2 hover:bg-[#f5f3e0] dark:hover:bg-stone-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">schedule</span>
+<span>Dispatch</span>
+</a>
+<a class="flex items-center gap-3 text-[#1c1c14] dark:text-[#fcfaeb] opacity-60 px-4 py-3 mx-2 hover:bg-[#f5f3e0] dark:hover:bg-stone-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 text-[#1c1c14] dark:text-[#fcfaeb] opacity-60 px-4 py-3 mx-2 hover:bg-[#f5f3e0] dark:hover:bg-stone-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full py-4 bg-tertiary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:brightness-110 transition-all active:scale-95">
+<span class="material-symbols-outlined">emergency_home</span>
+                Emergency Alert
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- TopNavBar Shell -->
+<header class="w-full h-16 sticky top-0 z-30 bg-[#fcfaeb] dark:bg-stone-900 flex justify-between items-center px-6 transition-colors">
+<div class="flex items-center gap-8 flex-1">
+<h1 class="text-xl font-bold text-[#1c1c14] dark:text-[#fcfaeb] font-headline">BMTC Department</h1>
+<!-- Search Bar -->
+<div class="relative w-96 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 opacity-40 text-sm">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 placeholder:opacity-50" placeholder="Search routes, shelters, or tickets..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-high rounded-lg cursor-pointer hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm">filter_alt</span>
+<span class="text-sm font-medium">Ward Filter</span>
+<span class="material-symbols-outlined text-xs">expand_more</span>
+</div>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-primary/10" data-alt="professional portrait of a municipal department head in a light-filled modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoDs3YW55Bdnzgg352mjeTIKpX1nIc0i0GaVPB4_R3SGghfgoTgiMcHe3hYFdQheDCVhTbs9DkIkyoamBUIVppUGb9iuyGCzBQ7WTNYv8TFZCS_24XwzxZMaTPgly1DJVTm9BShiDUDmPcU9TXMO38scFQpJz4DoyrL5smxZTfuAbsx-paC2EZZT55lr4Xl4k3wh95041UGVUXdtWnVa7Fxyid3j6OIRCxYM4-CwoqrvBqgUIDT-hX0eRRVOihecKsVH0b0PlHGXY"/>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-8 space-y-8 flex-1">
+<!-- Metrics Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Route Disruptions Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl relative overflow-hidden flex items-center justify-between group cursor-pointer shadow-[0px_4px_12px_rgba(28,28,20,0.02)]">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary"></div>
+<div>
+<p class="text-xs font-bold text-on-surface/40 uppercase tracking-widest mb-1">Route Disruptions</p>
+<h3 class="text-4xl font-black font-display text-tertiary">14</h3>
+</div>
+<div class="w-12 h-12 bg-tertiary/10 rounded-full flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+</div>
+<!-- Damaged Shelters Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl relative overflow-hidden flex items-center justify-between group cursor-pointer shadow-[0px_4px_12px_rgba(28,28,20,0.02)]">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
+<div>
+<p class="text-xs font-bold text-on-surface/40 uppercase tracking-widest mb-1">Damaged Shelters</p>
+<h3 class="text-4xl font-black font-display text-secondary">28</h3>
+</div>
+<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hardware</span>
+</div>
+</div>
+<!-- Resolved Today Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl relative overflow-hidden flex items-center justify-between group cursor-pointer shadow-[0px_4px_12px_rgba(28,28,20,0.02)]">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div>
+<p class="text-xs font-bold text-on-surface/40 uppercase tracking-widest mb-1">Resolved Today</p>
+<h3 class="text-4xl font-black font-display text-primary">156</h3>
+</div>
+<div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Ticket Feed Section (Split View) -->
+<div class="grid grid-cols-12 gap-8 h-[calc(100vh-320px)] min-h-[500px]">
+<!-- Left Column (Ticket List) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<h2 class="text-lg font-bold">Ticket Feed</h2>
+<span class="text-xs text-on-surface/50 font-medium">82 Active Tickets</span>
+</div>
+<div class="flex-1 overflow-y-auto space-y-4 pr-2">
+<!-- Ticket Card 1 (Active/Selected) -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0px_12px_24px_rgba(28,28,20,0.04)] ring-2 ring-primary relative cursor-pointer group">
+<div class="flex gap-4">
+<img alt="Ticket Evidence" class="w-20 h-20 rounded-lg object-cover" data-alt="close up of a shattered glass panel at a bus stop with urban traffic bokeh in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHVknHr7o6peGvbIl50Qk4VcDJjoHRWvtew-DCkIjv6WPPDV8E6XMLnFVwqO4duDAVEkcutEYU-TWF7dQrl5iLDEctqvhbQJVbomhipTUeRAoYiSPd6-I4Rl10JRaLvSCwMUMm7Ocle7xxgqdw7tCJsaHmWC4XA_A4Sw4PItTXaZz5lxAl2xg7b9sj15umAQBWrX8cYpa7upUXCnVAUPBITMCL0RjmoktIh0UDynhRck68prKTLnzhcRwZy34a4JPqiwX211ScVzA"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary">Ward 150 - Bellandur</span>
+<span class="text-[10px] text-on-surface/40">2m ago</span>
+</div>
+<h4 class="font-bold text-sm mb-2">Shattered Glass - Marathahalli</h4>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary text-[10px] font-bold rounded-full flex items-center gap-1">
+<span class="w-1 h-1 bg-tertiary rounded-full"></span>
+                                            CRITICAL
+                                        </span>
+<span class="px-2 py-0.5 bg-surface-container-high text-on-surface/60 text-[10px] font-bold rounded-full">
+                                            VANDALISM
+                                        </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Ticket Card 2 -->
+<div class="bg-surface-container-low p-4 rounded-xl hover:bg-surface-container-lowest transition-colors cursor-pointer group">
+<div class="flex gap-4">
+<img alt="Ticket Evidence" class="w-20 h-20 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="view of a bus shelter bench with a large crack across the middle, outdoor street lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbHVDFEQOc6dhd9sFOC6xm2e-LfCvzNRBOiINmw_H0St7vcV48T_E60hQXGPC0dSljH8E3Pv7ZkrT4y3h4CsvK_rdA10MovUSnQUHLE2GYEa4D6XuLsEfZ52hNPEhnGqBkFQnI20gRWpZH_JRMAZQTt1MWCwJE9cWIMjqepm1QlJV-CJ4RPyMmHDGTwIjGpVK9TdUWd7VoQlqKign_ispWYRah4tFEW-2q9O2K00QDeYCEVjrpSlWeKNzUz_0R7Os_fG-bKpuc8VI"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface/40">Ward 174 - HSR Layout</span>
+<span class="text-[10px] text-on-surface/40">15m ago</span>
+</div>
+<h4 class="font-bold text-sm mb-2">Broken Seating Unit</h4>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-secondary/10 text-secondary text-[10px] font-bold rounded-full flex items-center gap-1">
+<span class="w-1 h-1 bg-secondary rounded-full"></span>
+                                            PENDING
+                                        </span>
+<span class="px-2 py-0.5 bg-surface-container-high text-on-surface/60 text-[10px] font-bold rounded-full">
+                                            STRUCTURAL
+                                        </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Ticket Card 3 -->
+<div class="bg-surface-container-low p-4 rounded-xl hover:bg-surface-container-lowest transition-colors cursor-pointer group">
+<div class="flex gap-4">
+<img alt="Ticket Evidence" class="w-20 h-20 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="car parked illegally in a yellow-painted bus zone during daytime" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzCC0OuMR0iNFdqvhhbPzsQ3X8Lhm_3nlTWR_qI3Vec1X5kVk62xVCfMCB9P8B-Qcz_nkN2-TPZuji3Lt3B_8HPaCQ7uFeV4CLiAu_AcrVt-Vwikw89hq5Q4EBItFOASnBzh3Px43PFErlfZFkBLTiwp5Oe1xS_OezDFrgTFyW1jr-yreXy39z-hYeL3B0GVpwo-I9vIRtVjG3zNbFq2K-tvPnfqFkVQ3CUyRN2wBjMNppw-Efl8GU29WAEssSwThh2qKq3pHGLaY"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface/40">Ward 98 - Indiranagar</span>
+<span class="text-[10px] text-on-surface/40">44m ago</span>
+</div>
+<h4 class="font-bold text-sm mb-2">Illegal Parking in Bus Zone</h4>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-secondary/10 text-secondary text-[10px] font-bold rounded-full flex items-center gap-1">
+<span class="w-1 h-1 bg-secondary rounded-full"></span>
+                                            PENDING
+                                        </span>
+<span class="px-2 py-0.5 bg-surface-container-high text-on-surface/60 text-[10px] font-bold rounded-full">
+                                            OBSTRUCTION
+                                        </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (Ticket Detail) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-2xl flex flex-col overflow-hidden shadow-[0px_24px_48px_rgba(28,28,20,0.06)]">
+<!-- Detail Header -->
+<div class="p-8 border-b border-surface-container-high flex justify-between items-start">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<span class="px-3 py-1 bg-tertiary text-white text-[10px] font-black rounded-full uppercase tracking-tighter">Priority: Critical</span>
+<span class="text-xs text-on-surface/40 font-medium">Ticket ID: BMTC-2024-9182</span>
+</div>
+<h2 class="text-3xl font-black font-display leading-tight">Broken Glass at Marathahalli Bridge</h2>
+<p class="text-on-surface/60 mt-1 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                                Main Bus Stop, Marathahalli Underpass Southbound, Ward 150
+                            </p>
+</div>
+<div class="flex gap-2">
+<button class="p-3 bg-surface-container-low rounded-xl text-on-surface/60 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">print</span>
+</button>
+<button class="p-3 bg-surface-container-low rounded-xl text-on-surface/60 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-8 grid grid-cols-2 gap-8">
+<!-- Evidence Images & Map -->
+<div class="space-y-6">
+<div class="rounded-2xl overflow-hidden aspect-video relative group">
+<img alt="Detail Evidence" class="w-full h-full object-cover" data-alt="wide shot of a modern glass bus shelter with severe fragmentation and glass debris on the ground at night" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzbQ0FLE6PNr87l43EE1CTXL3yGEhRbNQ1jBEGhRo-0IkJfuKdWo5yPoe4J5UfU0yj6_mME-dP1lD9_3YOQS7DltOFhyu3ISIKudIFYA8ueYDhGtrsurqRfaz2WYpRKzrz9B7W-KoSwaB0VSiB6zsSY34g44B2v6Chr7hLoTOeiwlNrYYq28WpKkj8l6lkF7lyRA3ApTdZqt3JysjXyUfT5Q0VV3za3ErRjkj7wGKflKXKqZOmrxLRmai4_FzcO9W_n20bpm2oTl8"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all"></div>
+<div class="absolute bottom-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md text-white text-[10px] rounded-full">
+                                    AI-Verified: Structural Hazard
+                                </div>
+</div>
+<div class="bg-surface-container-low rounded-2xl h-48 relative overflow-hidden">
+<img alt="Map View" class="w-full h-full object-cover opacity-60" data-alt="minimalist clean map interface with custom green marker pin on a cross-street" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-oS8ojfDbfjq5T6SlExu1GFtEZzrEBLAjd8hm6tNnGMPdxnQsm-TMh9PyMZxKfo_gpeZlTMY41g_1s_SAGouJQ0FpUlnAeWtXjYVbuySjcqLmY9w8AzgDiv0rd-Y0QPMEBjkJUlRazAF4KMAbx_ljhg5SjVP4KbfEHC3_7Rj8UUVDtv-cxzsMbAgQLTxxZ6ECBfbhJm_vt8chcPyV19ZL4RIyB9mcAd7tkmglVimL5cBT_NgIo42xNl_R-ziipu1K5YGGD6Immms"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center shadow-lg animate-pulse">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+</div>
+</div>
+<!-- AI transcription & Metadata -->
+<div class="space-y-8">
+<section>
+<h4 class="text-xs font-bold uppercase tracking-widest text-on-surface/40 mb-4">AI Audio Transcription</h4>
+<div class="bg-surface-container-low p-5 rounded-2xl">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-primary">graphic_eq</span>
+<!-- Waveform Visual -->
+<div class="flex-1 h-8 flex items-center gap-1">
+<div class="w-1 h-3 bg-primary/20 rounded-full"></div>
+<div class="w-1 h-5 bg-primary/40 rounded-full"></div>
+<div class="w-1 h-8 bg-primary rounded-full"></div>
+<div class="w-1 h-4 bg-primary/60 rounded-full"></div>
+<div class="w-1 h-6 bg-primary/80 rounded-full"></div>
+<div class="w-1 h-2 bg-primary/20 rounded-full"></div>
+<div class="w-1 h-5 bg-primary rounded-full"></div>
+<div class="w-1 h-7 bg-primary/50 rounded-full"></div>
+<div class="w-1 h-4 bg-primary rounded-full"></div>
+<div class="w-1 h-6 bg-primary/30 rounded-full"></div>
+</div>
+<span class="text-[10px] font-mono font-bold">0:12</span>
+</div>
+<p class="text-sm italic text-on-surface/80 leading-relaxed border-l-2 border-primary/20 pl-4">
+                                        "...significant impact at the Marathahalli junction stop. Rear panel glass is completely shattered on the sidewalk. Potential injury risk for boarding passengers. Need immediate cleanup and temporary boarding barrier..."
+                                    </p>
+</div>
+</section>
+<section class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface-container-low rounded-xl">
+<p class="text-[10px] font-bold text-on-surface/40 uppercase mb-1">Source</p>
+<p class="text-sm font-semibold">Public Portal (Mobile)</p>
+</div>
+<div class="p-4 bg-surface-container-low rounded-xl">
+<p class="text-[10px] font-bold text-on-surface/40 uppercase mb-1">Weather</p>
+<p class="text-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">cloudy_snowing</span>
+                                        Rainy, 22°C
+                                    </p>
+</div>
+<div class="col-span-2 p-4 bg-surface-container-low rounded-xl border border-primary/10">
+<p class="text-[10px] font-bold text-on-surface/40 uppercase mb-1">Estimated Fix Time</p>
+<p class="text-sm font-semibold text-primary">4 hours (High Priority)</p>
+</div>
+</section>
+</div>
+</div>
+<!-- Action Bar -->
+<div class="p-8 bg-surface-container-low/50 backdrop-blur-md border-t border-surface-container-high flex gap-4">
+<button class="flex-[2] py-4 bg-gradient-to-br from-primary to-primary-container text-white rounded-xl font-bold text-lg flex items-center justify-center gap-3 shadow-lg shadow-primary/10 hover:brightness-110 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">local_shipping</span>
+                            Dispatch Crew
+                        </button>
+<button class="flex-1 py-4 border-2 border-tertiary/30 text-tertiary rounded-xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-tertiary/5 transition-colors">
+<span class="material-symbols-outlined">priority_high</span>
+                            Escalate
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

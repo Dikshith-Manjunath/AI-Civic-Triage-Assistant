@@ -16,6 +16,7 @@ router = APIRouter(prefix="/v1/complaints", tags=["similarity"])
 
 class SimilarComplaint(BaseModel):
     """A single similar complaint entry."""
+
     id: str
     summary: str
     dept: str
@@ -26,6 +27,7 @@ class SimilarComplaint(BaseModel):
 
 class SimilarResponse(BaseModel):
     """Response for the similarity endpoint."""
+
     complaint_id: str
     similar: list[SimilarComplaint]
 

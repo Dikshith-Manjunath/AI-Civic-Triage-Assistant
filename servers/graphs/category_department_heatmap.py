@@ -18,7 +18,9 @@ from graph_common import (
 )
 
 
-def build_table(tickets, dept_filter: set[str]) -> tuple[dict[str, Counter[str]], Counter[str], Counter[str]]:
+def build_table(
+    tickets, dept_filter: set[str]
+) -> tuple[dict[str, Counter[str]], Counter[str], Counter[str]]:
     """Build category x department count table with marginals."""
     table: dict[str, Counter[str]] = defaultdict(Counter)
     category_totals: Counter[str] = Counter()
@@ -50,8 +52,14 @@ def plot_heatmap(args) -> None:
     if not category_totals:
         raise SystemExit("No matching tickets found for the selected filters.")
 
-    departments = [dept for dept, _ in sorted(department_totals.items(), key=lambda x: (-x[1], x[0]))]
-    categories = [cat for cat, total in sorted(category_totals.items(), key=lambda x: (-x[1], x[0])) if total >= args.min_count]
+    departments = [
+        dept for dept, _ in sorted(department_totals.items(), key=lambda x: (-x[1], x[0]))
+    ]
+    categories = [
+        cat
+        for cat, total in sorted(category_totals.items(), key=lambda x: (-x[1], x[0]))
+        if total >= args.min_count
+    ]
 
     if args.top_categories > 0:
         categories = categories[: args.top_categories]
@@ -85,7 +93,9 @@ def plot_heatmap(args) -> None:
         for r_idx, row in enumerate(matrix):
             for c_idx, value in enumerate(row):
                 text_color = "white" if value > threshold else "#111827"
-                ax.text(c_idx, r_idx, str(value), ha="center", va="center", fontsize=8, color=text_color)
+                ax.text(
+                    c_idx, r_idx, str(value), ha="center", va="center", fontsize=8, color=text_color
+                )
 
     fig.tight_layout()
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -102,11 +112,24 @@ def build_parser() -> argparse.ArgumentParser:
     """Create CLI parser."""
     default_seed = find_default_seed_file(Path(__file__))
     parser = argparse.ArgumentParser(description="Category x Department ticket heatmap.")
-    parser.add_argument("--seed-file", type=Path, default=default_seed, help=f"Path to seed file (default: {default_seed})")
-    parser.add_argument("--output", type=Path, default=default_output_path(Path(__file__)), help="Output png path")
-    parser.add_argument("--departments", type=str, default="", help="Comma-separated department codes filter")
-    parser.add_argument("--top-categories", type=int, default=12, help="Show top N categories (0 = all)")
-    parser.add_argument("--min-count", type=int, default=1, help="Minimum total category count to include")
+    parser.add_argument(
+        "--seed-file",
+        type=Path,
+        default=default_seed,
+        help=f"Path to seed file (default: {default_seed})",
+    )
+    parser.add_argument(
+        "--output", type=Path, default=default_output_path(Path(__file__)), help="Output png path"
+    )
+    parser.add_argument(
+        "--departments", type=str, default="", help="Comma-separated department codes filter"
+    )
+    parser.add_argument(
+        "--top-categories", type=int, default=12, help="Show top N categories (0 = all)"
+    )
+    parser.add_argument(
+        "--min-count", type=int, default=1, help="Minimum total category count to include"
+    )
     parser.add_argument("--cmap", type=str, default="YlGnBu", help="Matplotlib colormap")
     parser.add_argument("--annotate", action="store_true", help="Show cell count labels")
     parser.add_argument("--show", action="store_true", help="Force interactive display")

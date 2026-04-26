@@ -54,14 +54,16 @@ def find_similar_complaints(
         result = client.query(query, parameters=params)
         rows = []
         for row in result.result_rows:
-            rows.append({
-                "id": str(row[0]),
-                "summary": row[1],
-                "dept": row[2],
-                "authority": row[3],
-                "urgency": row[4],
-                "score": round(1.0 - row[5], 4),  # convert distance → similarity
-            })
+            rows.append(
+                {
+                    "id": str(row[0]),
+                    "summary": row[1],
+                    "dept": row[2],
+                    "authority": row[3],
+                    "urgency": row[4],
+                    "score": round(1.0 - row[5], 4),  # convert distance → similarity
+                }
+            )
         logger.info("Found %d similar complaints (limit=%d)", len(rows), limit)
         return rows
     except Exception as exc:

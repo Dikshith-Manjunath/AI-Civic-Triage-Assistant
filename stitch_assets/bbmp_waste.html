@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BBMP Waste Department Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#4a3500",
+                        "surface-container-highest": "#e3e3d5",
+                        "inverse-surface": "#2f3128",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#261a00",
+                        "surface": "#fafaec",
+                        "on-surface-variant": "#3c4a42",
+                        "surface-container-high": "#e8e9db",
+                        "on-secondary": "#ffffff",
+                        "primary": "#006c49",
+                        "inverse-on-surface": "#f1f2e3",
+                        "on-primary-container": "#00422b",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#dadbcd",
+                        "surface-variant": "#e3e3d5",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#bbcabf",
+                        "inverse-primary": "#4edea3",
+                        "primary-fixed": "#6ffbbe",
+                        "on-background": "#1a1d14",
+                        "secondary-fixed-dim": "#ffb3b1",
+                        "surface-tint": "#006c49",
+                        "secondary": "#b7102a",
+                        "error": "#ba1a1a",
+                        "primary-container": "#10b981",
+                        "surface-container": "#eeefe1",
+                        "on-surface": "#1a1d14",
+                        "on-secondary-fixed-variant": "#92001c",
+                        "secondary-container": "#db313f",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "primary-fixed-dim": "#4edea3",
+                        "on-secondary-container": "#fffbff",
+                        "outline": "#6c7a71",
+                        "on-secondary-fixed": "#410007",
+                        "on-primary-fixed": "#002113",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#005236",
+                        "secondary-fixed": "#ffdad8",
+                        "tertiary": "#795900",
+                        "surface-container-low": "#f4f5e6",
+                        "tertiary-container": "#ce9a00",
+                        "background": "#fafaec",
+                        "surface-bright": "#fafaec",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Public Sans"],
+                        "display": ["Public Sans"],
+                        "body": ["Public Sans"],
+                        "label": ["Public Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; background-color: #fafaec; color: #1a1d14; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .ledger-scrollbar::-webkit-scrollbar { width: 4px; }
+        .ledger-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .ledger-scrollbar::-webkit-scrollbar-thumb { background: #bbcabf; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface selection:bg-primary/20">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-64 flex flex-col py-6 px-4 bg-emerald-50 dark:bg-zinc-950 font-public-sans tracking-tight">
+<div class="mb-10 px-4">
+<h1 class="text-xl font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-widest">The Sovereign Orchard</h1>
+<p class="text-[10px] opacity-60 font-bold uppercase tracking-[0.2em] mt-1">Sovereign Ledger</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-100 rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="route">route</span>
+                Collection Routes
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+                Dumping Sites
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+                Fleet Management
+            </a>
+<a class="mt-auto flex items-center gap-3 px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="mt-auto p-4 flex items-center gap-3 bg-surface-container rounded-xl">
+<img alt="Department Head Avatar" class="w-10 h-10 rounded-full object-cover" data-alt="Professional portrait of a department head in a light beige linen suit against a neutral architectural background, soft cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-N-M_RKP9I8Jxawzi2XCKZaiOVGsg6Kcn-4pqpZ0MI4s8BQpAbbQt3osy6iOnoei87z0SSsJ9UIgaMCbClyyiruUsaJ0eK_nY6F7VHbmMCVWCU8rQrxkbUJ--NwRP6HBE2u8MLV7jv2NB4VPN0f8fXsjdhvXcAjXzkjTP_Rn_hQEdZIn7Ib1Bn2rboCifuyC00n_96ZCGzkAI80Xpa7RwWeJUbBlcxYUvtQKIPjDhxTABcKw9uZhlUxug76lGETc9qFA7v-7VSB8"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold truncate">Arjun Rao</p>
+<p class="text-[10px] opacity-60 truncate">Chief Orchardist</p>
+</div>
+</div>
+</aside>
+<!-- TopAppBar Shell -->
+<header class="flex justify-between items-center w-[calc(100%-16rem)] px-8 py-4 ml-64 bg-emerald-50/80 dark:bg-zinc-950/80 backdrop-blur-md fixed top-0 z-10 border-b-2 border-emerald-600/10 font-public-sans">
+<div class="flex items-center gap-4">
+<span class="text-lg font-black text-emerald-900 dark:text-emerald-100 uppercase tracking-tighter">BBMP Waste Department</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-emerald-500/20 transition-all" placeholder="Search Ledger..." type="text"/>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-full text-xs font-bold">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                Ward Filter
+            </button>
+<div class="flex items-center gap-4 text-emerald-700">
+<span class="material-symbols-outlined cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 px-8 pb-12">
+<!-- Metrics Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- Missed Pickups -->
+<div class="bg-tertiary-container/10 p-6 rounded-xl border-l-4 border-tertiary relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-[10px] font-bold text-tertiary uppercase tracking-widest mb-1">Missed Pickups</p>
+<h2 class="text-4xl font-black text-on-tertiary-container tracking-tighter">42</h2>
+<div class="flex items-center gap-1 mt-4 text-xs text-on-tertiary-container/70">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span>12% increase from yesterday</span>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-8xl text-tertiary/10 scale-125 group-hover:rotate-12 transition-transform" data-icon="schedule">schedule</span>
+</div>
+<!-- Illegal Dumping Sites -->
+<div class="bg-secondary-container/10 p-6 rounded-xl border-l-4 border-secondary relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Active Hazards</p>
+<h2 class="text-4xl font-black text-on-secondary-fixed-variant tracking-tighter">18</h2>
+<div class="flex items-center gap-1 mt-4 text-xs text-on-secondary-fixed-variant/70">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+<span>3 Red Zone escalations</span>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-8xl text-secondary/10 scale-125 group-hover:rotate-12 transition-transform" data-icon="delete_forever">delete_forever</span>
+</div>
+<!-- Resolved Today -->
+<div class="bg-primary/5 p-6 rounded-xl border-l-4 border-primary relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Resolved Today</p>
+<h2 class="text-4xl font-black text-on-primary-container tracking-tighter">156</h2>
+<div class="flex items-center gap-1 mt-4 text-xs text-on-primary-container/70">
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+<span>Record high productivity</span>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-8xl text-primary/10 scale-125 group-hover:rotate-12 transition-transform" data-icon="check_circle">check_circle</span>
+</div>
+</section>
+<!-- Split View Ticket Feed -->
+<div class="grid grid-cols-12 gap-8 h-[700px]">
+<!-- Left: Ticket List -->
+<section class="col-span-5 flex flex-col gap-4 overflow-y-auto ledger-scrollbar pr-4">
+<div class="flex justify-between items-center sticky top-0 bg-surface/80 backdrop-blur-sm py-2 z-10">
+<h3 class="text-sm font-black uppercase tracking-tighter">Incoming Tickets (24)</h3>
+<span class="material-symbols-outlined text-outline cursor-pointer" data-icon="sort">sort</span>
+</div>
+<!-- Ticket Card 1 (Active) -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm border-2 border-primary/20 cursor-pointer flex gap-4 transition-all">
+<img alt="Garbage pile" class="w-20 h-20 rounded-lg object-cover" data-alt="Close up of a pile of urban waste and plastic bags discarded on a sunlit city sidewalk, sharp detail and high contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcXvO1iAO7EyFRb-TkR-1-a9oimZjakVcJIPJced2oOM2fSsmA-GWMZuPET1oCMdcdLd8b_L_tOqBWVgA_LLwNvXoD90h2EB01u5xVewENGjMmADQ9ph0cKhITdbOvV7jSj6DbVgXNafX9a_TtOmDKqKvqwEqqO3irT9Vy_c7aOuoqQJkCSYx522mFDQJkORRr9mqvuwYBDQ-g-G6nIT2qMwXvFVu7v0rwH5Pso0hHj5jK4F-oVfzuV12QKRLLeKJMyVMzUZwkKDw"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<p class="text-xs font-bold text-primary uppercase tracking-tight">Illegal Dumping</p>
+<span class="text-[10px] opacity-40">2m ago</span>
+</div>
+<h4 class="text-sm font-extrabold tracking-tight mt-1">Ward 150 - Bellandur</h4>
+<p class="text-xs opacity-60 mt-2 line-clamp-1">Heavy industrial waste near lake entrance...</p>
+<div class="flex gap-2 mt-3">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/10 text-secondary text-[9px] font-bold uppercase">High Priority</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase">AI Confirmed</span>
+</div>
+</div>
+</div>
+<!-- Ticket Card 2 -->
+<div class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container-highest cursor-pointer flex gap-4 transition-all">
+<img alt="Blocked drain" class="w-20 h-20 rounded-lg object-cover grayscale opacity-80" data-alt="Wide angle view of a stone drainage canal blocked with debris and leaves in a suburban neighborhood during morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2adnlG40QTRaQhVkME38aJfzAhNWvh-VFLs2HGisKgrQQbJ5e9xcPhTmGueLq5Yf1nsXidG6LE2-AYBfdT_S8vUq_AM88fMAE8wzdCL77LUbWLD_13xsE8O91H3UWQ71WxUJttbkekUjtfxlDHvPWwZimNpA3m0xaMV_twW07Y_Avny3slvTredpbApAqZlpyMLh3QylDu9aJABx4yzmBrrqRiVBIyLRvINDmk3Iw9SHGkwK1G5uHOSEIfdsjXhi0QAz5Q7fnY5k"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<p class="text-xs font-bold text-tertiary uppercase tracking-tight">Blocked Drain</p>
+<span class="text-[10px] opacity-40">15m ago</span>
+</div>
+<h4 class="text-sm font-extrabold tracking-tight mt-1">Ward 174 - HSR Layout</h4>
+<p class="text-xs opacity-60 mt-2 line-clamp-1">Water stagnation after light showers...</p>
+<div class="flex gap-2 mt-3">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase">Routine</span>
+</div>
+</div>
+</div>
+<!-- Ticket Card 3 -->
+<div class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container-highest cursor-pointer flex gap-4 transition-all">
+<img alt="Overflowing bin" class="w-20 h-20 rounded-lg object-cover grayscale opacity-80" data-alt="A large green communal waste bin overflowing with domestic trash bags in a residential alleyway at dusk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY6D1NyeYWr2wceb5a9EYnf7QB6x8UhtQKQ4fjPo6ASUqIA4LCV8UDzxPcqYMwmVFMfhk-u-_Bz5HxhQSEJQcrrZmx29Njiqj5ZThSUk0yOpRRbz9282UV-wl2ycNz5RP8NiQFaYqmY2zEwBPJAumS2_M3KWVR1loRGLc3WOYJ3yuFdwDVbwcrKu9y1LlZ5FF4ob5j5xm2LMx742G0lzDWCnZR2kbRl788gzzCvPaxNlAoIgQNZ5p_rWLrPaW15EOfQImyTd7qVKA"/>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<p class="text-xs font-bold text-primary uppercase tracking-tight">Overflowing Bin</p>
+<span class="text-[10px] opacity-40">42m ago</span>
+</div>
+<h4 class="text-sm font-extrabold tracking-tight mt-1">Ward 160 - Rajajinagar</h4>
+<p class="text-xs opacity-60 mt-2 line-clamp-1">Primary collection point at capacity...</p>
+</div>
+</div>
+</section>
+<!-- Right: Detailed View -->
+<section class="col-span-7 bg-surface-container-low rounded-3xl overflow-hidden flex flex-col">
+<div class="p-8 flex-1 overflow-y-auto ledger-scrollbar">
+<div class="flex justify-between items-center mb-6">
+<div>
+<p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Case #4029-BLR</p>
+<h2 class="text-2xl font-black tracking-tight mt-1">Illegal Dumping: Bellandur Lake Bed</h2>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-outline shadow-sm"><span class="material-symbols-outlined">share</span></button>
+<button class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-outline shadow-sm"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Evidence Photo -->
+<div class="rounded-2xl overflow-hidden relative mb-8 h-64 shadow-xl">
+<img alt="High-res evidence" class="w-full h-full object-cover" data-alt="Detailed close-up of a large illegal trash pile including construction debris and electronics at the edge of a water body, harsh mid-day sun" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMEzfjjelW0kaUaPcAvjydYVEtwNvalXyi4tX8Pc58vIwIy9eUzm6CIEamU1zMX0y01eNsYzprU52zH7F2FP5VzUOQyzX21eEIul3UdMCx7MQUnLZ94bOK1aKSRMg7ignAm9bvtY7wWyE7CTfBfmf_yyRQzSb8hUGSohpt9ftJ4w4FioEBYi-73DuE-H7Hdst_KomqedWxkCZdyB4iNRUhf4mb7KpN9-v_I3O4TqA6_2iEYow3NYzZiXbJ2ZOa9yKxcahpd3FCJGg"/>
+<div class="absolute bottom-4 left-4 bg-on-surface/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="photo_camera">photo_camera</span>
+<span class="text-[10px] font-bold uppercase">Timestamp: 09:42 AM IST</span>
+</div>
+</div>
+<!-- AI Analysis Section -->
+<div class="grid grid-cols-2 gap-6 mb-8">
+<div class="bg-surface-container-highest/50 p-6 rounded-2xl border-b-2 border-primary/20">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="psychology">psychology</span>
+<h3 class="text-xs font-black uppercase tracking-widest">AI Analysis</h3>
+</div>
+<p class="text-sm italic leading-relaxed text-on-surface-variant">
+                                "Detected 14.5 cubic meters of mixed waste. Dominant components: construction aggregate (40%), single-use plastics (35%), and organic garden waste (25%). Multiple unique tire tracks leading to Lake Road."
+                            </p>
+<div class="mt-4 flex items-center gap-2 text-[10px] font-bold text-primary">
+<span class="material-symbols-outlined text-xs" data-icon="mic" style="font-variation-settings: 'FILL' 1;">mic</span>
+                                AUDIO TRANSCRIPTION: "Citizen report via hotline: 'Truck seen dumping at midnight near the silt gate...'"
+                            </div>
+</div>
+<!-- Geospatial Context Map -->
+<div class="rounded-2xl overflow-hidden relative shadow-inner h-full min-h-[180px]">
+<img alt="Map location" class="w-full h-full object-cover" data-alt="Aerial satellite map view of an urban lake edge with surrounding residential streets and greenery, clear topographical details" data-location="Bangalore" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLFxkKNuQzmsu5FGNKME4I-vprCPPMwfnI4oL2BvJAarxHurOUAdZsK5BPGtYni3imoTi9R65zdWyqMWQXKKIXf59y2jwFrsU1CDfHEzHuyWeL8R9OorLx-XS3xyr2pphx9IYkHwbW2NCg-CLA1HPn5oD-iPZ_UFprk8mTZVZXSnDmJVuhcYgpZlBrNH7ae09cBLKU4Wp5aKngWfOHcDs_rlFZ6MFCbdVf1SMMyoWy3H22RHz8zUPD56QsqiKZ0StR019tzlNatSE"/>
+<div class="absolute inset-0 bg-primary/10 flex items-center justify-center">
+<div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-white ring-4 ring-secondary/30 animate-pulse">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+</div>
+</div>
+<div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-lg text-[10px] font-bold uppercase">
+                                Ward 150 Context
+                            </div>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="p-6 bg-surface-container-highest/30 backdrop-blur-md flex items-center justify-end gap-4">
+<button class="px-8 py-3 rounded-xl border-2 border-outline-variant text-outline font-bold text-xs uppercase tracking-widest hover:bg-surface-container-highest transition-all">
+                        Escalate to Chief Engineer
+                    </button>
+<button class="px-10 py-3 rounded-xl bg-primary text-on-primary font-bold text-xs uppercase tracking-[0.2em] shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                        Dispatch Crew
+                    </button>
+</div>
+</section>
+</div>
+</main>
+<!-- FAB Suppression Rule Active for Dashboards -->
+<div class="fixed bottom-8 right-8 group">
+<button class="w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:rotate-90 transition-transform duration-500">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</button>
+<div class="absolute bottom-full right-0 mb-4 flex flex-col gap-2 items-end opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+<span class="px-4 py-2 bg-white shadow-md rounded-lg text-xs font-bold whitespace-nowrap">Report New Incident</span>
+<span class="px-4 py-2 bg-white shadow-md rounded-lg text-xs font-bold whitespace-nowrap">Schedule Route Change</span>
+</div>
+</div>
+</body></html>

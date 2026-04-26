@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CivicFlow | Explore</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Public+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#adedd3",
+                    "tertiary-container": "#fc7c78",
+                    "surface": "#f8f9ff",
+                    "on-error": "#ffffff",
+                    "background": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#0b513d",
+                    "inverse-primary": "#4edea3",
+                    "tertiary-fixed-dim": "#ffb3af",
+                    "on-background": "#121c2a",
+                    "surface-container-low": "#eff4ff",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#6ffbbe",
+                    "on-tertiary-fixed-variant": "#842225",
+                    "surface-container-highest": "#d9e3f6",
+                    "on-secondary-fixed": "#002117",
+                    "on-primary-fixed-variant": "#005236",
+                    "surface-tint": "#006c49",
+                    "secondary-fixed": "#b0f0d6",
+                    "on-tertiary-container": "#711419",
+                    "surface-container-high": "#dee9fc",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#d0dbed",
+                    "surface-variant": "#d9e3f6",
+                    "on-primary-container": "#00422b",
+                    "primary-fixed-dim": "#4edea3",
+                    "secondary": "#2b6954",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#3c4a42",
+                    "tertiary": "#a43a3a",
+                    "surface-bright": "#f8f9ff",
+                    "on-surface": "#121c2a",
+                    "outline-variant": "#bbcabf",
+                    "on-tertiary-fixed": "#410005",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#ffdad7",
+                    "primary": "#006c49",
+                    "on-primary-fixed": "#002113",
+                    "secondary-fixed-dim": "#95d3ba",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#e6eeff",
+                    "primary-container": "#10b981",
+                    "inverse-surface": "#27313f",
+                    "outline": "#6c7a71",
+                    "on-secondary-container": "#306d58"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "display": ["Plus Jakarta Sans"],
+                    "body": ["Public Sans"],
+                    "label": ["Public Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#FDFBF7] text-[#1F2937] font-body selection:bg-primary-container/30">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#FDFBF7]/80 dark:bg-stone-900/80 backdrop-blur-md shadow-[0_24px_48px_rgba(6,78,59,0.06)]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#10B981] text-3xl" data-icon="eco">eco</span>
+<h1 class="text-2xl font-bold text-[#064E3B] dark:text-[#10B981] font-['Plus_Jakarta_Sans'] tracking-tight">CivicFlow</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8 font-['Plus_Jakarta_Sans']">
+<a class="text-stone-500 dark:text-stone-400 font-medium hover:text-[#10B981] transition-colors duration-200" href="#">Home</a>
+<a class="text-[#064E3B] dark:text-[#10B981] font-bold border-b-2 border-[#10B981] pb-1 hover:text-[#10B981] transition-colors duration-200" href="#">Explore</a>
+<a class="text-stone-500 dark:text-stone-400 font-medium hover:text-[#10B981] transition-colors duration-200" href="#">Impact</a>
+<a class="text-stone-500 dark:text-stone-400 font-medium hover:text-[#10B981] transition-colors duration-200" href="#">About</a>
+</nav>
+<button class="bg-primary text-on-primary px-5 py-2.5 rounded-xl font-headline font-semibold scale-95 active:scale-90 transition-transform">
+            Report
+        </button>
+</header>
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-7xl mx-auto">
+<!-- Search & Hero Title -->
+<section class="mb-12">
+<div class="max-w-2xl">
+<h2 class="text-4xl md:text-5xl font-display font-extrabold text-[#064E3B] tracking-tight mb-4">Explore the Garden</h2>
+<p class="text-on-surface-variant text-lg mb-8 leading-relaxed">Discover community-led improvements and help us nurture our city ward by ward.</p>
+</div>
+<!-- Search Bar Cluster -->
+<div class="flex flex-col md:flex-row gap-4 mb-8">
+<div class="flex-1 relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-lowest rounded-2xl outline-variant/15 border-none shadow-sm focus:ring-2 focus:ring-primary font-body text-on-surface placeholder:text-stone-400" placeholder="Search issues by ward or type..." type="text"/>
+</div>
+<button class="flex items-center justify-center gap-2 px-6 py-4 bg-surface-container-low text-primary font-headline font-bold rounded-2xl hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+                    Filters
+                </button>
+</div>
+<!-- Chips Cluster -->
+<div class="space-y-4">
+<div class="flex items-center gap-3 overflow-x-auto scroll-hide pb-2">
+<span class="text-xs font-bold text-outline uppercase tracking-widest shrink-0">Ward</span>
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary font-headline text-sm font-semibold whitespace-nowrap">All Wards</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-headline text-sm font-semibold whitespace-nowrap hover:bg-surface-container-highest transition-colors">Indiranagar</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-headline text-sm font-semibold whitespace-nowrap hover:bg-surface-container-highest transition-colors">Koramangala</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-headline text-sm font-semibold whitespace-nowrap hover:bg-surface-container-highest transition-colors">Whitefield</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-headline text-sm font-semibold whitespace-nowrap hover:bg-surface-container-highest transition-colors">Jayanagar</button>
+</div>
+<div class="flex items-center gap-3 overflow-x-auto scroll-hide pb-2">
+<span class="text-xs font-bold text-outline uppercase tracking-widest shrink-0">Issue</span>
+<button class="px-5 py-2 rounded-full bg-secondary-container text-on-secondary-container font-headline text-sm font-semibold whitespace-nowrap">All Types</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-headline text-sm font-semibold whitespace-nowrap hover:bg-surface-container-highest transition-colors">Potholes</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-headline text-sm font-semibold whitespace-nowrap hover:bg-surface-container-highest transition-colors">Water</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-headline text-sm font-semibold whitespace-nowrap hover:bg-surface-container-highest transition-colors">Electricity</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant font-headline text-sm font-semibold whitespace-nowrap hover:bg-surface-container-highest transition-colors">Sanitation</button>
+</div>
+</div>
+</section>
+<!-- Bento Grid of Issues -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Issue Card 1 -->
+<div class="group bg-surface-container-lowest rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="close-up of a large asphalt pothole filled with rain water on a gray city street" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSiRRGs9ShqOZk_6DxKTlEJ6c2g-qvCiWpEZJCdfWSffkhdITLX_FK1EHWxmPGRqqNLzQREIw9MJydeayCpMEYpMow9q7pe0XNywoEJ59DPWWJwev5LIfddF_l9M8sOZo9oH2WD9Ks7gZfeshxAj0CfLIERF0eR-eEqZ6CD-Gx0WMY50xuexRXsjGBlCTWu15SQSACR0nxPBJbFZFfKmM680tWigVXOcq8tG3RyGt_X6Zs_m7c3fKdNpTio91E3mqS1eNC8iJBpss"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1.5 bg-[#10B981] text-white text-xs font-bold rounded-lg uppercase tracking-wider">Pothole</span>
+</div>
+<div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="thumb_up" style="font-variation-settings: 'FILL' 1;">thumb_up</span>
+<span class="text-xs font-bold">124</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<div class="flex justify-between items-start mb-2">
+<h3 class="text-xl font-headline font-bold text-on-background leading-tight">Major Pothole on 100ft Road</h3>
+</div>
+<div class="flex items-center gap-1 text-stone-500 mb-4 text-sm font-medium">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+                        Indiranagar, Ward 80
+                    </div>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed text-xs font-bold">JD</div>
+<span class="text-xs text-on-surface-variant font-medium">Reported by Jane</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded">In Progress</span>
+</div>
+</div>
+</div>
+<!-- Issue Card 2 -->
+<div class="group bg-surface-container-lowest rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="broken urban street light hanging loosely from its pole at dusk against a purple sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh2s07-hrPcrKQjml4oaT7zHbdSSS20BxMb4B9_AWEm3xFaXYti72nGcNkW2lQszLYx9zIxLdpqXMZ5EBDo0rKQR09WW75FtKQh99OjVJVpny2gMtJzPsP_meoHOtE2k9VuAsMnkuG42WnJ3v7lN82beFJQ3OKy_Yp67RzMtGgAvbbvJl-y_HoPGhfRbUVSFVlQYy2XD44LS1EE1pGcytdLWlqAJ2yxAtOm0GFXXijEuCcNa4NO0VsskKk6JMT9kUAZ8-XyRpcsOA"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg uppercase tracking-wider">Electricity</span>
+</div>
+<div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="thumb_up" style="font-variation-settings: 'FILL' 1;">thumb_up</span>
+<span class="text-xs font-bold">89</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<h3 class="text-xl font-headline font-bold text-on-background leading-tight mb-2">Streetlight Out near 4th Block</h3>
+<div class="flex items-center gap-1 text-stone-500 mb-4 text-sm font-medium">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+                        Koramangala, Ward 151
+                    </div>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed text-xs font-bold">MK</div>
+<span class="text-xs text-on-surface-variant font-medium">Reported by Mark</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-stone-400 bg-stone-100 px-2 py-1 rounded">Reported 2h ago</span>
+</div>
+</div>
+</div>
+<!-- Issue Card 3 -->
+<div class="group bg-surface-container-lowest rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="water main burst spraying clean water into the air from a cracked pavement in a sunny suburban neighborhood" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIrYprqi0i2t2l21WsAUy1ZScMnwwlFxJS58IFp6UKzN_1w4J5T3HIoMs3Q1XJzA3wU90e9LTllDdST2pQqAbENMf-7xn8v9wI_m7Lr95cvsL1ZkuurJSbExfhMaS5SUey9Tg8v94HEth4Ol6B5uOHgoQPJyq5uQcM9s7RTCcILzJZs5mRtGNrW8XWciYRqwMrMHwDQ1FW5VqwcSaPxg223_Z6zTww8oE5Q9IPk1-_zN-sMQpXxrcqc1N2J6Ga2KEGoGSAFJ_Nob0"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1.5 bg-blue-500 text-white text-xs font-bold rounded-lg uppercase tracking-wider">Water</span>
+</div>
+<div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="thumb_up" style="font-variation-settings: 'FILL' 1;">thumb_up</span>
+<span class="text-xs font-bold">256</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<h3 class="text-xl font-headline font-bold text-on-background leading-tight mb-2">Pipe Leakage on ITPL Main Rd</h3>
+<div class="flex items-center gap-1 text-stone-500 mb-4 text-sm font-medium">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+                        Whitefield, Ward 84
+                    </div>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed text-xs font-bold">AS</div>
+<span class="text-xs text-on-surface-variant font-medium">Reported by Anita</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded">In Progress</span>
+</div>
+</div>
+</div>
+<!-- Issue Card 4 -->
+<div class="group bg-surface-container-lowest rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="overflowing green waste container in a public park with scattered plastic bottles around it" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwKL5C7wOSmLVnZO7jJBdX1Q9brxYEEwINZP3uw8Zmdb5bN6EaPQnl7HPEZlA8NscPYzNnyu6J5SOqPnzgXsQeE--v7pdmNUaM_1Z4jvVHY5epOvESRg60Wi4MHJXjL6LLnH2OIRHgIjZz2FWDVYaeaVJ50oXSjFMoyWpvZUp0Z7kjbo0UI8PBqHqQADfoBcgp0LzxoYf92Wyl7SX6xBfH159WSxczMiN9fStmw-dOEymLvK2JwxhH_WoZKBig4Skyt4rFXJV5_h4"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1.5 bg-stone-600 text-white text-xs font-bold rounded-lg uppercase tracking-wider">Sanitation</span>
+</div>
+<div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="thumb_up" style="font-variation-settings: 'FILL' 1;">thumb_up</span>
+<span class="text-xs font-bold">42</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1">
+<h3 class="text-xl font-headline font-bold text-on-background leading-tight mb-2">Overflowing Garbage Bin</h3>
+<div class="flex items-center gap-1 text-stone-500 mb-4 text-sm font-medium">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+                        Jayanagar, Ward 153
+                    </div>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed-dim flex items-center justify-center text-on-secondary-fixed-variant text-xs font-bold">RV</div>
+<span class="text-xs text-on-surface-variant font-medium">Reported by Rahul</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-stone-400 bg-stone-100 px-2 py-1 rounded">Reported 5h ago</span>
+</div>
+</div>
+</div>
+<!-- Issue Card 5 -->
+<div class="group bg-surface-container-lowest rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col lg:col-span-2">
+<div class="flex flex-col md:flex-row h-full">
+<div class="relative w-full md:w-1/2 h-64 md:h-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="wide shot of a neighborhood community park with broken benches and overgrown grass under soft daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuIn37-8IPWre8SrmOIKCQygyBC-xJZ6BT5b0SCbgZZa-UmcteTRNktoSpg-3vsj-Av_fPTdgrkZzikItlj3HhsYP29d4irGvpo48m9Soi4d2OXGXrIwRu4_gOkNStqWBFCYoIqyu7YWTQy47sJIGhVtLBHWQz0gDV_iynZTqq9WWxu1IpEtQfjZwNqyP9XAhWjl-Nt_-e7A5MDrUfhYBSlJHXXD9QUwPnvoFBey3MQsoSkp5vhvr4Tt6-NgleEKZRBXCtgQORiBY"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1.5 bg-[#10B981] text-white text-xs font-bold rounded-lg uppercase tracking-wider">Park Repair</span>
+</div>
+</div>
+<div class="p-8 flex-1 flex flex-col">
+<div class="flex items-center gap-1.5 text-primary mb-2">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="auto_graph" style="font-variation-settings: 'FILL' 1;">auto_graph</span>
+<span class="text-xs font-bold uppercase tracking-widest">High Community Impact</span>
+</div>
+<h3 class="text-2xl font-headline font-extrabold text-on-background leading-tight mb-4">Cubbon Park Bench Restoration Project</h3>
+<p class="text-on-surface-variant font-body mb-6 line-clamp-3">The wooden benches near the main entrance are deteriorating. We've gathered 450+ signatures to initiate a restoration project with sustainable materials.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex -space-x-3">
+<div class="w-10 h-10 rounded-full border-4 border-white bg-secondary-fixed flex items-center justify-center text-[10px] font-bold">AM</div>
+<div class="w-10 h-10 rounded-full border-4 border-white bg-primary-fixed flex items-center justify-center text-[10px] font-bold">KS</div>
+<div class="w-10 h-10 rounded-full border-4 border-white bg-tertiary-fixed flex items-center justify-center text-[10px] font-bold">+12</div>
+</div>
+<button class="text-primary font-headline font-bold text-sm hover:underline underline-offset-4">Join Support</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-[#FDFBF7]/90 dark:bg-stone-900/90 backdrop-blur-xl shadow-[0_-8px_24px_rgba(6,78,59,0.04)] rounded-t-[2rem]">
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-4 py-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-2xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-semibold">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#10B981]/10 text-[#064E3B] dark:text-[#10B981] rounded-2xl px-4 py-2 Active: slide-up-1 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="explore" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-semibold">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-4 py-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-2xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="auto_graph">auto_graph</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-semibold">Impact</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-4 py-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-2xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="info">info</span>
+<span class="font-['Plus_Jakarta_Sans'] text-xs font-semibold">About</span>
+</a>
+</nav>
+<!-- Contextual FAB (Hidden on Mobile per Shell Logic if not Primary Action, but shown here as it's a main Explore/Dashboard page) -->
+<button class="fixed bottom-24 right-6 md:bottom-8 md:right-8 bg-[#064E3B] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center group active:scale-95 transition-all">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform duration-300" data-icon="add">add</span>
+</button>
+</body></html>

@@ -74,8 +74,7 @@ def configure_matplotlib(interactive: bool) -> tuple[Any, bool]:
         import matplotlib
     except ImportError as exc:  # pragma: no cover - import guard
         raise SystemExit(
-            "matplotlib is required to render this graph. "
-            "Install it with: pip install matplotlib"
+            "matplotlib is required to render this graph. Install it with: pip install matplotlib"
         ) from exc
 
     if not interactive:

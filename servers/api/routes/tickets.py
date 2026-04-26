@@ -22,19 +22,23 @@ router = APIRouter(prefix="/v1/tickets", tags=["tickets"])
 
 # ── Request / Response models ──
 
+
 class ApprovalRequest(BaseModel):
     """Body for approve/reject endpoints."""
+
     approved_by: str = Field(..., min_length=1, description="Name or ID of the approver")
 
 
 class TransitionRequest(BaseModel):
     """Body for generic status transition."""
+
     new_status: str = Field(..., min_length=1, description="Target status")
     acted_by: str = Field("system", description="Who triggered the transition")
 
 
 class TransitionResponse(BaseModel):
     """Response after a status transition."""
+
     ticket_id: str
     old_status: str
     new_status: str
@@ -43,6 +47,7 @@ class TransitionResponse(BaseModel):
 
 
 # ── Endpoints ──
+
 
 @router.post(
     "/{ticket_id}/approve",
@@ -152,6 +157,9 @@ async def transition(ticket_id: str, body: TransitionRequest):
 
     logger.info(
         "Ticket %s transitioned: %s → %s (by=%s)",
-        ticket_id, result["old_status"], result["new_status"], body.acted_by,
+        ticket_id,
+        result["old_status"],
+        result["new_status"],
+        body.acted_by,
     )
     return TransitionResponse(**result)

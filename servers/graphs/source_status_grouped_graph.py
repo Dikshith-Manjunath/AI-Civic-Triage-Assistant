@@ -34,7 +34,9 @@ def source_label(source: str | None) -> str:
     return source.strip() or "Unknown Source"
 
 
-def build_counts(tickets, dept_filter: set[str], status_filter: set[str]) -> dict[str, Counter[str]]:
+def build_counts(
+    tickets, dept_filter: set[str], status_filter: set[str]
+) -> dict[str, Counter[str]]:
     """Build status counts grouped by source."""
     counts: dict[str, Counter[str]] = defaultdict(Counter)
     for ticket in tickets:
@@ -52,7 +54,9 @@ def choose_statuses(counts: dict[str, Counter[str]], requested: list[str]) -> li
 
     if requested:
         requested_set = {item.lower() for item in requested}
-        statuses = [status for status in STATUS_ORDER if status in requested_set and status in found]
+        statuses = [
+            status for status in STATUS_ORDER if status in requested_set and status in found
+        ]
         statuses.extend(sorted(found - set(statuses), key=lambda x: x not in requested_set))
         return statuses
 
@@ -77,11 +81,15 @@ def plot_graph(args) -> None:
     if not counts:
         raise SystemExit("No matching tickets found for the selected filters.")
 
-    sources = [source for source, _ in sorted(counts.items(), key=lambda x: (-sum(x[1].values()), x[0]))]
+    sources = [
+        source for source, _ in sorted(counts.items(), key=lambda x: (-sum(x[1].values()), x[0]))
+    ]
     if args.top_sources > 0:
         sources = sources[: args.top_sources]
 
-    statuses = choose_statuses({source: counts[source] for source in sources}, parse_csv_list(args.statuses))
+    statuses = choose_statuses(
+        {source: counts[source] for source in sources}, parse_csv_list(args.statuses)
+    )
     if not statuses:
         raise SystemExit("No statuses found for the selected filters.")
 
@@ -114,7 +122,7 @@ def plot_graph(args) -> None:
     ax.legend(title="Status", frameon=False)
 
     totals = [sum(counts[source].values()) for source in sources]
-    for x, total in zip(base_x, totals):
+    for x, total in zip(base_x, totals, strict=False):
         ax.text(x, total + 0.12, str(total), ha="center", va="bottom", fontsize=8.5)
 
     fig.tight_layout()
@@ -132,11 +140,22 @@ def build_parser() -> argparse.ArgumentParser:
     """Create CLI parser."""
     default_seed = find_default_seed_file(Path(__file__))
     parser = argparse.ArgumentParser(description="Grouped source vs status ticket graph.")
-    parser.add_argument("--seed-file", type=Path, default=default_seed, help=f"Path to seed file (default: {default_seed})")
-    parser.add_argument("--output", type=Path, default=default_output_path(Path(__file__)), help="Output png path")
-    parser.add_argument("--departments", type=str, default="", help="Comma-separated department codes filter")
+    parser.add_argument(
+        "--seed-file",
+        type=Path,
+        default=default_seed,
+        help=f"Path to seed file (default: {default_seed})",
+    )
+    parser.add_argument(
+        "--output", type=Path, default=default_output_path(Path(__file__)), help="Output png path"
+    )
+    parser.add_argument(
+        "--departments", type=str, default="", help="Comma-separated department codes filter"
+    )
     parser.add_argument("--statuses", type=str, default="", help="Comma-separated status filter")
-    parser.add_argument("--top-sources", type=int, default=8, help="Top N sources by volume (0 = all)")
+    parser.add_argument(
+        "--top-sources", type=int, default=8, help="Top N sources by volume (0 = all)"
+    )
     parser.add_argument("--show", action="store_true", help="Force interactive display")
     parser.add_argument("--no-show", action="store_true", help="Save only; disable display")
     return parser

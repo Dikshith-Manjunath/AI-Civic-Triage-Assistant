@@ -90,8 +90,7 @@ def configure_matplotlib(interactive: bool) -> bool:
         import matplotlib
     except ImportError as exc:  # pragma: no cover - import guard
         raise SystemExit(
-            "matplotlib is required to render this graph. "
-            "Install it with: pip install matplotlib"
+            "matplotlib is required to render this graph. Install it with: pip install matplotlib"
         ) from exc
 
     if not interactive:
@@ -172,7 +171,9 @@ def _status_order(status_by_dept: dict[str, Counter[str]]) -> list[str]:
     return ordered
 
 
-def plot_department_data(ax, dept_counts: Counter[str], status_by_dept: dict[str, Counter[str]]) -> None:
+def plot_department_data(
+    ax, dept_counts: Counter[str], status_by_dept: dict[str, Counter[str]]
+) -> None:
     """Plot department ticket volume and status breakdown."""
     departments = [dept for dept, _ in sorted(dept_counts.items(), key=lambda x: (-x[1], x[0]))]
     labels = [_display_dept(d) for d in departments]
@@ -184,10 +185,12 @@ def plot_department_data(ax, dept_counts: Counter[str], status_by_dept: dict[str
         values = [status_by_dept[d].get(status, 0) for d in departments]
         color = STATUS_COLORS.get(status, "#9ca3af")
         ax.bar(labels, values, bottom=bottoms, label=status.replace("_", " "), color=color)
-        bottoms = [b + v for b, v in zip(bottoms, values)]
+        bottoms = [b + v for b, v in zip(bottoms, values, strict=False)]
 
     for idx, total in enumerate(bottoms):
-        ax.text(idx, total + 0.08, str(total), ha="center", va="bottom", fontsize=9, color="#111827")
+        ax.text(
+            idx, total + 0.08, str(total), ha="center", va="bottom", fontsize=9, color="#111827"
+        )
 
     ax.set_title("Combined Department Data (Seed Tickets)", fontsize=12, fontweight="bold")
     ax.set_ylabel("Ticket Count")
@@ -255,9 +258,21 @@ def plot_processing_flow(ax, dept_counts: Counter[str]) -> None:
     n_preprocess = _draw_node(ax, 0.36, 0.82, "Preprocess\nTranscribe/Extract/Unify", width=0.22)
     n_embed = _draw_node(ax, 0.58, 0.82, "Embedding +\nSimilarity Search", width=0.2)
     n_classify = _draw_node(ax, 0.8, 0.82, "LLM Classification\nDept/Urgency", width=0.18)
-    n_router = _draw_node(ax, 0.8, 0.64, "Authority Router", width=0.16, facecolor="#ecfeff", edgecolor="#0f766e")
-    n_approval = _draw_node(ax, 0.2, 0.18, "Approval / Dispatch", width=0.2, facecolor="#f0fdf4", edgecolor="#15803d")
-    n_storage = _draw_node(ax, 0.46, 0.18, "Storage + Dashboard\n(ClickHouse / UI)", width=0.24, facecolor="#fffbeb", edgecolor="#b45309")
+    n_router = _draw_node(
+        ax, 0.8, 0.64, "Authority Router", width=0.16, facecolor="#ecfeff", edgecolor="#0f766e"
+    )
+    n_approval = _draw_node(
+        ax, 0.2, 0.18, "Approval / Dispatch", width=0.2, facecolor="#f0fdf4", edgecolor="#15803d"
+    )
+    n_storage = _draw_node(
+        ax,
+        0.46,
+        0.18,
+        "Storage + Dashboard\n(ClickHouse / UI)",
+        width=0.24,
+        facecolor="#fffbeb",
+        edgecolor="#b45309",
+    )
 
     _draw_arrow(ax, n_input, n_preprocess)
     _draw_arrow(ax, n_preprocess, n_embed)
@@ -298,7 +313,9 @@ def plot_processing_flow(ax, dept_counts: Counter[str]) -> None:
 def create_graph(seed_file: Path, output_path: Path, show_graph: bool) -> None:
     """Create and render the combined graph."""
     if plt is None:
-        raise RuntimeError("Matplotlib is not configured. Call configure_matplotlib() before create_graph().")
+        raise RuntimeError(
+            "Matplotlib is not configured. Call configure_matplotlib() before create_graph()."
+        )
 
     dept_counts, status_by_dept = parse_seed_ticket_data(seed_file)
 

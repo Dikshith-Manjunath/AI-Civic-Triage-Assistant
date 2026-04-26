@@ -70,7 +70,7 @@ def _extract_json(text: str) -> dict:
     if end == -1 or end <= start:
         # LLM may have returned truncated JSON — try to repair by adding closing brace
         logger.warning("JSON appears truncated, attempting repair")
-        text = text[start:] + '}'
+        text = text[start:] + "}"
         # Try adding missing quotes if needed
         try:
             return json.loads(text)
@@ -82,7 +82,7 @@ def _extract_json(text: str) -> dict:
             except json.JSONDecodeError:
                 raise ValueError(f"Truncated/invalid JSON from LLM: {text[:200]}")
 
-    return json.loads(text[start:end + 1])
+    return json.loads(text[start : end + 1])
 
 
 def _build_context_block(similar_complaints: list[dict] | None) -> str:
@@ -93,8 +93,7 @@ def _build_context_block(similar_complaints: list[dict] | None) -> str:
     lines = ["\n--- Related past complaints (for context) ---"]
     for i, c in enumerate(similar_complaints, 1):
         lines.append(
-            f"{i}. [{c['dept'].upper()}/{c['authority']}] (urgency={c['urgency']}) "
-            f"{c['summary']}"
+            f"{i}. [{c['dept'].upper()}/{c['authority']}] (urgency={c['urgency']}) {c['summary']}"
         )
     lines.append("--- End of related complaints ---\n")
     return "\n".join(lines)
@@ -179,6 +178,8 @@ async def classify_complaint(
     ticket = TicketClassification(**parsed)
     logger.info(
         "Classification result: dept=%s authority=%s urgency=%d",
-        ticket.dept, ticket.authority, ticket.urgency,
+        ticket.dept,
+        ticket.authority,
+        ticket.urgency,
     )
     return ticket

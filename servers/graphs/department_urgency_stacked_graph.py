@@ -73,7 +73,7 @@ def plot_graph(counts: dict[str, Counter[str]], args) -> None:
     for urgency in URGENCY_ORDER:
         values = [counts[dept].get(urgency, 0) for dept in departments]
         if args.normalize:
-            values = [100.0 * v / t if t else 0.0 for v, t in zip(values, totals)]
+            values = [100.0 * v / t if t else 0.0 for v, t in zip(values, totals, strict=False)]
 
         ax.bar(
             labels,
@@ -82,7 +82,7 @@ def plot_graph(counts: dict[str, Counter[str]], args) -> None:
             label=urgency,
             color=URGENCY_COLORS.get(urgency, "#9ca3af"),
         )
-        bottoms = [b + v for b, v in zip(bottoms, values)]
+        bottoms = [b + v for b, v in zip(bottoms, values, strict=False)]
 
     for idx, total in enumerate(totals):
         y = bottoms[idx] + (1.0 if args.normalize else 0.12)
@@ -110,11 +110,25 @@ def build_parser() -> argparse.ArgumentParser:
     """Create CLI parser."""
     default_seed = find_default_seed_file(Path(__file__))
     parser = argparse.ArgumentParser(description="Department-wise urgency stacked graph.")
-    parser.add_argument("--seed-file", type=Path, default=default_seed, help=f"Path to seed file (default: {default_seed})")
-    parser.add_argument("--output", type=Path, default=default_output_path(Path(__file__)), help="Output png path")
-    parser.add_argument("--departments", type=str, default="", help="Comma-separated department codes filter")
+    parser.add_argument(
+        "--seed-file",
+        type=Path,
+        default=default_seed,
+        help=f"Path to seed file (default: {default_seed})",
+    )
+    parser.add_argument(
+        "--output", type=Path, default=default_output_path(Path(__file__)), help="Output png path"
+    )
+    parser.add_argument(
+        "--departments", type=str, default="", help="Comma-separated department codes filter"
+    )
     parser.add_argument("--top", type=int, default=0, help="Show only top N departments (0 = all)")
-    parser.add_argument("--sort-by", choices=["total", "critical", "alphabetical"], default="total", help="Department sort strategy")
+    parser.add_argument(
+        "--sort-by",
+        choices=["total", "critical", "alphabetical"],
+        default="total",
+        help="Department sort strategy",
+    )
     parser.add_argument("--normalize", action="store_true", help="Display bars as percentages")
     parser.add_argument("--show", action="store_true", help="Force interactive display")
     parser.add_argument("--no-show", action="store_true", help="Save only; disable display")

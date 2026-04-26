@@ -19,67 +19,83 @@ DEFAULT_AUTHORITY = "BBMP"
 # Evaluated top-to-bottom; first match wins.
 _RULES: list[tuple[re.Pattern[str], str]] = [
     # BWSSB — water, sewage, drainage
-    (re.compile(
-        r"\b(water\s*supply|no\s*water|water\s*leak|water\s*shortage|sewage|sewer"
-        r"|drainage|drain|borewell|bore\s*well|cauvery|kaveri|water\s*board"
-        r"|water\s*pipe|pipe\s*burst|tap\s*water|dirty\s*water|flood(?:ing)?)\b",
-        re.IGNORECASE,
-    ), "BWSSB"),
-
+    (
+        re.compile(
+            r"\b(water\s*supply|no\s*water|water\s*leak|water\s*shortage|sewage|sewer"
+            r"|drainage|drain|borewell|bore\s*well|cauvery|kaveri|water\s*board"
+            r"|water\s*pipe|pipe\s*burst|tap\s*water|dirty\s*water|flood(?:ing)?)\b",
+            re.IGNORECASE,
+        ),
+        "BWSSB",
+    ),
     # BESCOM — electricity, power
-    (re.compile(
-        r"\b(electric(?:ity|al)?|power\s*(?:cut|outage|failure|supply)|transformer"
-        r"|voltage|meter|street\s*light|pole|cable|wire|bescom|load\s*shedding"
-        r"|power\s*line|short\s*circuit|electr(?:ocution|ic\s*shock))\b",
-        re.IGNORECASE,
-    ), "BESCOM"),
-
+    (
+        re.compile(
+            r"\b(electric(?:ity|al)?|power\s*(?:cut|outage|failure|supply)|transformer"
+            r"|voltage|meter|street\s*light|pole|cable|wire|bescom|load\s*shedding"
+            r"|power\s*line|short\s*circuit|electr(?:ocution|ic\s*shock))\b",
+            re.IGNORECASE,
+        ),
+        "BESCOM",
+    ),
     # BMTC — public transport / buses
-    (re.compile(
-        r"\b(bmtc|bus(?:es)?|bus\s*(?:stop|route|shelter|stand|service|frequency)"
-        r"|public\s*transport|volvo|metro\s*feeder)\b",
-        re.IGNORECASE,
-    ), "BMTC"),
-
+    (
+        re.compile(
+            r"\b(bmtc|bus(?:es)?|bus\s*(?:stop|route|shelter|stand|service|frequency)"
+            r"|public\s*transport|volvo|metro\s*feeder)\b",
+            re.IGNORECASE,
+        ),
+        "BMTC",
+    ),
     # BWSSB (secondary — dept-based)
     # (covered above already, dept check handled later)
-
     # BDA — development authority, layouts, planning
-    (re.compile(
-        r"\b(bda|layout\s*(?:approval|plan|sanction|encroach)|site\s*allot"
-        r"|land\s*use|zoning|building\s*plan"
-        r"|plan\s*approval|development\s*authority|encroachment\s*(?:on|of)\s*bda"
-        r"|unauthor[iz](?:ed|sed)\s*(?:construction|layout|building))\b",
-        re.IGNORECASE,
-    ), "BDA"),
-
+    (
+        re.compile(
+            r"\b(bda|layout\s*(?:approval|plan|sanction|encroach)|site\s*allot"
+            r"|land\s*use|zoning|building\s*plan"
+            r"|plan\s*approval|development\s*authority|encroachment\s*(?:on|of)\s*bda"
+            r"|unauthor[iz](?:ed|sed)\s*(?:construction|layout|building))\b",
+            re.IGNORECASE,
+        ),
+        "BDA",
+    ),
     # BMRDA — regional planning
-    (re.compile(
-        r"\b(bmrda|regional\s*planning|metropolitan\s*region|peri\s*urban"
-        r"|regional\s*development)\b",
-        re.IGNORECASE,
-    ), "BMRDA"),
-
+    (
+        re.compile(
+            r"\b(bmrda|regional\s*planning|metropolitan\s*region|peri\s*urban"
+            r"|regional\s*development)\b",
+            re.IGNORECASE,
+        ),
+        "BMRDA",
+    ),
     # BEML — metro equipment, heavy engineering
-    (re.compile(
-        r"\b(beml|metro\s*(?:rail|train|coach|equipment)|namma\s*metro"
-        r"|heavy\s*engineer)\b",
-        re.IGNORECASE,
-    ), "BEML"),
-
+    (
+        re.compile(
+            r"\b(beml|metro\s*(?:rail|train|coach|equipment)|namma\s*metro"
+            r"|heavy\s*engineer)\b",
+            re.IGNORECASE,
+        ),
+        "BEML",
+    ),
     # KSDB — slum development, rehabilitation
-    (re.compile(
-        r"\b(ksdb|slum|rehabilitation|slum\s*(?:develop|board|dwell|area)"
-        r"|hutment|kachcha\s*house)\b",
-        re.IGNORECASE,
-    ), "KSDB"),
-
+    (
+        re.compile(
+            r"\b(ksdb|slum|rehabilitation|slum\s*(?:develop|board|dwell|area)"
+            r"|hutment|kachcha\s*house)\b",
+            re.IGNORECASE,
+        ),
+        "KSDB",
+    ),
     # GBA — large-scale urban governance
-    (re.compile(
-        r"\b(gba|greater\s*bengaluru|urban\s*governance|city\s*planning"
-        r"|master\s*plan)\b",
-        re.IGNORECASE,
-    ), "GBA"),
+    (
+        re.compile(
+            r"\b(gba|greater\s*bengaluru|urban\s*governance|city\s*planning"
+            r"|master\s*plan)\b",
+            re.IGNORECASE,
+        ),
+        "GBA",
+    ),
 ]
 
 # ── Department → authority mapping (weaker signal, used as tiebreaker) ──
@@ -152,13 +168,16 @@ def _similarity_consensus(similar_complaints: list[dict] | None) -> str | None:
     if ratio >= 0.6:
         logger.info(
             "Similarity consensus: %s (%.0f%% of %d similar complaints)",
-            most_common, ratio * 100, len(authorities),
+            most_common,
+            ratio * 100,
+            len(authorities),
         )
         return most_common
 
     logger.debug(
         "No similarity consensus (top=%s at %.0f%%)",
-        most_common, ratio * 100,
+        most_common,
+        ratio * 100,
     )
     return None
 
@@ -194,7 +213,9 @@ def _validate_authority(authority: str, source: str) -> str:
 
     logger.warning(
         "Invalid authority '%s' from %s — falling back to %s",
-        authority, source, DEFAULT_AUTHORITY,
+        authority,
+        source,
+        DEFAULT_AUTHORITY,
     )
     return DEFAULT_AUTHORITY
 

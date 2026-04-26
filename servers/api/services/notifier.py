@@ -86,20 +86,30 @@ async def send_discord_notification(
             {"name": "Department", "value": ticket.get("dept", "N/A").capitalize(), "inline": True},
             {"name": "Authority", "value": ticket.get("authority", "N/A"), "inline": True},
             {"name": "Urgency", "value": urgency_label, "inline": True},
-            {"name": "Status", "value": ticket.get("status", "N/A").replace("_", " ").title(), "inline": True},
+            {
+                "name": "Status",
+                "value": ticket.get("status", "N/A").replace("_", " ").title(),
+                "inline": True,
+            },
             {"name": "Channel", "value": ticket.get("channel", "N/A").capitalize(), "inline": True},
-            {"name": "Summary", "value": ticket.get("summary", "No summary")[:1024], "inline": False},
+            {
+                "name": "Summary",
+                "value": ticket.get("summary", "No summary")[:1024],
+                "inline": False,
+            },
         ],
         "footer": {"text": "CivicFlow AI Triage System"},
     }
 
     # Add approver info for approval/rejection events
     if event in ("approved", "rejected") and ticket.get("acted_by"):
-        embed["fields"].append({
-            "name": "Approved By" if event == "approved" else "Rejected By",
-            "value": ticket["acted_by"],
-            "inline": True,
-        })
+        embed["fields"].append(
+            {
+                "name": "Approved By" if event == "approved" else "Rejected By",
+                "value": ticket["acted_by"],
+                "inline": True,
+            }
+        )
 
     payload = {
         "username": "CivicFlow Bot",
@@ -137,13 +147,15 @@ async def send_discord_notification(
             if response.status_code in (200, 204):
                 logger.info(
                     "Discord notification sent [event=%s ticket=%s]",
-                    event, ticket.get("id"),
+                    event,
+                    ticket.get("id"),
                 )
                 return True
             else:
                 logger.warning(
                     "Discord webhook returned %d: %s",
-                    response.status_code, response.text[:200],
+                    response.status_code,
+                    response.text[:200],
                 )
                 return False
     except Exception as exc:

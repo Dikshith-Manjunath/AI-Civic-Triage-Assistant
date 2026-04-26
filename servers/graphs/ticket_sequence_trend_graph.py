@@ -50,7 +50,9 @@ def choose_departments(tickets, requested: list[str], max_departments: int) -> l
     return chosen
 
 
-def build_cumulative_series(tickets, departments: list[str]) -> tuple[list[int], dict[str, list[int]]]:
+def build_cumulative_series(
+    tickets, departments: list[str]
+) -> tuple[list[int], dict[str, list[int]]]:
     """Build cumulative count series across ticket sequence."""
     dept_set = set(departments)
     filtered = [ticket for ticket in tickets if ticket.department in dept_set]
@@ -140,10 +142,21 @@ def build_parser() -> argparse.ArgumentParser:
     """Create CLI parser."""
     default_seed = find_default_seed_file(Path(__file__))
     parser = argparse.ArgumentParser(description="Cumulative trend graph using ticket sequence.")
-    parser.add_argument("--seed-file", type=Path, default=default_seed, help=f"Path to seed file (default: {default_seed})")
-    parser.add_argument("--output", type=Path, default=default_output_path(Path(__file__)), help="Output png path")
-    parser.add_argument("--departments", type=str, default="", help="Comma-separated department codes filter")
-    parser.add_argument("--max-departments", type=int, default=6, help="Maximum departments to render (0 = all)")
+    parser.add_argument(
+        "--seed-file",
+        type=Path,
+        default=default_seed,
+        help=f"Path to seed file (default: {default_seed})",
+    )
+    parser.add_argument(
+        "--output", type=Path, default=default_output_path(Path(__file__)), help="Output png path"
+    )
+    parser.add_argument(
+        "--departments", type=str, default="", help="Comma-separated department codes filter"
+    )
+    parser.add_argument(
+        "--max-departments", type=int, default=6, help="Maximum departments to render (0 = all)"
+    )
     parser.add_argument("--step", type=int, default=1, help="Sample every N points for readability")
     parser.add_argument("--show", action="store_true", help="Force interactive display")
     parser.add_argument("--no-show", action="store_true", help="Save only; disable display")

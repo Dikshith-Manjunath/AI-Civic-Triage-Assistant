@@ -91,11 +91,25 @@ def insert_ticket(
         table="civic_complaints",
         data=[row],
         column_names=[
-            "id", "timestamp", "dept", "authority", "urgency",
-            "summary", "reply", "status", "channel", "raw_text", "embedding",
+            "id",
+            "timestamp",
+            "dept",
+            "authority",
+            "urgency",
+            "summary",
+            "reply",
+            "status",
+            "channel",
+            "raw_text",
+            "embedding",
         ],
     )
-    logger.info("Inserted ticket %s [dept=%s, authority=%s, status=pending]", ticket_id, ticket.dept, ticket.authority)
+    logger.info(
+        "Inserted ticket %s [dept=%s, authority=%s, status=pending]",
+        ticket_id,
+        ticket.dept,
+        ticket.authority,
+    )
 
     return {
         "id": ticket_id,
@@ -135,13 +149,21 @@ def insert_media(
             ]
         ],
         column_names=[
-            "id", "complaint_id", "type", "object_path",
-            "filename", "content_type", "size_bytes",
+            "id",
+            "complaint_id",
+            "type",
+            "object_path",
+            "filename",
+            "content_type",
+            "size_bytes",
         ],
     )
     logger.info(
         "Inserted media %s for complaint %s [type=%s, path=%s]",
-        media_id, complaint_id, media_type, object_path,
+        media_id,
+        complaint_id,
+        media_type,
+        object_path,
     )
     return media_id
 
@@ -157,7 +179,7 @@ def fetch_media_for_complaint(complaint_id: str) -> list[dict]:
     columns = result.column_names
     rows: list[dict] = []
     for row in result.result_rows:
-        d = dict(zip(columns, row))
+        d = dict(zip(columns, row, strict=False))
         d["id"] = str(d["id"])
         d["complaint_id"] = str(d["complaint_id"])
         rows.append(d)
@@ -174,11 +196,13 @@ def fetch_all_tickets(limit: int = 100) -> list[dict]:
     columns = result.column_names
     rows: list[dict] = []
     for row in result.result_rows:
-        d = dict(zip(columns, row))
+        d = dict(zip(columns, row, strict=False))
         # Ensure id and timestamp are serialisable strings
         d["id"] = str(d["id"])
         d["timestamp"] = (
-            d["timestamp"].isoformat() if hasattr(d["timestamp"], "isoformat") else str(d["timestamp"])
+            d["timestamp"].isoformat()
+            if hasattr(d["timestamp"], "isoformat")
+            else str(d["timestamp"])
         )
         rows.append(d)
     return rows
@@ -198,10 +222,12 @@ def fetch_tickets_by_authority(authority: str, limit: int = 200) -> list[dict]:
     columns = result.column_names
     rows: list[dict] = []
     for row in result.result_rows:
-        d = dict(zip(columns, row))
+        d = dict(zip(columns, row, strict=False))
         d["id"] = str(d["id"])
         d["timestamp"] = (
-            d["timestamp"].isoformat() if hasattr(d["timestamp"], "isoformat") else str(d["timestamp"])
+            d["timestamp"].isoformat()
+            if hasattr(d["timestamp"], "isoformat")
+            else str(d["timestamp"])
         )
         if hasattr(d.get("approved_at"), "isoformat"):
             d["approved_at"] = d["approved_at"].isoformat()

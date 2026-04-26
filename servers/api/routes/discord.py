@@ -69,7 +69,7 @@ async def discord_interactions(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid request signature",
         )
-    
+
     payload = await request.json()
     interaction_type = payload.get("type")
 
@@ -87,16 +87,19 @@ async def discord_interactions(
 
         logger.info(
             "Discord button interaction: custom_id=%s actor=%s",
-            custom_id, actor_name,
+            custom_id,
+            actor_name,
         )
 
         # Parse custom_id format: "civicflow_approve:<ticket_id>" or "civicflow_reject:<ticket_id>"
         if ":" not in custom_id:
             logger.warning("Malformed custom_id: %s", custom_id)
-            return JSONResponse({
-                "type": 4,  # CHANNEL_MESSAGE_WITH_SOURCE
-                "data": {"content": "Invalid button action.", "flags": 64},
-            })
+            return JSONResponse(
+                {
+                    "type": 4,  # CHANNEL_MESSAGE_WITH_SOURCE
+                    "data": {"content": "Invalid button action.", "flags": 64},
+                }
+            )
 
         action, ticket_id = custom_id.split(":", 1)
 
@@ -113,10 +116,12 @@ async def discord_interactions(
                 verb = "rejected"
             else:
                 logger.warning("Unknown action: %s", action)
-                return JSONResponse({
-                    "type": 4,
-                    "data": {"content": f"Unknown action: {action}", "flags": 64},
-                })
+                return JSONResponse(
+                    {
+                        "type": 4,
+                        "data": {"content": f"Unknown action: {action}", "flags": 64},
+                    }
+                )
 
             # Send follow-up notification (best-effort)
             try:
@@ -129,43 +134,51 @@ async def discord_interactions(
 
             logger.info("Ticket %s %s by %s via Discord", ticket_id, verb, actor_name)
 
-            return JSONResponse({
-                "type": 4,  # CHANNEL_MESSAGE_WITH_SOURCE
-                "data": {
-                    "content": (
-                        f"{emoji} Ticket `{ticket_id}` has been **{verb}** by {actor_name}."
-                    ),
-                    "flags": 64,  # Ephemeral (only visible to clicker)
-                },
-            })
+            return JSONResponse(
+                {
+                    "type": 4,  # CHANNEL_MESSAGE_WITH_SOURCE
+                    "data": {
+                        "content": (
+                            f"{emoji} Ticket `{ticket_id}` has been **{verb}** by {actor_name}."
+                        ),
+                        "flags": 64,  # Ephemeral (only visible to clicker)
+                    },
+                }
+            )
 
         except ValueError as exc:
             logger.warning("Ticket not found: %s", exc)
-            return JSONResponse({
-                "type": 4,
-                "data": {
-                    "content": f"Ticket not found: {ticket_id}",
-                    "flags": 64,
-                },
-            })
+            return JSONResponse(
+                {
+                    "type": 4,
+                    "data": {
+                        "content": f"Ticket not found: {ticket_id}",
+                        "flags": 64,
+                    },
+                }
+            )
         except IllegalTransitionError as exc:
             logger.warning("Illegal transition: %s", exc)
-            return JSONResponse({
-                "type": 4,
-                "data": {
-                    "content": f"Cannot {action.split('_')[1]}: {exc}",
-                    "flags": 64,
-                },
-            })
+            return JSONResponse(
+                {
+                    "type": 4,
+                    "data": {
+                        "content": f"Cannot {action.split('_')[1]}: {exc}",
+                        "flags": 64,
+                    },
+                }
+            )
         except Exception:
             logger.exception("Discord interaction handler error for ticket %s", ticket_id)
-            return JSONResponse({
-                "type": 4,
-                "data": {
-                    "content": "Internal error processing action. Please try again.",
-                    "flags": 64,
-                },
-            })
+            return JSONResponse(
+                {
+                    "type": 4,
+                    "data": {
+                        "content": "Internal error processing action. Please try again.",
+                        "flags": 64,
+                    },
+                }
+            )
 
     # ── Unknown interaction type ──
     logger.warning("Unhandled Discord interaction type: %s", interaction_type)

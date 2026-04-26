@@ -16,8 +16,8 @@ TRANSITIONS: dict[str, set[str]] = {
     "awaiting_approval": {"approved", "rejected"},
     "approved": {"filed"},
     "filed": {"resolved"},
-    "rejected": set(),   # terminal state
-    "resolved": set(),   # terminal state
+    "rejected": set(),  # terminal state
+    "resolved": set(),  # terminal state
 }
 
 VALID_STATUSES: set[str] = set(TRANSITIONS.keys())
@@ -97,9 +97,7 @@ def _update_ticket_status(
         )
     else:
         client.command(
-            "ALTER TABLE civic_complaints UPDATE "
-            "status = %(new_status)s "
-            "WHERE id = %(tid)s",
+            "ALTER TABLE civic_complaints UPDATE status = %(new_status)s WHERE id = %(tid)s",
             parameters={
                 "new_status": new_status,
                 "tid": ticket_id,
@@ -143,7 +141,10 @@ def transition_ticket(
 
     logger.info(
         "Ticket %s transitioned: %s → %s (by=%s)",
-        ticket_id, current, new_status, acted_by or "system",
+        ticket_id,
+        current,
+        new_status,
+        acted_by or "system",
     )
 
     return {
