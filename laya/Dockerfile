@@ -1,9 +1,9 @@
-# Laya Classifier Dockerfile - Optimized for CPU-only inference
+# Laya Classifier Dockerfile - CPU-only PyTorch
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies and uv in a single layer
+# Install system dependencies and uv
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && curl -LsSf https://astral.sh/uv/install.sh | sh \
@@ -12,15 +12,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Add uv to PATH
 ENV PATH="/root/.local/bin:$PATH"
 
-# Increased timeout for large packages like torch
+# Increased timeout for large packages
 ENV UV_HTTP_TIMEOUT=600
 
-# CRITICAL: Install torch CPU-only FIRST to avoid CUDA dependencies
-# This saves ~2.5GB and prevents network timeouts
+# STEP 1: Install CPU-only PyTorch FIRST (prevents CUDA dependencies)
 RUN uv pip install --system --no-cache \
     torch --index-url https://download.pytorch.org/whl/cpu
 
-# Install remaining dependencies (sentence-transformers will use the CPU torch)
+# STEP 2: Copy and install remaining dependencies
 COPY requirements.txt ./
 RUN uv pip install --system --no-cache \
     fastapi \
