@@ -1,4 +1,7 @@
-"""Ticket lifecycle router — approve, reject, and transition ticket status."""
+"""Ticket lifecycle router — approve, reject, and transition ticket status.
+
+DEPRECATED: Use /api/v1/tickets instead. This endpoint will be removed in v2.
+"""
 
 from __future__ import annotations
 
@@ -17,7 +20,7 @@ from api.services.notifier import send_discord_notification
 
 logger = logging.getLogger("civicflow.routes.tickets")
 
-router = APIRouter(prefix="/v1/tickets", tags=["tickets"])
+router = APIRouter(prefix="/tickets", tags=["tickets"], deprecated=True)
 
 
 # ── Request / Response models ──
@@ -52,10 +55,11 @@ class TransitionResponse(BaseModel):
 @router.post(
     "/{ticket_id}/approve",
     response_model=TransitionResponse,
-    summary="Approve a ticket",
-    description="Transition a ticket from awaiting_approval to approved.",
+    summary="Approve a ticket (DEPRECATED)",
+    description="DEPRECATED: Use /api/v1/tickets/{ticket_id}/approve instead.",
+    deprecated=True,
 )
-async def approve(ticket_id: str, body: ApprovalRequest):
+async def approve_legacy(ticket_id: str, body: ApprovalRequest):
     """Approve a pending ticket."""
     try:
         result = approve_ticket(ticket_id, approved_by=body.approved_by)
@@ -79,17 +83,18 @@ async def approve(ticket_id: str, body: ApprovalRequest):
     except Exception as exc:
         logger.error("Discord notification failed after approval: %s", exc)
 
-    logger.info("Ticket %s approved by %s", ticket_id, body.approved_by)
+    logger.info("Ticket %s approved by %s (legacy endpoint)", ticket_id, body.approved_by)
     return TransitionResponse(**result)
 
 
 @router.post(
     "/{ticket_id}/reject",
     response_model=TransitionResponse,
-    summary="Reject a ticket",
-    description="Transition a ticket from awaiting_approval to rejected.",
+    summary="Reject a ticket (DEPRECATED)",
+    description="DEPRECATED: Use /api/v1/tickets/{ticket_id}/reject instead.",
+    deprecated=True,
 )
-async def reject(ticket_id: str, body: ApprovalRequest):
+async def reject_legacy(ticket_id: str, body: ApprovalRequest):
     """Reject a pending ticket."""
     try:
         result = reject_ticket(ticket_id, rejected_by=body.approved_by)
@@ -113,21 +118,22 @@ async def reject(ticket_id: str, body: ApprovalRequest):
     except Exception as exc:
         logger.error("Discord notification failed after rejection: %s", exc)
 
-    logger.info("Ticket %s rejected by %s", ticket_id, body.approved_by)
+    logger.info("Ticket %s rejected by %s (legacy endpoint)", ticket_id, body.approved_by)
     return TransitionResponse(**result)
 
 
 @router.post(
     "/{ticket_id}/transition",
     response_model=TransitionResponse,
-    summary="Transition ticket status",
+    summary="Transition ticket status (DEPRECATED)",
     description=(
-        "Generic state transition endpoint. Valid transitions: "
-        "pending→awaiting_approval, awaiting_approval→approved/rejected, "
+        "DEPRECATED: Use /api/v1/tickets/{ticket_id}/transition instead. "
+        "Valid transitions: pending→awaiting_approval, awaiting_approval→approved/rejected, "
         "approved→filed, filed→resolved."
     ),
+    deprecated=True,
 )
-async def transition(ticket_id: str, body: TransitionRequest):
+async def transition_legacy(ticket_id: str, body: TransitionRequest):
     """Perform an arbitrary valid state transition."""
     try:
         result = transition_ticket(
@@ -156,7 +162,7 @@ async def transition(ticket_id: str, body: TransitionRequest):
         logger.error("Discord notification failed after transition: %s", exc)
 
     logger.info(
-        "Ticket %s transitioned: %s → %s (by=%s)",
+        "Ticket %s transitioned: %s → %s (by=%s, legacy endpoint)",
         ticket_id,
         result["old_status"],
         result["new_status"],

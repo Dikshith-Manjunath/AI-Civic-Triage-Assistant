@@ -1,0 +1,28 @@
+# CivicFlow Worker Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies and uv
+RUN apt-get update && apt-get install -y \
+    curl \
+    ffmpeg \
+    && curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add uv to PATH
+ENV PATH="/root/.local/bin:$PATH"
+
+# Install Python dependencies using uv (much faster)
+COPY pyproject.toml ./
+RUN uv pip install --system --no-cache -e .
+
+# Copy application code
+COPY . .
+
+# Create non-root user
+RUN useradd -m -u 1000 civicflow && chown -R civicflow:civicflow /app
+USER civicflow
+
+# Run the worker
+CMD ["python", "-m", "workers.kafka_consumer"]

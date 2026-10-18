@@ -11,6 +11,7 @@ import clickhouse_connect
 from clickhouse_connect.driver.client import Client as CHClient
 
 from api.config import settings
+from api.middleware.tracing import trace_operation
 from api.models.ticket import TicketClassification
 
 logger = logging.getLogger("civicflow.db")
@@ -87,23 +88,25 @@ def insert_ticket(
         embedding or [],
     ]
 
-    client.insert(
-        table="civic_complaints",
-        data=[row],
-        column_names=[
-            "id",
-            "timestamp",
-            "dept",
-            "authority",
-            "urgency",
-            "summary",
-            "reply",
-            "status",
-            "channel",
-            "raw_text",
-            "embedding",
-        ],
-    )
+    # Add tracing for database insert
+    with trace_operation("db_insert_ticket", table="civic_complaints", dept=ticket.dept):
+        client.insert(
+            table="civic_complaints",
+            data=[row],
+            column_names=[
+                "id",
+                "timestamp",
+                "dept",
+                "authority",
+                "urgency",
+                "summary",
+                "reply",
+                "status",
+                "channel",
+                "raw_text",
+                "embedding",
+            ],
+        )
     logger.info(
         "Inserted ticket %s [dept=%s, authority=%s, status=pending]",
         ticket_id,
@@ -211,14 +214,18 @@ def fetch_all_tickets(limit: int = 100) -> list[dict]:
 def fetch_tickets_by_authority(authority: str, limit: int = 200) -> list[dict]:
     """Return tickets filtered by authority code (e.g. BBMP, BWSSB)."""
     client = get_client()
-    result = client.query(
-        "SELECT id, timestamp, dept, authority, urgency, summary, reply, status, "
-        "raw_text, channel, approved_by, approved_at "
-        "FROM civic_complaints "
-        "WHERE upper(authority) = %(auth)s "
-        "ORDER BY timestamp DESC LIMIT %(lim)s",
-        parameters={"auth": authority.upper(), "lim": limit},
-    )
+
+    # Add tracing for database query
+    with trace_operation("db_query_tickets", table="civic_complaints", authority=authority):
+        result = client.query(
+            "SELECT id, timestamp, dept, authority, urgency, summary, reply, status, "
+            "raw_text, channel, approved_by, approved_at "
+            "FROM civic_complaints "
+            "WHERE upper(authority) = %(auth)s "
+            "ORDER BY timestamp DESC LIMIT %(lim)s",
+            parameters={"auth": authority.upper(), "lim": limit},
+        )
+
     columns = result.column_names
     rows: list[dict] = []
     for row in result.result_rows:

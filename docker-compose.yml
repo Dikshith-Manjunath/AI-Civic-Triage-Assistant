@@ -1,50 +1,197 @@
-version: '3.8'
+# CivicFlow - Bengaluru Civic Issue Triage System
+# Full stack deployment with all services
 
 services:
+  # Infrastructure Services
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.0
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: civicflow-zookeeper
     ports:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_logs:/var/lib/zookeeper/log
+    restart: unless-stopped
 
   kafka:
-    image: confluentinc/cp-kafka:7.0.0
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: civicflow-kafka
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     ports:
       - "9092:9092"
+      - "9093:9093"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    restart: unless-stopped
 
   clickhouse:
-    image: clickhouse/clickhouse-server:latest
+    image: clickhouse/clickhouse-server:24.1
+    container_name: civicflow-clickhouse
     ports:
       - "8123:8123"
       - "9000:9000"
     environment:
-      - CLICKHOUSE_DB=civicflow
-      - CLICKHOUSE_USER=civicflow
-      - CLICKHOUSE_PASSWORD=civicflow
+      CLICKHOUSE_DB: civicflow
+      CLICKHOUSE_USER: civicflow
+      CLICKHOUSE_PASSWORD: civicflow
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     ulimits:
       nofile:
         soft: 262144
         hard: 262144
-
-  minio:
-    image: minio/minio
-    command: server /data --console-address ":9001"
-    ports:
-      - "9100:9000"
-      - "9101:9001"
-    environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
-      - minio_data:/data
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: civicflow-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # Application Services
+  laya-classifier:
+    build:
+      context: ./laya
+      dockerfile: Dockerfile
+    container_name: civicflow-laya
+    ports:
+      - "8001:8001"
+    environment:
+      - MODEL_PATH=/app/models
+      - LOG_LEVEL=INFO
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  civicflow-api:
+    build:
+      context: ./servers
+      dockerfile: Dockerfile
+    container_name: civicflow-api
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=development
+      - LOG_LEVEL=INFO
+      - CLICKHOUSE_HOST=clickhouse
+      - CLICKHOUSE_PORT=9000
+      - CLICKHOUSE_DB=civicflow
+      - CLICKHOUSE_USER=civicflow
+      - CLICKHOUSE_PASSWORD=civicflow
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - LAYA_CLASSIFIER_URL=http://laya-classifier:8001
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      laya-classifier:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  civicflow-worker:
+    build:
+      context: ./servers
+      dockerfile: Dockerfile.worker
+    container_name: civicflow-worker
+    environment:
+      - APP_ENV=development
+      - LOG_LEVEL=INFO
+      - CLICKHOUSE_HOST=clickhouse
+      - CLICKHOUSE_PORT=9000
+      - CLICKHOUSE_DB=civicflow
+      - CLICKHOUSE_USER=civicflow
+      - CLICKHOUSE_PASSWORD=civicflow
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - LAYA_CLASSIFIER_URL=http://laya-classifier:8001
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      laya-classifier:
+        condition: service_healthy
+    restart: unless-stopped
+
+  civicflow-bot:
+    build:
+      context: ./servers
+      dockerfile: Dockerfile.bot
+    container_name: civicflow-bot
+    environment:
+      - APP_ENV=development
+      - LOG_LEVEL=INFO
+      - CIVICFLOW_API_URL=http://civicflow-api:8000
+    env_file:
+      - ./servers/.env
+    depends_on:
+      civicflow-api:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
-  minio_data:
+  zookeeper_data:
+  zookeeper_logs:
+  kafka_data:
+  clickhouse_data:
+  clickhouse_logs:
+  redis_data:
+
+networks:
+  default:
+    name: civicflow-network

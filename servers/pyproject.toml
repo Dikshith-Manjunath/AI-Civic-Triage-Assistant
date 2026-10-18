@@ -1,9 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "civicflow-server"
-version = "0.2.0"
-description = "AI Civic Triage System – Phase 1-3 (Core + Multimodal + Embeddings)"
+version = "0.3.0"
+description = "AI Civic Triage System – Production Grade (Redis + Laya Classifier + Telegram Bot)"
 readme = "README.md"
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.11"
 dependencies = [
     # ── Web Framework ──
     "fastapi>=0.115.0",
@@ -15,14 +19,27 @@ dependencies = [
     "pydantic-settings>=2.6.0",
     # ── ClickHouse ──
     "clickhouse-connect>=0.8.0",
+    # ── Redis Caching ──
+    "redis>=5.0.0",
     # ── MinIO / S3 ──
     "minio>=7.2.0",
     # ── Document Processing ──
     "pypdf>=5.0.0",
-    # ── AI / LLM ──
+    # ── AI / LLM (Legacy - will be replaced by Laya) ──
     "google-genai>=1.0.0",
-    # ── Embeddings ──
-    "sentence-transformers>=3.0.0",
+    # ── Embeddings ── (optional - requires torch)
+    # "sentence-transformers>=3.0.0",
+    # ── Telegram Bot ──
+    "python-telegram-bot>=21.0",
+    # ── Observability ──
+    "prometheus-client>=0.19.0",
+    # ── Security ──
+    "cryptography>=41.0.0",
+    "bcrypt>=4.1.0",
+    # ── Resilience ──
+    "tenacity>=8.2.0",
+    # ── Media Processing ──
+    "pillow>=10.0.0",
     # ── Utilities ──
     "python-dotenv>=1.0.0",
     "pynacl>=1.6.2",
@@ -41,6 +58,9 @@ dev = [
     "ruff>=0.7.0",
     "mypy>=1.12.0",
 ]
+
+[tool.setuptools.packages.find]
+include = ["api*", "workers*", "graphs*"]
 
 [tool.ruff]
 line-length = 100

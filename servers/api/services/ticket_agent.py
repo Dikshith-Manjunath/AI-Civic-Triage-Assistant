@@ -1,4 +1,4 @@
-"""Ticket Agent — orchestrates LLM classification of citizen complaints."""
+"""Ticket Agent — orchestrates classification of citizen complaints using Laya classifier."""
 
 from __future__ import annotations
 
@@ -6,12 +6,21 @@ import json
 import logging
 import re
 
+from api.config import settings
 from api.models.ticket import VALID_AUTHORITIES, VALID_DEPARTMENTS, TicketClassification
-from api.services.nim_client import chat_completion
 from api.services.sop_retrieval import retrieve_relevant_sops
 
 logger = logging.getLogger("civicflow.agent")
 
+# Import Laya classifier client (preferred) or fall back to Gemini
+if settings.laya_classifier_enabled:
+    from api.services.classifier import classify_complaint as classify_with_laya
+    logger.info("Using Laya classifier for complaint classification")
+else:
+    from api.services.nim_client import chat_completion
+    logger.info("Using Gemini LLM for complaint classification (Laya disabled)")
+
+# ── LLM System Prompt (for Gemini fallback) ──
 SYSTEM_PROMPT = """\
 You are CivicFlow, an AI civic-issue triage assistant for Bengaluru, India.
 
@@ -117,7 +126,7 @@ async def classify_complaint(
     similar_complaints: list[dict] | None = None,
     complaint_embedding: list[float] | None = None,
 ) -> TicketClassification:
-    """Send the complaint to the LLM and return a validated TicketClassification.
+    """Classify a complaint using Laya classifier (preferred) or Gemini LLM fallback.
 
     Args:
         complaint_text: Unified text from citizen input.
@@ -126,7 +135,36 @@ async def classify_complaint(
     """
     logger.info("Classifying complaint (%d chars)", len(complaint_text))
 
-    # ── Retrieve SOP context (Phase 6 RAG) ──
+    # ── Use Laya Classifier (Preferred Path) ──
+    if settings.laya_classifier_enabled:
+        try:
+            result = await classify_with_laya(text=complaint_text)
+
+            # Build classification from Laya response
+            ticket = TicketClassification(
+                dept=result["department"],
+                authority=result["authority"],
+                urgency=result["urgency"],
+                confidence=result.get("confidence", 0.8),
+                summary=_generate_summary(complaint_text, result["department"]),
+                reply=_generate_acknowledgement(result["department"], result["authority"]),
+            )
+
+            logger.info(
+                "Laya classification: dept=%s authority=%s urgency=%d conf=%.2f",
+                ticket.dept,
+                ticket.authority,
+                ticket.urgency,
+                result.get("confidence", 0.0),
+            )
+            return ticket
+
+        except Exception as exc:
+            logger.error("Laya classifier failed: %s — falling back to LLM", exc)
+            # Fall through to LLM fallback
+
+    # ── LLM Fallback (Gemini) ──
+    # Retrieve SOP context for RAG
     sop_chunks: list[dict] = []
     if complaint_embedding:
         try:
@@ -136,7 +174,7 @@ async def classify_complaint(
         except Exception as exc:
             logger.warning("SOP retrieval failed (non-fatal): %s", exc)
 
-    # Enrich user message with historical context if available
+    # Enrich user message with historical context
     context_block = _build_context_block(similar_complaints)
     sop_block = _build_sop_context(sop_chunks)
     enriched_message = f"{sop_block}{context_block}{complaint_text}"
@@ -175,11 +213,45 @@ async def classify_complaint(
     # Clamp urgency
     parsed["urgency"] = max(0, min(2, int(parsed.get("urgency", 1))))
 
+    # Set default confidence for LLM results
+    if "confidence" not in parsed:
+        parsed["confidence"] = 0.75
+
     ticket = TicketClassification(**parsed)
     logger.info(
-        "Classification result: dept=%s authority=%s urgency=%d",
+        "LLM classification result: dept=%s authority=%s urgency=%d",
         ticket.dept,
         ticket.authority,
         ticket.urgency,
     )
     return ticket
+
+
+def _generate_summary(text: str, department: str) -> str:
+    """Generate a brief summary from complaint text."""
+    # Truncate and clean for summary
+    clean_text = text.strip().replace("\n", " ")
+    if len(clean_text) > 150:
+        return clean_text[:147] + "..."
+    return clean_text or f"Civic complaint related to {department}"
+
+
+def _generate_acknowledgement(department: str, authority: str) -> str:
+    """Generate a citizen-facing acknowledgement message."""
+    dept_names = {
+        "roads": "Roads & Infrastructure",
+        "water": "Water Supply",
+        "sanitation": "Sanitation & Waste Management",
+        "electricity": "Electricity",
+        "transport": "Public Transport",
+        "housing": "Housing",
+        "planning": "Urban Planning",
+    }
+
+    dept_display = dept_names.get(department, department.title())
+
+    return (
+        f"Thank you for your complaint regarding {dept_display}. "
+        f"Your ticket has been assigned to {authority} and will be reviewed shortly. "
+        f"You will receive updates on the status of your complaint."
+    )

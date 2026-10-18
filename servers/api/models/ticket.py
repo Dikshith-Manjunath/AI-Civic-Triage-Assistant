@@ -50,13 +50,14 @@ class Urgency(IntEnum):
 
 
 class TicketClassification(BaseModel):
-    """The structured output the LLM must produce."""
+    """The structured output the classifier must produce."""
 
     dept: str = Field(..., description="Civic category (e.g. roads, sanitation, water)")
     authority: str = Field(..., description="Authority code (e.g. BBMP, BWSSB)")
     urgency: int = Field(..., ge=0, le=2, description="0=Low, 1=Medium, 2=High")
     summary: str = Field(..., min_length=5, description="Concise structured description")
     reply: str = Field(..., min_length=5, description="Citizen-facing acknowledgement")
+    confidence: float = Field(0.8, ge=0.0, le=1.0, description="Classification confidence score")
 
 
 class TicketResponse(BaseModel):
