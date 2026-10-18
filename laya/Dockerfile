@@ -16,17 +16,20 @@ ENV PATH="/root/.local/bin:$PATH"
 ENV UV_HTTP_TIMEOUT=600
 
 # STEP 1: Install CPU-only PyTorch FIRST (prevents CUDA dependencies)
+# Must use --index-url to force CPU-only wheel
 RUN uv pip install --system --no-cache \
-    torch --index-url https://download.pytorch.org/whl/cpu
+    torch==2.2.0+cpu \
+    --index-url https://download.pytorch.org/whl/cpu
 
-# STEP 2: Copy and install remaining dependencies
+# STEP 2: Install remaining dependencies (torch is already present, so no CUDA re-pull)
 COPY requirements.txt ./
 RUN uv pip install --system --no-cache \
     fastapi \
     uvicorn \
     pydantic \
     sentence-transformers \
-    httpx
+    httpx \
+    --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 
 # Copy application code
 COPY . .
